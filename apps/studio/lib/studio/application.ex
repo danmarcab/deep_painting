@@ -6,8 +6,6 @@ defmodule Studio.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    IO.inspect "Startingggggg"
-
     children = [
       worker(Application.get_env(:studio, :storage), [])
     ]
