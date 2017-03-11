@@ -11,64 +11,32 @@ defmodule Studio.Painting.Storage.Memory do
     {:ok, %{}}
   end
 
-  def create(name) do
-    GenServer.call(__MODULE__, {:create, name})
+  def save(painting) do
+    GenServer.call(__MODULE__, {:save, painting})
   end
 
-  def add_content(name, content) do
-    GenServer.call(__MODULE__, {:add_content, name, content})
+  def find(name) do
+    GenServer.call(__MODULE__, {:find, name})
   end
 
-  def add_style(name, style) do
-    GenServer.call(__MODULE__, {:add_style, name, style})
-  end
-
-  def add_settings(name, settings) do
-    GenServer.call(__MODULE__, {:add_settings, name, settings})
-  end
-
-  def has_painting?(name) do
-    GenServer.call(__MODULE__, {:has_painting?, name})
+  def exists?(name) do
+    GenServer.call(__MODULE__, {:exists?, name})
   end
 
   def clear() do
     GenServer.call(__MODULE__, :clear)
   end
 
-  def handle_call({:create, name}, _from, state) do
-    if Map.has_key?(state, name) do
-      {:reply, {:error, :already_created}, state}
-    else
-      {:reply, :ok, Map.put(state, name, %{})}
-    end
+  def handle_call({:save, painting}, _from, state) do
+    {:reply, :ok, Map.put(state, painting.name, painting)}
   end
 
-  def handle_call({:add_content, name, content}, _from, state) do
-    if Map.has_key?(state, name) do
-      {:reply, :ok, Map.update(state, name, %{}, &Map.put(&1, :content, content))}
-    else
-      {:reply, {:error, :not_created}, state}
-    end
+  def handle_call({:find, name}, _from, state) do
+    {:reply, Map.fetch(state, name), state}
   end
 
-  def handle_call({:add_style, name, style}, _from, state) do
-    if Map.has_key?(state, name) do
-      {:reply, :ok, Map.update(state, name, %{}, &Map.put(&1, :style, style))}
-    else
-      {:reply, {:error, :not_created}, state}
-    end
-  end
-
-  def handle_call({:add_settings, name, settings}, _from, state) do
-    if Map.has_key?(state, name) do
-      {:reply, :ok, Map.update(state, name, %{}, &Map.put(&1, :settings, settings))}
-    else
-      {:reply, {:error, :not_created}, state}
-    end
-  end
-
-  def handle_call({:has_painting?, name}, _from, state) do
-    Map.has_key?(state, name)
+  def handle_call({:exists?, name}, _from, state) do
+    {:reply, Map.has_key?(state, name), state}
   end
 
   def handle_call(:clear, _from, state) do

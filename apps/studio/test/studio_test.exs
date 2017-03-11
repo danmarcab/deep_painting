@@ -1,5 +1,7 @@
 defmodule StudioTest do
   use ExUnit.Case
+  alias Studio.Painting
+
   doctest Studio
 
   setup do

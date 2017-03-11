@@ -31,6 +31,8 @@ defmodule Studio.Painting do
 
   defstruct name: nil, content: nil, style: nil, settings: nil, status: :not_ready
 
+  @type t :: %__MODULE__{}
+
   @doc """
   Creates an painting with a given name
 
@@ -41,7 +43,7 @@ defmodule Studio.Painting do
       :not_ready
 
   """
-  @spec new(name :: String.t) :: %__MODULE__{}
+  @spec new(name :: String.t) :: t
   def new(name), do: %__MODULE__{name: name}
 
   @doc """
@@ -57,7 +59,7 @@ defmodule Studio.Painting do
       "content.png"
 
   """
-  @spec add_content(painting :: %__MODULE__{}, content :: String.t) :: %__MODULE__{}
+  @spec add_content(painting :: t, content :: String.t) :: t
   def add_content(%__MODULE__{} = p, content) do
     %{p | content: content}
     |> update_status()
@@ -77,7 +79,7 @@ defmodule Studio.Painting do
       "style.png"
 
   """
-  @spec add_style(painting :: %__MODULE__{}, style :: String.t) :: %__MODULE__{}
+  @spec add_style(painting :: t, style :: String.t) :: t
   def add_style(%__MODULE__{} = p, style) do
     %{p | style: style}
     |> update_status()
@@ -96,7 +98,7 @@ defmodule Studio.Painting do
       %Settings{}
 
   """
-  @spec add_style(painting :: %__MODULE__{}, settings :: %Settings{}) :: %__MODULE__{}
+  @spec add_style(painting :: t, settings :: %Settings{}) :: t
   def add_settings(%__MODULE__{} = p, %Settings{} = settings) do
     %{p | settings: settings}
     |> update_status()

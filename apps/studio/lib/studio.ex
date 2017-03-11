@@ -3,6 +3,8 @@ defmodule Studio do
   Studio provides funcions to create, set the settings and start the process to create a painting.
   """
 
+  alias Studio.Painting
+
   @doc """
   Creates an empty painting with a given name. Name must be unique.
 
@@ -15,7 +17,11 @@ defmodule Studio do
 
   """
   def create_painting(name) do
-    storage().create(name)
+    if storage().exists?(name) do
+      {:error, :already_created}
+    else
+      storage().save(Painting.new(name))
+    end
   end
 
   @doc """
@@ -32,7 +38,12 @@ defmodule Studio do
 
   """
   def add_painting_content(name, content) do
-    storage().add_content(name, content)
+    if storage().exists?(name) do
+      {:ok, painting} = storage().find(name)
+      storage().save(Painting.add_content(painting, content))
+    else
+      {:error, :not_created}
+    end
   end
 
   @doc """
@@ -49,7 +60,12 @@ defmodule Studio do
 
   """
   def add_painting_style(name, style) do
-    storage().add_style(name, style)
+    if storage().exists?(name) do
+      {:ok, painting} = storage().find(name)
+      storage().save(Painting.add_style(painting, style))
+    else
+      {:error, :not_created}
+    end
   end
 
   @doc """
@@ -59,14 +75,19 @@ defmodule Studio do
 
       iex> Studio.create_painting("My painting")
       :ok
-      iex> Studio.add_painting_settings("My painting", %{})
+      iex> Studio.add_painting_settings("My painting", Painting.Settings.new())
       :ok
-      iex> Studio.add_painting_settings("Not my painting", %{})
+      iex> Studio.add_painting_settings("Not my painting", Painting.Settings.new())
       {:error, :not_created}
 
   """
-  def add_painting_settings(name, settings) do
-    storage().add_settings(name, settings)
+  def add_painting_settings(name, %Painting.Settings{} = settings) do
+    if storage().exists?(name) do
+      {:ok, painting} = storage().find(name)
+      storage().save(Painting.add_settings(painting, settings))
+    else
+      {:error, :not_created}
+    end
   end
 
   def start_painting(name, iterations) do

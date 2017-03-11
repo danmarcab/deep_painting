@@ -2,6 +2,7 @@ defmodule Studio.Painting.Storage do
   @moduledoc """
   Studio.Painting.Storage defines the contract to store paintings
   """
+  alias Studio.Painting
 
   @doc """
   Starts storage
@@ -9,27 +10,17 @@ defmodule Studio.Painting.Storage do
   @callback start_link() :: Supervisor.on_start()
 
   @doc """
-  Creates a painting with a given name
+  Finds a return a painting by name.
   """
-  @callback create(name :: String.t) :: :ok | {:error, atom}
+  @callback find(name :: String.t) :: {:ok, Painting.t} | :error
 
   @doc """
-  Adds the content to the painting
+  Check if a painting with a given name exists.
   """
-  @callback add_content(name :: String.t, content :: String.t) :: :ok | {:error, atom}
+  @callback exists?(name :: String.t) :: boolean
 
   @doc """
-  Adds the style to the painting
+  Save a painting in the storage. If a painting with the same name exists, it will update it.
   """
-  @callback add_style(name :: String.t, style :: String.t) :: :ok | {:error, atom}
-
-  @doc """
-  Adds the settings to the painting
-  """
-  @callback add_settings(name :: String.t, style :: String.t) :: :ok | {:error, atom}
-
-  @doc """
-  Checks if a picture with a given name exists
-  """
-  @callback has_painting?(name :: String.t) :: boolean
+  @callback save(Painting.t) :: :ok | {:error, atom}
 end

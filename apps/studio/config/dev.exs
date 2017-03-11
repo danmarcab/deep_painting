@@ -1,3 +1,3 @@
 use Mix.Config
 
-config :studio, storage: Studio.Painting.Storage.FileSystem
+config :studio, storage: Studio.Painting.Storage.Memory
