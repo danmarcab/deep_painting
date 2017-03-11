@@ -17,6 +17,10 @@ defmodule Studio.Painting.Storage.FileSystem do
     :ok
   end
 
+  def add_settings(name, settings) do
+    :ok
+  end
+
   def has_painting?(name) do
     true
   end

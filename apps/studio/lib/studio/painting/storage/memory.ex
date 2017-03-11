@@ -67,6 +67,10 @@ defmodule Studio.Painting.Storage.Memory do
     end
   end
 
+  def handle_call({:has_painting?, name}, _from, state) do
+    Map.has_key?(state, name)
+  end
+
   def handle_call(:clear, _from, state) do
     {:reply, :ok, %{}}
   end
