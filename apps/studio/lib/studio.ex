@@ -90,6 +90,14 @@ defmodule Studio do
     end
   end
 
+  def find_painting(name) do
+    storage().find(name)
+  end
+
+  def save_painting(painting) do
+    storage().save(painting)
+  end
+
   def start_painting(name, iterations) do
     :ok
   end

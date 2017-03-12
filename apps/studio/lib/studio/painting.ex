@@ -26,7 +26,6 @@ defmodule Studio.Painting do
 
   """
 
-  alias Studio.Painting
   alias Studio.Painting.Settings
 
   defstruct name: nil, content: nil, style: nil, settings: nil, status: :not_ready
@@ -98,7 +97,7 @@ defmodule Studio.Painting do
       %Settings{}
 
   """
-  @spec add_style(painting :: t, settings :: %Settings{}) :: t
+  @spec add_style(painting :: t, settings :: Settings.t) :: t
   def add_settings(%__MODULE__{} = p, %Settings{} = settings) do
     %{p | settings: settings}
     |> update_status()
