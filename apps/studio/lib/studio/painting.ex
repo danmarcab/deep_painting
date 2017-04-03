@@ -27,8 +27,9 @@ defmodule Studio.Painting do
   """
 
   alias Studio.Painting.Settings
+  alias Studio.Painting.Iteration
 
-  defstruct name: nil, content: nil, style: nil, settings: nil, status: :not_ready
+  defstruct name: nil, content: nil, style: nil, settings: nil, status: :not_ready, iterations: []
 
   @type t :: %__MODULE__{}
 
@@ -103,9 +104,29 @@ defmodule Studio.Painting do
     |> update_status()
   end
 
+  @doc """
+  Adds settings to a painting
+
+  ## Examples
+
+      iex> p = Painting.new("my_painting")
+      iex> p.settings
+      nil
+      iex> p = Painting.add_settings(p, %Settings{})
+      iex> p.settings
+      %Settings{}
+
+  """
+  @spec add_iteration(painting :: t, iter :: Iteration.t) :: t
+  def add_iteration(%__MODULE__{} = p, %Iteration{} = iter) do
+    %{p | iterations: p.iterations ++ [iter]}
+    |> update_status()
+  end
+
   defp update_status(%__MODULE__{content: nil, status: :not_ready} = p), do: p
   defp update_status(%__MODULE__{style: nil, status: :not_ready} = p), do: p
   defp update_status(%__MODULE__{settings: nil, status: :not_ready} = p), do: p
   defp update_status(%__MODULE__{status: :not_ready} = p), do: %{p | status: :ready}
+  defp update_status(%__MODULE__{status: :ready} = p), do: p
 
 end

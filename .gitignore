@@ -21,3 +21,9 @@ erl_crash.dump
 
 # intellij
 .idea
+
+# MacOS
+*.DS_Store
+
+# priv
+apps/studio/priv/

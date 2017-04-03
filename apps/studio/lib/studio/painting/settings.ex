@@ -3,7 +3,7 @@ defmodule Studio.Painting.Settings do
   Module to create and manipulate painting settings.
   """
 
-  defstruct content_weight: nil
+  defstruct content_weight: nil, output_width: 50
 
   @type t :: %__MODULE__{}
 

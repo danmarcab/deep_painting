@@ -4,6 +4,7 @@ defmodule Studio do
   """
 
   alias Studio.Painting
+  alias Studio.Painter
 
   @doc """
   Creates an empty painting with a given name. Name must be unique.
@@ -99,7 +100,7 @@ defmodule Studio do
   end
 
   def start_painting(name, iterations) do
-    :ok
+    Painter.start_link(name, iterations: 10)
   end
 
   def stop_painting(name) do
