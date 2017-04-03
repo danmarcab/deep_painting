@@ -3,6 +3,7 @@ defmodule Studio.Painter do
   Module to interact with a painter executable.
   """
   use GenServer
+  require Logger
 
   alias Studio.Painting
   alias Studio.Painting.Iteration
@@ -27,12 +28,13 @@ defmodule Studio.Painter do
 
   def handle_cast(:stop, %{port: port} = state) do
     Port.close(port)
-    {:noreply, state}
+    {:stop, :normal, state}
   end
 
   def handle_info({port, {:data, response}}, %{port: port, painting: painting} = state) do
-    IO.inspect("received from port:")
-    IO.inspect response
+    Logger.debug("received from port:")
+    Logger.debug(inspect(response))
+
     {:ok, iteration} = parse_iteration(response)
     new_painting = Painting.add_iteration(painting, iteration)
     Studio.save_painting(new_painting)

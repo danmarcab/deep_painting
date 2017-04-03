@@ -27,13 +27,13 @@ def send_response(response):
   os.write(output, struct.pack(">I", len(response)))
   os.write(output, response)
 
-send_response("iter0: init")
+send_response("{\"iteration\": 0, \"file_name\": \"file0.png\", \"loss\": \"3.00\"}")
 n = 0
 while True:
   input_received = receive_input()
   if input_received == "CONT":
     n += 1
-    send_response("iter#{n}: " + input_received)
+    send_response("{\"iteration\": " +  str(n) + ", \"file_name\": \"file.png\", \"loss\": \"3.13\"}")
   else:
     break
   sleep(0.001)

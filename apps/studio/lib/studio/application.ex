@@ -7,7 +7,8 @@ defmodule Studio.Application do
     import Supervisor.Spec, warn: false
 
     children = [
-      worker(Application.get_env(:studio, :storage), [])
+      worker(Application.get_env(:studio, :storage), []),
+      supervisor(Registry, [:unique, Studio.Painter])
     ]
 
     opts = [strategy: :one_for_one, name: Studio.Supervisor]

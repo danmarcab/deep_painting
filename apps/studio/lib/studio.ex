@@ -100,15 +100,18 @@ defmodule Studio do
   end
 
   def start_painting(name, iterations) do
-    Painter.start_link(name, iterations: 10)
+    Painter.start_link(name, iterations: 10, name: painter_name(name))
   end
 
   def stop_painting(name) do
-    :ok
+    Painter.stop(painter_name(name))
   end
 
   defp storage() do
     Application.get_env(:studio, :storage)
   end
 
+  defp painter_name(painting_name) do
+    {:via, Registry, {Studio.Painter, painting_name}}
+  end
 end
