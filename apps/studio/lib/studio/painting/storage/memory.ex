@@ -39,7 +39,7 @@ defmodule Studio.Painting.Storage.Memory do
     {:reply, Map.has_key?(state, name), state}
   end
 
-  def handle_call(:clear, _from, state) do
+  def handle_call(:clear, _from, _state) do
     {:reply, :ok, %{}}
   end
 end

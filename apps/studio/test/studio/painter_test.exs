@@ -1,25 +1,34 @@
 defmodule Studio.PainterTest do
   use ExUnit.Case
 
-  test "watcher is notified on every iteration" do
+  setup do
+    :ok = Studio.Painting.Storage.Memory.clear()
+
     Studio.create_painting("my_painting")
-    Studio.Painter.start_link("my_painting", iterations: 10, watcher: self())
+    Studio.add_painting_content("my_painting", "content.png")
+    Studio.add_painting_style("my_painting", "style.png")
+    Studio.add_painting_settings("my_painting", %{Studio.Painting.Settings.new| iterations: 10})
+  end
+
+  test "watcher is notified on every iteration until it completes the painting" do
+    Studio.Painter.start_link("my_painting", watcher: self())
 
     for _ <- 0..10 do
       assert_receive({:painter, "my_painting"})
     end
     refute_receive({:painter, "my_painting"})
+    assert {:ok, %{status: :complete}} = Studio.find_painting("my_painting")
   end
 
-  test "can stop the painter" do
-    Studio.create_painting("my_painting")
-    {:ok, painter} = Studio.Painter.start_link("my_painting", iterations: 10, watcher: self())
+  test "can stop the painter, and completes painting" do
+    {:ok, painter} = Studio.Painter.start_link("my_painting", watcher: self())
 
     for _ <- 0..5 do
       assert_receive({:painter, "my_painting"})
     end
     Studio.Painter.stop(painter)
     refute_receive({:painter, "my_painting"})
+    assert {:ok, %{status: :complete}} = Studio.find_painting("my_painting")
   end
 
 

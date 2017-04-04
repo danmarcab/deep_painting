@@ -105,7 +105,39 @@ defmodule Studio.Painting do
   end
 
   @doc """
-  Adds settings to a painting
+  Adds an iteration to a painting
+
+  ## Examples
+
+      iex> ready_painting().status
+      :ready
+      iex> Painting.start(ready_painting()).status
+      :in_progress
+
+  """
+  @spec start(painting :: t) :: t
+  def start(%__MODULE__{status: :ready} = p) do
+    %{p | status: :in_progress}
+  end
+
+  @doc """
+  Adds an iteration to a painting
+
+  ## Examples
+
+      iex> in_progress_painting().status
+      :in_progress
+      iex> Painting.complete(in_progress_painting()).status
+      :complete
+
+  """
+  @spec complete(painting :: t) :: t
+  def complete(%__MODULE__{status: :in_progress} = p) do
+    %{p | status: :complete}
+  end
+
+  @doc """
+  Adds an iteration to a painting
 
   ## Examples
 
@@ -118,7 +150,7 @@ defmodule Studio.Painting do
 
   """
   @spec add_iteration(painting :: t, iter :: Iteration.t) :: t
-  def add_iteration(%__MODULE__{} = p, %Iteration{} = iter) do
+  def add_iteration(%__MODULE__{status: :in_progress} = p, %Iteration{} = iter) do
     %{p | iterations: p.iterations ++ [iter]}
     |> update_status()
   end
@@ -128,5 +160,7 @@ defmodule Studio.Painting do
   defp update_status(%__MODULE__{settings: nil, status: :not_ready} = p), do: p
   defp update_status(%__MODULE__{status: :not_ready} = p), do: %{p | status: :ready}
   defp update_status(%__MODULE__{status: :ready} = p), do: p
+  defp update_status(%__MODULE__{status: :in_progress, settings: %Settings{iterations: n_iterations}, iterations: iterations} = p) when length(iterations) <= n_iterations, do: p
+  defp update_status(%__MODULE__{status: :in_progress} = p), do: %{p | status: :complete}
 
 end

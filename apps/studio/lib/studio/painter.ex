@@ -14,9 +14,10 @@ defmodule Studio.Painter do
 
   def init({name, opts}) do
     with {:ok, painting} <- Studio.find_painting(name),
+         painting <- Painting.start(painting),
          port <- start_port(painting)
     do
-      {:ok, %{port: port, painting: painting, max_iterations: opts[:iterations], iterations: 0, watcher: opts[:watcher]}}
+      {:ok, %{port: port, painting: painting, watcher: opts[:watcher]}}
     else
       _ -> {:stop, :error}
     end
@@ -26,7 +27,8 @@ defmodule Studio.Painter do
     GenServer.cast(painter, :stop)
   end
 
-  def handle_cast(:stop, %{port: port} = state) do
+  def handle_cast(:stop, %{port: port, painting: painting} = state) do
+    Studio.save_painting(Painting.complete(painting))
     Port.close(port)
     {:stop, :normal, state}
   end
@@ -40,7 +42,7 @@ defmodule Studio.Painter do
     Studio.save_painting(new_painting)
 
 #    set iteration data in painting and save it
-    new_state = %{state | iterations: state.iterations + 1, painting: new_painting}
+    new_state = %{state | painting: new_painting}
     if state.watcher do
       send(state.watcher, {:painter, state.painting.name})
     end
@@ -65,8 +67,8 @@ defmodule Studio.Painter do
     painter_module.start(painting)
   end
 
-  defp keep_painting?(%{iterations: iterations, max_iterations: max_iterations}) do
-    iterations <= max_iterations
+  defp keep_painting?(%{painting: painting}) do
+    painting.status != :complete
   end
 
   defp parse_iteration(data) do

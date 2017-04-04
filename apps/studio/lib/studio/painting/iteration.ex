@@ -8,8 +8,8 @@ defmodule Studio.Painting.Iteration do
   @type t :: %__MODULE__{}
 
   @doc """
-  Creates empty settings.
+  Creates a iteration.
   """
-  @spec new(file_name :: String.t, loss :: Float.t) :: t
+  @spec new(file_name :: String.t, loss :: float) :: t
   def new(file_name, loss), do: %__MODULE__{file_name: file_name, loss: loss}
 end
