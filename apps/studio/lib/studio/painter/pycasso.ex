@@ -9,12 +9,12 @@ defmodule Studio.Painter.Pycasso do
   end
 
   def args(%Painting{} = painting) do
-    ([painting.content, painting.style, output_path()] ++ settings_args(painting.settings))
+    ([painting.content, painting.style, output_path(painting)] ++ settings_args(painting.settings))
     |> Enum.join(" ")
   end
 
-  def output_path() do
-    Application.app_dir(:studio, "priv") <> "/output"
+  def output_path(painting) do
+    Application.app_dir(:studio, "priv") <> "/paintings/" <> painting.name
   end
 
   def settings_args(%Settings{output_width: output_width}) do

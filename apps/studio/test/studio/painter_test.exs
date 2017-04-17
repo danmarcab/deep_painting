@@ -14,9 +14,9 @@ defmodule Studio.PainterTest do
     Studio.Painter.start_link("my_painting", watcher: self())
 
     for _ <- 0..10 do
-      assert_receive({:painter, "my_painting"})
+      assert_receive({:painter, "my_painting", i})
     end
-    refute_receive({:painter, "my_painting"})
+    refute_receive({:painter, "my_painting", i})
     assert {:ok, %{status: :complete}} = Studio.find_painting("my_painting")
   end
 
@@ -24,10 +24,10 @@ defmodule Studio.PainterTest do
     {:ok, painter} = Studio.Painter.start_link("my_painting", watcher: self())
 
     for _ <- 0..5 do
-      assert_receive({:painter, "my_painting"})
+      assert_receive({:painter, "my_painting", i})
     end
     Studio.Painter.stop(painter)
-    refute_receive({:painter, "my_painting"})
+    refute_receive({:painter, "my_painting", i})
     assert {:ok, %{status: :complete}} = Studio.find_painting("my_painting")
   end
 

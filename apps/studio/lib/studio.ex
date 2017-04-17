@@ -91,18 +91,46 @@ defmodule Studio do
     end
   end
 
+  @doc """
+  Finds an existing painting with a given name.
+
+  ## Examples
+
+      iex> Studio.create_painting("My painting")
+      :ok
+      iex> {:ok, %Painting{} = painting} = Studio.find_painting("My painting")
+      iex> painting.name
+      "My painting"
+      iex> Studio.find_painting("Not my painting")
+      :error
+
+  """
   def find_painting(name) do
     storage().find(name)
   end
 
+  @doc """
+  Saves a painting with a given name.
+
+  ## Examples
+
+      iex> p = %Painting{name: "My painting", content: "my_content"}
+      iex> :ok = Studio.save_painting(p)
+      iex> {:ok, %Painting{} = painting} = Studio.find_painting("My painting")
+      iex> {painting.name, painting.content}
+      {"My painting", "my_content"}
+
+  """
   def save_painting(painting) do
     storage().save(painting)
   end
 
-  def start_painting(name, iterations) do
-    Painter.start_link(name, iterations: 10, name: painter_name(name))
+  # TODO: add doc/tests
+  def start_painting(name) do
+    Painter.start_link(name, name: painter_name(name))
   end
 
+  # TODO: add doc/tests
   def stop_painting(name) do
     Painter.stop(painter_name(name))
   end

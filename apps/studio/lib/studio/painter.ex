@@ -43,8 +43,10 @@ defmodule Studio.Painter do
 
 #    set iteration data in painting and save it
     new_state = %{state | painting: new_painting}
+
+#    send iteration data to watcher
     if state.watcher do
-      send(state.watcher, {:painter, state.painting.name})
+      send(state.watcher, {:painter, state.painting.name, iteration})
     end
 
     if keep_painting?(new_state) do

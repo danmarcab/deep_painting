@@ -8,7 +8,8 @@ defmodule Studio.Application do
 
     children = [
       worker(Application.get_env(:studio, :storage), []),
-      supervisor(Registry, [:unique, Studio.Painter])
+      supervisor(Registry, [:unique, Studio.Painter]),
+      Plug.Adapters.Cowboy.child_spec(:http, Studio.Web.Router, [], [port: Application.get_env(:studio, :web_port)])
     ]
 
     opts = [strategy: :one_for_one, name: Studio.Supervisor]
