@@ -1,22 +1,9 @@
-module UrlParser
-    exposing
-        ( Parser
-        , string
-        , int
-        , s
-        , (</>)
-        , map
-        , oneOf
-        , top
-        , custom
-        , QueryParser
-        , (<?>)
-        , stringParam
-        , intParam
-        , customParam
-        , parsePath
-        , parseHash
-        )
+module UrlParser exposing
+  ( Parser, string, int, s
+  , (</>), map, oneOf, top, custom
+  , QueryParser, (<?>), stringParam, intParam, customParam
+  , parsePath, parseHash
+  )
 
 {-|
 
@@ -39,21 +26,22 @@ import Http
 import Navigation
 
 
+
 -- PARSERS
 
 
 {-| Turn URLs like `/blog/42/cat-herding-techniques` into nice Elm data.
 -}
-type Parser a b
-    = Parser (State a -> List (State b))
+type Parser a b =
+  Parser (State a -> List (State b))
 
 
 type alias State value =
-    { visited : List String
-    , unvisited : List String
-    , params : Dict String String
-    , value : value
-    }
+  { visited : List String
+  , unvisited : List String
+  , params : Dict String String
+  , value : value
+  }
 
 
 
@@ -69,7 +57,7 @@ type alias State value =
 -}
 string : Parser (String -> a) a
 string =
-    custom "STRING" Ok
+  custom "STRING" Ok
 
 
 {-| Parse a segment of the path as an `Int`.
@@ -81,7 +69,7 @@ string =
 -}
 int : Parser (Int -> a) a
 int =
-    custom "NUMBER" String.toInt
+  custom "NUMBER" String.toInt
 
 
 {-| Parse a segment of the path if it matches a given string.
@@ -91,17 +79,17 @@ int =
 -}
 s : String -> Parser a a
 s str =
-    Parser <|
-        \{ visited, unvisited, params, value } ->
-            case unvisited of
-                [] ->
-                    []
+  Parser <| \{ visited, unvisited, params, value } ->
+    case unvisited of
+      [] ->
+        []
 
-                next :: rest ->
-                    if next == str then
-                        [ State (next :: visited) rest params value ]
-                    else
-                        []
+      next :: rest ->
+        if next == str then
+          [ State (next :: visited) rest params value ]
+
+        else
+          []
 
 
 {-| Create a custom path segment parser. Here is how it is used to define the
@@ -125,19 +113,18 @@ You can use it to define something like “only CSS files” like this:
 -}
 custom : String -> (String -> Result String a) -> Parser (a -> b) b
 custom tipe stringToSomething =
-    Parser <|
-        \{ visited, unvisited, params, value } ->
-            case unvisited of
-                [] ->
-                    []
+  Parser <| \{ visited, unvisited, params, value } ->
+    case unvisited of
+      [] ->
+        []
 
-                next :: rest ->
-                    case stringToSomething next of
-                        Ok nextValue ->
-                            [ State (next :: visited) rest params (value nextValue) ]
+      next :: rest ->
+        case stringToSomething next of
+          Ok nextValue ->
+            [ State (next :: visited) rest params (value nextValue) ]
 
-                        Err msg ->
-                            []
+          Err msg ->
+            []
 
 
 
@@ -160,9 +147,10 @@ custom tipe stringToSomething =
 -}
 (</>) : Parser a b -> Parser b c -> Parser a c
 (</>) (Parser parseBefore) (Parser parseAfter) =
-    Parser <|
-        \state ->
-            List.concatMap parseAfter (parseBefore state)
+  Parser <| \state ->
+    List.concatMap parseAfter (parseBefore state)
+
+
 infixr 7 </>
 
 
@@ -185,24 +173,22 @@ infixr 7 </>
 -}
 map : a -> Parser a b -> Parser (b -> c) c
 map subValue (Parser parse) =
-    Parser <|
-        \{ visited, unvisited, params, value } ->
-            List.map (mapHelp value) <|
-                parse <|
-                    { visited = visited
-                    , unvisited = unvisited
-                    , params = params
-                    , value = subValue
-                    }
+  Parser <| \{ visited, unvisited, params, value } ->
+    List.map (mapHelp value) <| parse <|
+      { visited = visited
+      , unvisited = unvisited
+      , params = params
+      , value = subValue
+      }
 
 
 mapHelp : (a -> b) -> State a -> State b
-mapHelp func { visited, unvisited, params, value } =
-    { visited = visited
-    , unvisited = unvisited
-    , params = params
-    , value = func value
-    }
+mapHelp func {visited, unvisited, params, value} =
+  { visited = visited
+  , unvisited = unvisited
+  , params = params
+  , value = func value
+  }
 
 
 {-| Try a bunch of different path parsers.
@@ -237,9 +223,8 @@ mapHelp func { visited, unvisited, params, value } =
 -}
 oneOf : List (Parser a b) -> Parser a b
 oneOf parsers =
-    Parser <|
-        \state ->
-            List.concatMap (\(Parser parser) -> parser state) parsers
+  Parser <| \state ->
+    List.concatMap (\(Parser parser) -> parser state) parsers
 
 
 {-| A parser that does not consume any path segments.
@@ -259,7 +244,7 @@ oneOf parsers =
 -}
 top : Parser a a
 top =
-    Parser <| \state -> [ state ]
+  Parser <| \state -> [state]
 
 
 
@@ -268,8 +253,8 @@ top =
 
 {-| Turn query parameters like `?name=tom&age=42` into nice Elm data.
 -}
-type QueryParser a b
-    = QueryParser (State a -> List (State b))
+type QueryParser a b =
+  QueryParser (State a -> List (State b))
 
 
 {-| Parse some query parameters.
@@ -290,9 +275,10 @@ type QueryParser a b
 -}
 (<?>) : Parser a b -> QueryParser b c -> Parser a c
 (<?>) (Parser parser) (QueryParser queryParser) =
-    Parser <|
-        \state ->
-            List.concatMap queryParser (parser state)
+  Parser <| \state ->
+    List.concatMap queryParser (parser state)
+
+
 infixl 8 <?>
 
 
@@ -304,7 +290,7 @@ infixl 8 <?>
 -}
 stringParam : String -> QueryParser (Maybe String -> a) a
 stringParam name =
-    customParam name identity
+  customParam name identity
 
 
 {-| Parse a query parameter as an `Int`. Maybe you want to show paginated
@@ -317,17 +303,17 @@ should appear first.
 -}
 intParam : String -> QueryParser (Maybe Int -> a) a
 intParam name =
-    customParam name intParamHelp
+  customParam name intParamHelp
 
 
 intParamHelp : Maybe String -> Maybe Int
 intParamHelp maybeValue =
-    case maybeValue of
-        Nothing ->
-            Nothing
+  case maybeValue of
+    Nothing ->
+      Nothing
 
-        Just value ->
-            Result.toMaybe (String.toInt value)
+    Just value ->
+      Result.toMaybe (String.toInt value)
 
 
 {-| Create a custom query parser. You could create parsers like these:
@@ -343,9 +329,8 @@ scenario. We can use that data to decide if they should be added.
 -}
 customParam : String -> (Maybe String -> a) -> QueryParser (a -> b) b
 customParam key func =
-    QueryParser <|
-        \{ visited, unvisited, params, value } ->
-            [ State visited unvisited params (value (func (Dict.get key params))) ]
+  QueryParser <| \{ visited, unvisited, params, value } ->
+    [ State visited unvisited params (value (func (Dict.get key params))) ]
 
 
 
@@ -357,7 +342,7 @@ ignores the hash entirely.
 -}
 parsePath : Parser (a -> a) a -> Navigation.Location -> Maybe a
 parsePath parser location =
-    parse parser location.pathname (parseParams location.search)
+  parse parser location.pathname (parseParams location.search)
 
 
 {-| Parse based on `location.hash` and `location.search`. This parser
@@ -365,7 +350,7 @@ ignores the normal path entirely.
 -}
 parseHash : Parser (a -> a) a -> Navigation.Location -> Maybe a
 parseHash parser location =
-    parse parser (String.dropLeft 1 location.hash) (parseParams location.search)
+  parse parser (String.dropLeft 1 location.hash) (parseParams location.search)
 
 
 
@@ -374,57 +359,56 @@ parseHash parser location =
 
 parse : Parser (a -> a) a -> String -> Dict String String -> Maybe a
 parse (Parser parser) url params =
-    parseHelp <|
-        parser <|
-            { visited = []
-            , unvisited = splitUrl url
-            , params = params
-            , value = identity
-            }
+  parseHelp <| parser <|
+    { visited = []
+    , unvisited = splitUrl url
+    , params = params
+    , value = identity
+    }
 
 
 parseHelp : List (State a) -> Maybe a
 parseHelp states =
-    case states of
+  case states of
+    [] ->
+      Nothing
+
+    state :: rest ->
+      case state.unvisited of
         [] ->
-            Nothing
+          Just state.value
 
-        state :: rest ->
-            case state.unvisited of
-                [] ->
-                    Just state.value
+        [""] ->
+          Just state.value
 
-                [ "" ] ->
-                    Just state.value
-
-                _ ->
-                    parseHelp rest
+        _ ->
+          parseHelp rest
 
 
 splitUrl : String -> List String
 splitUrl url =
-    case String.split "/" url of
-        "" :: segments ->
-            segments
+  case String.split "/" url of
+    "" :: segments ->
+      segments
 
-        segments ->
-            segments
+    segments ->
+      segments
 
 
 parseParams : String -> Dict String String
 parseParams queryString =
-    queryString
-        |> String.dropLeft 1
-        |> String.split "&"
-        |> List.filterMap toKeyValuePair
-        |> Dict.fromList
+  queryString
+    |> String.dropLeft 1
+    |> String.split "&"
+    |> List.filterMap toKeyValuePair
+    |> Dict.fromList
 
 
-toKeyValuePair : String -> Maybe ( String, String )
+toKeyValuePair : String -> Maybe (String, String)
 toKeyValuePair segment =
-    case String.split "=" segment of
-        [ key, value ] ->
-            Maybe.map2 (,) (Http.decodeUri key) (Http.decodeUri value)
+  case String.split "=" segment of
+    [key, value] ->
+      Maybe.map2 (,) (Http.decodeUri key) (Http.decodeUri value)
 
-        _ ->
-            Nothing
+    _ ->
+      Nothing

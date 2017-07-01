@@ -1,47 +1,12 @@
-module String
-    exposing
-        ( isEmpty
-        , length
-        , reverse
-        , repeat
-        , cons
-        , uncons
-        , fromChar
-        , append
-        , concat
-        , split
-        , join
-        , words
-        , lines
-        , slice
-        , left
-        , right
-        , dropLeft
-        , dropRight
-        , contains
-        , startsWith
-        , endsWith
-        , indexes
-        , indices
-        , toInt
-        , toFloat
-        , toList
-        , fromList
-        , toUpper
-        , toLower
-        , pad
-        , padLeft
-        , padRight
-        , trim
-        , trimLeft
-        , trimRight
-        , map
-        , filter
-        , foldl
-        , foldr
-        , any
-        , all
-        )
+module String exposing
+  ( isEmpty, length, reverse, repeat
+  , cons, uncons, fromChar, append, concat, split, join, words, lines
+  , slice, left, right, dropLeft, dropRight
+  , contains, startsWith, endsWith, indexes, indices
+  , toInt, toFloat, toList, fromList
+  , toUpper, toLower, pad, padLeft, padRight, trim, trimLeft, trimRight
+  , map, filter, foldl, foldr, any, all
+  )
 
 {-| A built-in representation for efficient string manipulation. String literals
 are enclosed in `"double quotes"`. Strings are *not* lists of characters.
@@ -85,7 +50,7 @@ import Result exposing (Result)
 -}
 isEmpty : String -> Bool
 isEmpty =
-    Native.String.isEmpty
+  Native.String.isEmpty
 
 
 {-| Add a character to the beginning of a string.
@@ -94,7 +59,7 @@ isEmpty =
 -}
 cons : Char -> String -> String
 cons =
-    Native.String.cons
+  Native.String.cons
 
 
 {-| Create a string from a given character.
@@ -103,7 +68,7 @@ cons =
 -}
 fromChar : Char -> String
 fromChar char =
-    cons char ""
+  cons char ""
 
 
 {-| Split a non-empty string into its head and tail. This lets you
@@ -112,9 +77,9 @@ pattern match on strings exactly as you would with lists.
     uncons "abc" == Just ('a',"bc")
     uncons ""    == Nothing
 -}
-uncons : String -> Maybe ( Char, String )
+uncons : String -> Maybe (Char, String)
 uncons =
-    Native.String.uncons
+  Native.String.uncons
 
 
 {-| Append two strings. You can also use [the `(++)` operator](Basics#++)
@@ -124,7 +89,7 @@ to do this.
 -}
 append : String -> String -> String
 append =
-    Native.String.append
+  Native.String.append
 
 
 {-| Concatenate many strings into one.
@@ -133,7 +98,7 @@ append =
 -}
 concat : List String -> String
 concat =
-    Native.String.concat
+  Native.String.concat
 
 
 {-| Get the length of a string.
@@ -144,7 +109,7 @@ concat =
 -}
 length : String -> Int
 length =
-    Native.String.length
+  Native.String.length
 
 
 {-| Transform every character in a string
@@ -153,7 +118,7 @@ length =
 -}
 map : (Char -> Char) -> String -> String
 map =
-    Native.String.map
+  Native.String.map
 
 
 {-| Keep only the characters that satisfy the predicate.
@@ -162,7 +127,7 @@ map =
 -}
 filter : (Char -> Bool) -> String -> String
 filter =
-    Native.String.filter
+  Native.String.filter
 
 
 {-| Reverse a string.
@@ -171,7 +136,7 @@ filter =
 -}
 reverse : String -> String
 reverse =
-    Native.String.reverse
+  Native.String.reverse
 
 
 {-| Reduce a string from the left.
@@ -180,7 +145,7 @@ reverse =
 -}
 foldl : (Char -> b -> b) -> b -> String -> b
 foldl =
-    Native.String.foldl
+  Native.String.foldl
 
 
 {-| Reduce a string from the right.
@@ -189,7 +154,7 @@ foldl =
 -}
 foldr : (Char -> b -> b) -> b -> String -> b
 foldr =
-    Native.String.foldr
+  Native.String.foldr
 
 
 {-| Split a string using a given separator.
@@ -201,7 +166,7 @@ Use [`Regex.split`](Regex#split) if you need something more flexible.
 -}
 split : String -> String -> List String
 split =
-    Native.String.split
+  Native.String.split
 
 
 {-| Put many strings together with a given separator.
@@ -212,7 +177,7 @@ split =
 -}
 join : String -> List String -> String
 join =
-    Native.String.join
+  Native.String.join
 
 
 {-| Repeat a string *n* times.
@@ -221,7 +186,7 @@ join =
 -}
 repeat : Int -> String -> String
 repeat =
-    Native.String.repeat
+  Native.String.repeat
 
 
 {-| Take a substring given a start and end index. Negative indexes
@@ -234,7 +199,7 @@ are taken starting from the *end* of the list.
 -}
 slice : Int -> Int -> String -> String
 slice =
-    Native.String.slice
+  Native.String.slice
 
 
 {-| Take *n* characters from the left side of a string.
@@ -243,7 +208,7 @@ slice =
 -}
 left : Int -> String -> String
 left =
-    Native.String.left
+  Native.String.left
 
 
 {-| Take *n* characters from the right side of a string.
@@ -252,7 +217,7 @@ left =
 -}
 right : Int -> String -> String
 right =
-    Native.String.right
+  Native.String.right
 
 
 {-| Drop *n* characters from the left side of a string.
@@ -261,7 +226,7 @@ right =
 -}
 dropLeft : Int -> String -> String
 dropLeft =
-    Native.String.dropLeft
+  Native.String.dropLeft
 
 
 {-| Drop *n* characters from the right side of a string.
@@ -270,7 +235,7 @@ dropLeft =
 -}
 dropRight : Int -> String -> String
 dropRight =
-    Native.String.dropRight
+  Native.String.dropRight
 
 
 {-| Pad a string on both sides until it has a given length.
@@ -281,7 +246,7 @@ dropRight =
 -}
 pad : Int -> Char -> String -> String
 pad =
-    Native.String.pad
+  Native.String.pad
 
 
 {-| Pad a string on the left until it has a given length.
@@ -292,7 +257,7 @@ pad =
 -}
 padLeft : Int -> Char -> String -> String
 padLeft =
-    Native.String.padLeft
+  Native.String.padLeft
 
 
 {-| Pad a string on the right until it has a given length.
@@ -303,7 +268,7 @@ padLeft =
 -}
 padRight : Int -> Char -> String -> String
 padRight =
-    Native.String.padRight
+  Native.String.padRight
 
 
 {-| Get rid of whitespace on both sides of a string.
@@ -312,7 +277,7 @@ padRight =
 -}
 trim : String -> String
 trim =
-    Native.String.trim
+  Native.String.trim
 
 
 {-| Get rid of whitespace on the left of a string.
@@ -321,7 +286,7 @@ trim =
 -}
 trimLeft : String -> String
 trimLeft =
-    Native.String.trimLeft
+  Native.String.trimLeft
 
 
 {-| Get rid of whitespace on the right of a string.
@@ -330,7 +295,7 @@ trimLeft =
 -}
 trimRight : String -> String
 trimRight =
-    Native.String.trimRight
+  Native.String.trimRight
 
 
 {-| Break a string into words, splitting on chunks of whitespace.
@@ -339,7 +304,7 @@ trimRight =
 -}
 words : String -> List String
 words =
-    Native.String.words
+  Native.String.words
 
 
 {-| Break a string into lines, splitting on newlines.
@@ -348,7 +313,7 @@ words =
 -}
 lines : String -> List String
 lines =
-    Native.String.lines
+  Native.String.lines
 
 
 {-| Convert a string to all upper case. Useful for case-insensitive comparisons
@@ -358,7 +323,7 @@ and VIRTUAL YELLING.
 -}
 toUpper : String -> String
 toUpper =
-    Native.String.toUpper
+  Native.String.toUpper
 
 
 {-| Convert a string to all lower case. Useful for case-insensitive comparisons.
@@ -367,7 +332,7 @@ toUpper =
 -}
 toLower : String -> String
 toLower =
-    Native.String.toLower
+  Native.String.toLower
 
 
 {-| Determine whether *any* characters satisfy a predicate.
@@ -378,7 +343,7 @@ toLower =
 -}
 any : (Char -> Bool) -> String -> Bool
 any =
-    Native.String.any
+  Native.String.any
 
 
 {-| Determine whether *all* characters satisfy a predicate.
@@ -389,7 +354,7 @@ any =
 -}
 all : (Char -> Bool) -> String -> Bool
 all =
-    Native.String.all
+  Native.String.all
 
 
 {-| See if the second string contains the first one.
@@ -402,7 +367,7 @@ Use [`Regex.contains`](Regex#contains) if you need something more flexible.
 -}
 contains : String -> String -> Bool
 contains =
-    Native.String.contains
+  Native.String.contains
 
 
 {-| See if the second string starts with the first one.
@@ -412,7 +377,7 @@ contains =
 -}
 startsWith : String -> String -> Bool
 startsWith =
-    Native.String.startsWith
+  Native.String.startsWith
 
 
 {-| See if the second string ends with the first one.
@@ -422,7 +387,7 @@ startsWith =
 -}
 endsWith : String -> String -> Bool
 endsWith =
-    Native.String.endsWith
+  Native.String.endsWith
 
 
 {-| Get all of the indexes for a substring in another string.
@@ -433,14 +398,13 @@ endsWith =
 -}
 indexes : String -> String -> List Int
 indexes =
-    Native.String.indexes
+  Native.String.indexes
 
 
-{-| Alias for `indexes`.
--}
+{-| Alias for `indexes`. -}
 indices : String -> String -> List Int
 indices =
-    Native.String.indexes
+  Native.String.indexes
 
 
 {-| Try to convert a string into an int, failing on improperly formatted strings.
@@ -458,7 +422,7 @@ want to use [`Result.withDefault`](Result#withDefault) to handle bad data:
 -}
 toInt : String -> Result String Int
 toInt =
-    Native.String.toInt
+  Native.String.toInt
 
 
 {-| Try to convert a string into a float, failing on improperly formatted strings.
@@ -476,7 +440,7 @@ want to use [`Result.withDefault`](Result#withDefault) to handle bad data:
 -}
 toFloat : String -> Result String Float
 toFloat =
-    Native.String.toFloat
+  Native.String.toFloat
 
 
 {-| Convert a string to a list of characters.
@@ -485,7 +449,7 @@ toFloat =
 -}
 toList : String -> List Char
 toList =
-    Native.String.toList
+  Native.String.toList
 
 
 {-| Convert a list of characters into a String. Can be useful if you
@@ -496,4 +460,5 @@ something.
 -}
 fromList : List Char -> String
 fromList =
-    Native.String.fromList
+  Native.String.fromList
+

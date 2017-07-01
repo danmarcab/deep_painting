@@ -1,19 +1,19 @@
-module Http.Internal
-    exposing
-        ( Request(..)
-        , RawRequest
-        , Expect
-        , Body(..)
-        , Header(..)
-        , map
-        )
+module Http.Internal exposing
+  ( Request(..)
+  , RawRequest
+  , Expect
+  , Body(..)
+  , Header(..)
+  , map
+  )
+
 
 import Native.Http
 import Time exposing (Time)
 
 
-type Request a
-    = Request (RawRequest a)
+
+type Request a = Request (RawRequest a)
 
 
 type alias RawRequest a =
@@ -27,20 +27,19 @@ type alias RawRequest a =
     }
 
 
-type Expect a
-    = Expect
+type Expect a = Expect
 
 
 type Body
-    = EmptyBody
-    | StringBody String String
-    | FormDataBody
+  = EmptyBody
+  | StringBody String String
+  | FormDataBody
 
 
-type Header
-    = Header String String
+
+type Header = Header String String
 
 
 map : (a -> b) -> RawRequest a -> RawRequest b
 map func request =
-    { request | expect = Native.Http.mapExpect func request.expect }
+  { request | expect = Native.Http.mapExpect func request.expect }

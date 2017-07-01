@@ -1,10 +1,9 @@
-module Platform.Sub
-    exposing
-        ( Sub
-        , map
-        , batch
-        , none
-        )
+module Platform.Sub exposing
+  ( Sub
+  , map
+  , batch
+  , none
+  )
 
 {-|
 
@@ -30,23 +29,24 @@ ever, subscriptions will make more sense as you work through [the Elm Architectu
 Tutorial](http://guide.elm-lang.org/architecture/index.html) and see how they fit
 into a real application!
 -}
-type Sub msg
-    = Sub
+type Sub msg = Sub
 
 
-{-| -}
+{-|-}
 map : (a -> msg) -> Sub a -> Sub msg
 map =
-    Native.Platform.map
+  Native.Platform.map
 
 
-{-| -}
+{-|-}
 batch : List (Sub msg) -> Sub msg
 batch =
-    Native.Platform.batch
+  Native.Platform.batch
 
 
-{-| -}
+{-|-}
 none : Sub msg
 none =
-    batch []
+  batch []
+
+

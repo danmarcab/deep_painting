@@ -1,25 +1,13 @@
-effect module Random
-    where { command = MyCmd }
-    exposing
-        ( Generator
-        , Seed
-        , bool
-        , int
-        , float
-        , list
-        , pair
-        , map
-        , map2
-        , map3
-        , map4
-        , map5
-        , andThen
-        , minInt
-        , maxInt
-        , generate
-        , step
-        , initialSeed
-        )
+effect module Random where { command = MyCmd } exposing
+  ( Generator, Seed
+  , bool, int, float
+  , list, pair
+  , map, map2, map3, map4, map5
+  , andThen
+  , minInt, maxInt
+  , generate
+  , step, initialSeed
+  )
 
 {-| This library helps you generate pseudo-random values.
 
@@ -70,6 +58,7 @@ import Time
 import Tuple
 
 
+
 -- PRIMITIVE GENERATORS
 
 
@@ -84,7 +73,7 @@ simulates a coin flip that may land heads or tails.
 -}
 bool : Generator Bool
 bool =
-    map ((==) 1) (int 0 1)
+  map ((==) 1) (int 0 1)
 
 
 {-| Generate 32-bit integers in a given range.
@@ -99,65 +88,51 @@ This function *can* produce values outside of the range [[`minInt`](#minInt),
 -}
 int : Int -> Int -> Generator Int
 int a b =
-    Generator <|
-        \(Seed seed) ->
+  Generator <| \(Seed seed) ->
+    let
+      (lo,hi) =
+        if a < b then (a,b) else (b,a)
+
+      k = hi - lo + 1
+      -- 2^31 - 87
+      base = 2147483561
+      n = iLogBase base k
+
+      f n acc state =
+        case n of
+          0 -> (acc, state)
+          _ ->
             let
-                ( lo, hi ) =
-                    if a < b then
-                        ( a, b )
-                    else
-                        ( b, a )
-
-                k =
-                    hi - lo + 1
-
-                -- 2^31 - 87
-                base =
-                    2147483561
-
-                n =
-                    iLogBase base k
-
-                f n acc state =
-                    case n of
-                        0 ->
-                            ( acc, state )
-
-                        _ ->
-                            let
-                                ( x, nextState ) =
-                                    seed.next state
-                            in
-                                f (n - 1) (x + acc * base) nextState
-
-                ( v, nextState ) =
-                    f n 1 seed.state
+              (x, nextState) = seed.next state
             in
-                ( lo + v % k
-                , Seed { seed | state = nextState }
-                )
+              f (n - 1) (x + acc * base) nextState
+
+      (v, nextState) =
+        f n 1 seed.state
+    in
+      ( lo + v % k
+      , Seed { seed | state = nextState }
+      )
 
 
 iLogBase : Int -> Int -> Int
 iLogBase b i =
-    if i < b then
-        1
-    else
-        1 + iLogBase b (i // b)
+  if i < b then
+    1
+  else
+    1 + iLogBase b (i // b)
 
 
-{-| The maximum value for randomly generated 32-bit ints: 2147483647
--}
+{-| The maximum value for randomly generated 32-bit ints: 2147483647 -}
 maxInt : Int
 maxInt =
-    2147483647
+  2147483647
 
 
-{-| The minimum value for randomly generated 32-bit ints: -2147483648
--}
+{-| The minimum value for randomly generated 32-bit ints: -2147483648 -}
 minInt : Int
 minInt =
-    -2147483648
+  -2147483648
 
 
 {-| Generate floats in a given range. The following example is a generator
@@ -169,25 +144,21 @@ that produces decimals between 0 and 1.
 -}
 float : Float -> Float -> Generator Float
 float a b =
-    Generator <|
-        \seed ->
-            let
-                ( lo, hi ) =
-                    if a < b then
-                        ( a, b )
-                    else
-                        ( b, a )
+  Generator <| \seed ->
+    let
+      (lo, hi) =
+        if a < b then (a,b) else (b,a)
 
-                ( number, newSeed ) =
-                    step (int minInt maxInt) seed
+      (number, newSeed) =
+        step (int minInt maxInt) seed
 
-                negativeOneToOne =
-                    toFloat number / toFloat (maxInt - minInt)
+      negativeOneToOne =
+        toFloat number / toFloat (maxInt - minInt)
 
-                scaled =
-                    (lo + hi) / 2 + ((hi - lo) * negativeOneToOne)
-            in
-                ( scaled, newSeed )
+      scaled =
+        (lo+hi)/2 + ((hi-lo) * negativeOneToOne)
+    in
+      (scaled, newSeed)
 
 
 
@@ -203,9 +174,9 @@ wide and 200 pixels tall.
         pair (int -200 200) (int -100 100)
 
 -}
-pair : Generator a -> Generator b -> Generator ( a, b )
+pair : Generator a -> Generator b -> Generator (a,b)
 pair genA genB =
-    map2 (,) genA genB
+  map2 (,) genA genB
 
 
 {-| Create a list of random values.
@@ -224,21 +195,21 @@ pair genA genB =
 -}
 list : Int -> Generator a -> Generator (List a)
 list n (Generator generate) =
-    Generator <|
-        \seed ->
-            listHelp [] n generate seed
+  Generator <| \seed ->
+    listHelp [] n generate seed
 
 
-listHelp : List a -> Int -> (Seed -> ( a, Seed )) -> Seed -> ( List a, Seed )
+listHelp : List a -> Int -> (Seed -> (a,Seed)) -> Seed -> (List a, Seed)
 listHelp list n generate seed =
-    if n < 1 then
-        ( List.reverse list, seed )
-    else
-        let
-            ( value, newSeed ) =
-                generate seed
-        in
-            listHelp (value :: list) (n - 1) generate newSeed
+  if n < 1 then
+    (List.reverse list, seed)
+
+  else
+    let
+      (value, newSeed) =
+        generate seed
+    in
+      listHelp (value :: list) (n-1) generate newSeed
 
 
 
@@ -263,13 +234,11 @@ how to generate booleans and letters based on a basic integer generator.
 -}
 map : (a -> b) -> Generator a -> Generator b
 map func (Generator genA) =
-    Generator <|
-        \seed0 ->
-            let
-                ( a, seed1 ) =
-                    genA seed0
-            in
-                ( func a, seed1 )
+  Generator <| \seed0 ->
+    let
+      (a, seed1) = genA seed0
+    in
+      (func a, seed1)
 
 
 {-| Combine two generators.
@@ -284,16 +253,12 @@ put two generators together.
 -}
 map2 : (a -> b -> c) -> Generator a -> Generator b -> Generator c
 map2 func (Generator genA) (Generator genB) =
-    Generator <|
-        \seed0 ->
-            let
-                ( a, seed1 ) =
-                    genA seed0
-
-                ( b, seed2 ) =
-                    genB seed1
-            in
-                ( func a b, seed2 )
+  Generator <| \seed0 ->
+    let
+      (a, seed1) = genA seed0
+      (b, seed2) = genB seed1
+    in
+      (func a b, seed2)
 
 
 {-| Combine three generators. This could be used to produce random colors.
@@ -310,66 +275,42 @@ map2 func (Generator genA) (Generator genB) =
 -}
 map3 : (a -> b -> c -> d) -> Generator a -> Generator b -> Generator c -> Generator d
 map3 func (Generator genA) (Generator genB) (Generator genC) =
-    Generator <|
-        \seed0 ->
-            let
-                ( a, seed1 ) =
-                    genA seed0
-
-                ( b, seed2 ) =
-                    genB seed1
-
-                ( c, seed3 ) =
-                    genC seed2
-            in
-                ( func a b c, seed3 )
+  Generator <| \seed0 ->
+    let
+      (a, seed1) = genA seed0
+      (b, seed2) = genB seed1
+      (c, seed3) = genC seed2
+    in
+      (func a b c, seed3)
 
 
 {-| Combine four generators.
 -}
 map4 : (a -> b -> c -> d -> e) -> Generator a -> Generator b -> Generator c -> Generator d -> Generator e
 map4 func (Generator genA) (Generator genB) (Generator genC) (Generator genD) =
-    Generator <|
-        \seed0 ->
-            let
-                ( a, seed1 ) =
-                    genA seed0
-
-                ( b, seed2 ) =
-                    genB seed1
-
-                ( c, seed3 ) =
-                    genC seed2
-
-                ( d, seed4 ) =
-                    genD seed3
-            in
-                ( func a b c d, seed4 )
+  Generator <| \seed0 ->
+    let
+      (a, seed1) = genA seed0
+      (b, seed2) = genB seed1
+      (c, seed3) = genC seed2
+      (d, seed4) = genD seed3
+    in
+      (func a b c d, seed4)
 
 
 {-| Combine five generators.
 -}
 map5 : (a -> b -> c -> d -> e -> f) -> Generator a -> Generator b -> Generator c -> Generator d -> Generator e -> Generator f
 map5 func (Generator genA) (Generator genB) (Generator genC) (Generator genD) (Generator genE) =
-    Generator <|
-        \seed0 ->
-            let
-                ( a, seed1 ) =
-                    genA seed0
-
-                ( b, seed2 ) =
-                    genB seed1
-
-                ( c, seed3 ) =
-                    genC seed2
-
-                ( d, seed4 ) =
-                    genD seed3
-
-                ( e, seed5 ) =
-                    genE seed4
-            in
-                ( func a b c d e, seed5 )
+  Generator <| \seed0 ->
+    let
+      (a, seed1) = genA seed0
+      (b, seed2) = genB seed1
+      (c, seed3) = genC seed2
+      (d, seed4) = genD seed3
+      (e, seed5) = genE seed4
+    in
+      (func a b c d e, seed5)
 
 
 {-| Chain random operations, threading through the seed. In the following
@@ -391,16 +332,15 @@ lowercase letters.
 -}
 andThen : (a -> Generator b) -> Generator a -> Generator b
 andThen callback (Generator generate) =
-    Generator <|
-        \seed ->
-            let
-                ( result, newSeed ) =
-                    generate seed
+  Generator <| \seed ->
+    let
+      (result, newSeed) =
+        generate seed
 
-                (Generator genB) =
-                    callback result
-            in
-                genB newSeed
+      (Generator genB) =
+        callback result
+    in
+      genB newSeed
 
 
 
@@ -414,24 +354,23 @@ describes how to generate strings.
 To actually *run* a generator and produce the random values, you need to use
 functions like [`generate`](#generate) and [`initialSeed`](#initialSeed).
 -}
-type Generator a
-    = Generator (Seed -> ( a, Seed ))
+type Generator a =
+    Generator (Seed -> (a, Seed))
 
 
-type State
-    = State Int Int
+type State = State Int Int
 
 
 {-| A `Seed` is the source of randomness in this whole system. Whenever
 you want to use a generator, you need to pair it with a seed.
 -}
-type Seed
-    = Seed
-        { state : State
-        , next : State -> ( Int, State )
-        , split : State -> ( State, State )
-        , range : State -> ( Int, Int )
-        }
+type Seed =
+  Seed
+    { state : State
+    , next  : State -> (Int, State)
+    , split : State -> (State, State)
+    , range : State -> (Int,Int)
+    }
 
 
 {-| Generate a random value as specified by a given `Generator`.
@@ -457,9 +396,9 @@ the same seed, you get the same results.
     -- step (int 0 100) seed0 ==> (42, seed1)
     -- step (int 0 100) seed0 ==> (42, seed1)
 -}
-step : Generator a -> Seed -> ( a, Seed )
+step : Generator a -> Seed -> (a, Seed)
 step (Generator generator) seed =
-    generator seed
+  generator seed
 
 
 {-| Create a &ldquo;seed&rdquo; of randomness which makes it possible to
@@ -469,12 +408,12 @@ the current time.
 -}
 initialSeed : Int -> Seed
 initialSeed n =
-    Seed
-        { state = initState n
-        , next = next
-        , split = split
-        , range = range
-        }
+  Seed
+    { state = initState n
+    , next = next
+    , split = split
+    , range = range
+    }
 
 
 {-| Produce the initial generator state. Distinct arguments should be likely
@@ -482,126 +421,64 @@ to produce distinct generator states.
 -}
 initState : Int -> State
 initState seed =
-    let
-        s =
-            max seed -seed
-
-        q =
-            s // (magicNum6 - 1)
-
-        s1 =
-            s % (magicNum6 - 1)
-
-        s2 =
-            q % (magicNum7 - 1)
-    in
-        State (s1 + 1) (s2 + 1)
+  let
+    s = max seed -seed
+    q  = s // (magicNum6-1)
+    s1 = s %  (magicNum6-1)
+    s2 = q %  (magicNum7-1)
+  in
+    State (s1+1) (s2+1)
 
 
-magicNum0 =
-    40014
+magicNum0 = 40014
+magicNum1 = 53668
+magicNum2 = 12211
+magicNum3 = 52774
+magicNum4 = 40692
+magicNum5 = 3791
+magicNum6 = 2147483563
+magicNum7 = 2147483399
+magicNum8 = 2147483562
 
 
-magicNum1 =
-    53668
-
-
-magicNum2 =
-    12211
-
-
-magicNum3 =
-    52774
-
-
-magicNum4 =
-    40692
-
-
-magicNum5 =
-    3791
-
-
-magicNum6 =
-    2147483563
-
-
-magicNum7 =
-    2147483399
-
-
-magicNum8 =
-    2147483562
-
-
-next : State -> ( Int, State )
+next : State -> (Int, State)
 next (State state1 state2) =
-    -- Div always rounds down and so random numbers are biased
-    -- ideally we would use division that rounds towards zero so
-    -- that in the negative case it rounds up and in the positive case
-    -- it rounds down. Thus half the time it rounds up and half the time it
-    -- rounds down
-    let
-        k1 =
-            state1 // magicNum1
-
-        rawState1 =
-            magicNum0 * (state1 - k1 * magicNum1) - k1 * magicNum2
-
-        newState1 =
-            if rawState1 < 0 then
-                rawState1 + magicNum6
-            else
-                rawState1
-
-        k2 =
-            state2 // magicNum3
-
-        rawState2 =
-            magicNum4 * (state2 - k2 * magicNum3) - k2 * magicNum5
-
-        newState2 =
-            if rawState2 < 0 then
-                rawState2 + magicNum7
-            else
-                rawState2
-
-        z =
-            newState1 - newState2
-
-        newZ =
-            if z < 1 then
-                z + magicNum8
-            else
-                z
-    in
-        ( newZ, State newState1 newState2 )
+  -- Div always rounds down and so random numbers are biased
+  -- ideally we would use division that rounds towards zero so
+  -- that in the negative case it rounds up and in the positive case
+  -- it rounds down. Thus half the time it rounds up and half the time it
+  -- rounds down
+  let
+    k1 = state1 // magicNum1
+    rawState1 = magicNum0 * (state1 - k1 * magicNum1) - k1 * magicNum2
+    newState1 = if rawState1 < 0 then rawState1 + magicNum6 else rawState1
+    k2 = state2 // magicNum3
+    rawState2 = magicNum4 * (state2 - k2 * magicNum3) - k2 * magicNum5
+    newState2 = if rawState2 < 0 then rawState2 + magicNum7 else rawState2
+    z = newState1 - newState2
+    newZ = if z < 1 then z + magicNum8 else z
+  in
+    (newZ, State newState1 newState2)
 
 
-split : State -> ( State, State )
-split ((State s1 s2) as std) =
-    let
-        new_s1 =
-            if s1 == magicNum6 - 1 then
-                1
-            else
-                s1 + 1
+split : State -> (State, State)
+split (State s1 s2 as std) =
+  let
+    new_s1 =
+      if s1 == magicNum6-1 then 1 else s1 + 1
 
-        new_s2 =
-            if s2 == 1 then
-                magicNum7 - 1
-            else
-                s2 - 1
+    new_s2 =
+      if s2 == 1 then magicNum7-1 else s2 - 1
 
-        (State t1 t2) =
-            Tuple.second (next std)
-    in
-        ( State new_s1 t2, State t1 new_s2 )
+    (State t1 t2) =
+      Tuple.second (next std)
+  in
+    (State new_s1 t2, State t1 new_s2)
 
 
-range : State -> ( Int, Int )
+range : State -> (Int,Int)
 range _ =
-    ( 0, magicNum8 )
+    (0, magicNum8)
 
 
 
@@ -618,39 +495,38 @@ tutorial][arch] which has a section specifically [about random values][rand].
 -}
 generate : (a -> msg) -> Generator a -> Cmd msg
 generate tagger generator =
-    command (Generate (map tagger generator))
+  command (Generate (map tagger generator))
 
 
-type MyCmd msg
-    = Generate (Generator msg)
+type MyCmd msg = Generate (Generator msg)
 
 
 cmdMap : (a -> b) -> MyCmd a -> MyCmd b
 cmdMap func (Generate generator) =
-    Generate (map func generator)
+  Generate (map func generator)
 
 
 init : Task Never Seed
 init =
-    Time.now
-        |> Task.andThen (\t -> Task.succeed (initialSeed (round t)))
+  Time.now
+    |> Task.andThen (\t -> Task.succeed (initialSeed (round t)))
 
 
 onEffects : Platform.Router msg Never -> List (MyCmd msg) -> Seed -> Task Never Seed
 onEffects router commands seed =
-    case commands of
-        [] ->
-            Task.succeed seed
+  case commands of
+    [] ->
+      Task.succeed seed
 
-        (Generate generator) :: rest ->
-            let
-                ( value, newSeed ) =
-                    step generator seed
-            in
-                Platform.sendToApp router value
-                    |> Task.andThen (\_ -> onEffects router rest newSeed)
+    Generate generator :: rest ->
+      let
+        (value, newSeed) =
+          step generator seed
+      in
+        Platform.sendToApp router value
+          |> Task.andThen (\_ -> onEffects router rest newSeed)
 
 
 onSelfMsg : Platform.Router msg Never -> Never -> Seed -> Task Never Seed
 onSelfMsg _ _ seed =
-    Task.succeed seed
+  Task.succeed seed

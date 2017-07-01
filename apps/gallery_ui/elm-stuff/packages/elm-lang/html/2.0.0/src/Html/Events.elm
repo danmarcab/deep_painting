@@ -1,26 +1,13 @@
-module Html.Events
-    exposing
-        ( onClick
-        , onDoubleClick
-        , onMouseDown
-        , onMouseUp
-        , onMouseEnter
-        , onMouseLeave
-        , onMouseOver
-        , onMouseOut
-        , onInput
-        , onCheck
-        , onSubmit
-        , onBlur
-        , onFocus
-        , on
-        , onWithOptions
-        , Options
-        , defaultOptions
-        , targetValue
-        , targetChecked
-        , keyCode
-        )
+module Html.Events exposing
+  ( onClick, onDoubleClick
+  , onMouseDown, onMouseUp
+  , onMouseEnter, onMouseLeave
+  , onMouseOver, onMouseOut
+  , onInput, onCheck, onSubmit
+  , onBlur, onFocus
+  , on, onWithOptions, Options, defaultOptions
+  , targetValue, targetChecked, keyCode
+  )
 
 {-|
 It is often helpful to create an [Union Type][] so you can have many different kinds
@@ -53,55 +40,56 @@ import Json.Decode as Json
 import VirtualDom
 
 
+
 -- MOUSE EVENTS
 
 
-{-| -}
+{-|-}
 onClick : msg -> Attribute msg
 onClick msg =
-    on "click" (Json.succeed msg)
+  on "click" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onDoubleClick : msg -> Attribute msg
 onDoubleClick msg =
-    on "dblclick" (Json.succeed msg)
+  on "dblclick" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onMouseDown : msg -> Attribute msg
 onMouseDown msg =
-    on "mousedown" (Json.succeed msg)
+  on "mousedown" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onMouseUp : msg -> Attribute msg
 onMouseUp msg =
-    on "mouseup" (Json.succeed msg)
+  on "mouseup" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onMouseEnter : msg -> Attribute msg
 onMouseEnter msg =
-    on "mouseenter" (Json.succeed msg)
+  on "mouseenter" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onMouseLeave : msg -> Attribute msg
 onMouseLeave msg =
-    on "mouseleave" (Json.succeed msg)
+  on "mouseleave" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onMouseOver : msg -> Attribute msg
 onMouseOver msg =
-    on "mouseover" (Json.succeed msg)
+  on "mouseover" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onMouseOut : msg -> Attribute msg
 onMouseOut msg =
-    on "mouseout" (Json.succeed msg)
+  on "mouseout" (Json.succeed msg)
 
 
 
@@ -112,14 +100,14 @@ onMouseOut msg =
 events for things like text fields or text areas.
 
 It grabs the **string** value at `event.target.value`, so it will not work if
-you need some other type of information. For example, if you want to track
+you need some other type of information. For example, if you want to track 
 inputs on a range slider, make a custom handler with [`on`](#on).
 
 For more details on how `onInput` works, check out [targetValue](#targetValue).
 -}
 onInput : (String -> msg) -> Attribute msg
 onInput tagger =
-    on "input" (Json.map tagger targetValue)
+  on "input" (Json.map tagger targetValue)
 
 
 {-| Capture [change](https://developer.mozilla.org/en-US/docs/Web/Events/change)
@@ -130,7 +118,7 @@ Check out [targetChecked](#targetChecked) for more details on how this works.
 -}
 onCheck : (Bool -> msg) -> Attribute msg
 onCheck tagger =
-    on "change" (Json.map tagger targetChecked)
+  on "change" (Json.map tagger targetChecked)
 
 
 {-| Capture a [submit](https://developer.mozilla.org/en-US/docs/Web/Events/submit)
@@ -141,28 +129,27 @@ different behavior, use `onWithOptions` to create a customized version of
 -}
 onSubmit : msg -> Attribute msg
 onSubmit msg =
-    onWithOptions "submit" onSubmitOptions (Json.succeed msg)
+  onWithOptions "submit" onSubmitOptions (Json.succeed msg)
 
 
 onSubmitOptions : Options
 onSubmitOptions =
-    { defaultOptions | preventDefault = True }
-
+  { defaultOptions | preventDefault = True }
 
 
 -- FOCUS EVENTS
 
 
-{-| -}
+{-|-}
 onBlur : msg -> Attribute msg
 onBlur msg =
-    on "blur" (Json.succeed msg)
+  on "blur" (Json.succeed msg)
 
 
-{-| -}
+{-|-}
 onFocus : msg -> Attribute msg
 onFocus msg =
-    on "focus" (Json.succeed msg)
+  on "focus" (Json.succeed msg)
 
 
 
@@ -195,14 +182,14 @@ It really does help!
 -}
 on : String -> Json.Decoder msg -> Attribute msg
 on =
-    VirtualDom.on
+  VirtualDom.on
 
 
 {-| Same as `on` but you can set a few options.
 -}
 onWithOptions : String -> Options -> Json.Decoder msg -> Attribute msg
 onWithOptions =
-    VirtualDom.onWithOptions
+  VirtualDom.onWithOptions
 
 
 {-| Options for an event listener. If `stopPropagation` is true, it means the
@@ -226,7 +213,7 @@ type alias Options =
 -}
 defaultOptions : Options
 defaultOptions =
-    VirtualDom.defaultOptions
+  VirtualDom.defaultOptions
 
 
 
@@ -247,7 +234,7 @@ how to make custom event handlers.
 -}
 targetValue : Json.Decoder String
 targetValue =
-    Json.at [ "target", "value" ] Json.string
+  Json.at ["target", "value"] Json.string
 
 
 {-| A `Json.Decoder` for grabbing `event.target.checked`. We use this to define
@@ -261,7 +248,7 @@ targetValue =
 -}
 targetChecked : Json.Decoder Bool
 targetChecked =
-    Json.at [ "target", "checked" ] Json.bool
+  Json.at ["target", "checked"] Json.bool
 
 
 {-| A `Json.Decoder` for grabbing `event.keyCode`. This helps you define
@@ -279,4 +266,4 @@ helpers here for `onKeyUp`, `onKeyDown`, `onKeyPress`, etc.
 -}
 keyCode : Json.Decoder Int
 keyCode =
-    Json.field "keyCode" Json.int
+  Json.field "keyCode" Json.int

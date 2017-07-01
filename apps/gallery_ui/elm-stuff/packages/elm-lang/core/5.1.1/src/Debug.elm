@@ -1,8 +1,7 @@
-module Debug
-    exposing
-        ( log
-        , crash
-        )
+module Debug exposing
+  ( log
+  , crash
+  )
 
 {-| This library is for investigating bugs or performance problems. It should
 *not* be used in production code.
@@ -24,7 +23,7 @@ investigating bugs or performance problems.
 -}
 log : String -> a -> a
 log =
-    Native.Debug.log
+  Native.Debug.log
 
 
 {-| Crash the program with an error message. This is an uncatchable error,
@@ -59,4 +58,5 @@ Use the [`Maybe`](Maybe) or [`Result`](Result) libraries instead.
 -}
 crash : String -> a
 crash =
-    Native.Debug.crash
+  Native.Debug.crash
+

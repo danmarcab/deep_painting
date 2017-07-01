@@ -1,67 +1,16 @@
-module Basics
-    exposing
-        ( (==)
-        , (/=)
-        , (<)
-        , (>)
-        , (<=)
-        , (>=)
-        , max
-        , min
-        , Order(..)
-        , compare
-        , not
-        , (&&)
-        , (||)
-        , xor
-        , (+)
-        , (-)
-        , (*)
-        , (/)
-        , (^)
-        , (//)
-        , rem
-        , (%)
-        , negate
-        , abs
-        , sqrt
-        , clamp
-        , logBase
-        , e
-        , pi
-        , cos
-        , sin
-        , tan
-        , acos
-        , asin
-        , atan
-        , atan2
-        , round
-        , floor
-        , ceiling
-        , truncate
-        , toFloat
-        , degrees
-        , radians
-        , turns
-        , toPolar
-        , fromPolar
-        , isNaN
-        , isInfinite
-        , toString
-        , (++)
-        , identity
-        , always
-        , (<|)
-        , (|>)
-        , (<<)
-        , (>>)
-        , flip
-        , curry
-        , uncurry
-        , Never
-        , never
-        )
+module Basics exposing
+  ( (==), (/=)
+  , (<), (>), (<=), (>=), max, min, Order (..), compare
+  , not, (&&), (||), xor
+  , (+), (-), (*), (/), (^), (//), rem, (%), negate, abs, sqrt, clamp, logBase, e
+  , pi, cos, sin, tan, acos, asin, atan, atan2
+  , round, floor, ceiling, truncate, toFloat
+  , degrees, radians, turns
+  , toPolar, fromPolar
+  , isNaN, isInfinite
+  , toString, (++)
+  , identity, always, (<|), (|>), (<<), (>>), flip, curry, uncurry, Never, never
+  )
 
 {-| Tons of useful functions that get imported by default.
 
@@ -113,18 +62,16 @@ import Native.Basics
 import Native.Utils
 
 
-{-| Convert radians to standard Elm angles (radians).
--}
+{-| Convert radians to standard Elm angles (radians). -}
 radians : Float -> Float
 radians t =
-    t
+  t
 
 
-{-| Convert degrees to standard Elm angles (radians).
--}
+{-| Convert degrees to standard Elm angles (radians). -}
 degrees : Float -> Float
 degrees =
-    Native.Basics.degrees
+  Native.Basics.degrees
 
 
 {-| Convert turns to standard Elm angles (radians).
@@ -132,74 +79,59 @@ One turn is equal to 360&deg;.
 -}
 turns : Float -> Float
 turns =
-    Native.Basics.turns
+  Native.Basics.turns
 
 
-{-| Convert polar coordinates (r,&theta;) to Cartesian coordinates (x,y).
--}
-fromPolar : ( Float, Float ) -> ( Float, Float )
+{-| Convert polar coordinates (r,&theta;) to Cartesian coordinates (x,y). -}
+fromPolar : (Float,Float) -> (Float,Float)
 fromPolar =
-    Native.Basics.fromPolar
+  Native.Basics.fromPolar
 
 
-{-| Convert Cartesian coordinates (x,y) to polar coordinates (r,&theta;).
--}
-toPolar : ( Float, Float ) -> ( Float, Float )
+{-| Convert Cartesian coordinates (x,y) to polar coordinates (r,&theta;). -}
+toPolar : (Float,Float) -> (Float,Float)
 toPolar =
-    Native.Basics.toPolar
+  Native.Basics.toPolar
 
 
-{-| -}
+{-|-}
 (+) : number -> number -> number
 (+) =
-    Native.Basics.add
+  Native.Basics.add
 
 
-{-| -}
+{-|-}
 (-) : number -> number -> number
 (-) =
-    Native.Basics.sub
+  Native.Basics.sub
 
 
-{-| -}
+{-|-}
 (*) : number -> number -> number
 (*) =
-    Native.Basics.mul
+  Native.Basics.mul
 
 
-{-| Floating point division.
--}
+{-| Floating point division. -}
 (/) : Float -> Float -> Float
 (/) =
-    Native.Basics.floatDiv
+  Native.Basics.floatDiv
 
 
 infixl 6 +
-
-
 infixl 6 -
-
-
 infixl 7 *
-
-
 infixl 7 /
-
-
 infixr 8 ^
 
-
 infixl 7 //
-
-
 infixl 7 %
 
 
-{-| Integer division. The remainder is discarded.
--}
+{-| Integer division. The remainder is discarded. -}
 (//) : Int -> Int -> Int
 (//) =
-    Native.Basics.div
+  Native.Basics.div
 
 
 {-| Find the remainder after dividing one number by another.
@@ -211,7 +143,7 @@ infixl 7 %
 -}
 rem : Int -> Int -> Int
 rem =
-    Native.Basics.rem
+  Native.Basics.rem
 
 
 {-| Perform [modular arithmetic](http://en.wikipedia.org/wiki/Modular_arithmetic).
@@ -221,7 +153,7 @@ rem =
 -}
 (%) : Int -> Int -> Int
 (%) =
-    Native.Basics.mod
+  Native.Basics.mod
 
 
 {-| Exponentiation
@@ -230,37 +162,37 @@ rem =
 -}
 (^) : number -> number -> number
 (^) =
-    Native.Basics.exp
+  Native.Basics.exp
 
 
-{-| -}
+{-|-}
 cos : Float -> Float
 cos =
-    Native.Basics.cos
+  Native.Basics.cos
 
 
-{-| -}
+{-|-}
 sin : Float -> Float
 sin =
-    Native.Basics.sin
+  Native.Basics.sin
 
 
-{-| -}
+{-|-}
 tan : Float -> Float
 tan =
-    Native.Basics.tan
+  Native.Basics.tan
 
 
-{-| -}
+{-|-}
 acos : Float -> Float
 acos =
-    Native.Basics.acos
+  Native.Basics.acos
 
 
-{-| -}
+{-|-}
 asin : Float -> Float
 asin =
-    Native.Basics.asin
+  Native.Basics.asin
 
 
 {-| You probably do not want to use this. It takes `(y/x)` as the
@@ -270,7 +202,7 @@ the `y` or `x`. Thus, the resulting angle is always between &pi;/2 and -&pi;/2
 -}
 atan : Float -> Float
 atan =
-    Native.Basics.atan
+  Native.Basics.atan
 
 
 {-| This helps you find the angle of a Cartesian coordinate.
@@ -281,14 +213,13 @@ quadrant the angle should really be in. The result will be between
 -}
 atan2 : Float -> Float -> Float
 atan2 =
-    Native.Basics.atan2
+  Native.Basics.atan2
 
 
-{-| Take the square root of a number.
--}
+{-| Take the square root of a number. -}
 sqrt : Float -> Float
 sqrt =
-    Native.Basics.sqrt
+  Native.Basics.sqrt
 
 
 {-| Negate a number.
@@ -299,14 +230,13 @@ sqrt =
 -}
 negate : number -> number
 negate =
-    Native.Basics.negate
+  Native.Basics.negate
 
 
-{-| Take the absolute value of a number.
--}
+{-| Take the absolute value of a number. -}
 abs : number -> number
 abs =
-    Native.Basics.abs
+  Native.Basics.abs
 
 
 {-| Calculate the logarithm of a number with a given base.
@@ -316,7 +246,7 @@ abs =
 -}
 logBase : Float -> Float -> Float
 logBase =
-    Native.Basics.logBase
+  Native.Basics.logBase
 
 
 {-| Clamps a number within a given range. With the expression
@@ -328,21 +258,19 @@ logBase =
 -}
 clamp : number -> number -> number -> number
 clamp =
-    Native.Basics.clamp
+  Native.Basics.clamp
 
 
-{-| An approximation of pi.
--}
+{-| An approximation of pi. -}
 pi : Float
 pi =
-    Native.Basics.pi
+  Native.Basics.pi
 
 
-{-| An approximation of e.
--}
+{-| An approximation of e. -}
 e : Float
 e =
-    Native.Basics.e
+  Native.Basics.e
 
 
 {-| Check if values are &ldquo;the same&rdquo;.
@@ -366,7 +294,7 @@ if passed through a port.
 -}
 (==) : a -> a -> Bool
 (==) =
-    Native.Basics.eq
+  Native.Basics.eq
 
 
 {-| Check if values are not &ldquo;the same&rdquo;.
@@ -375,48 +303,38 @@ So `(a /= b)` is the same as `(not (a == b))`.
 -}
 (/=) : a -> a -> Bool
 (/=) =
-    Native.Basics.neq
+  Native.Basics.neq
 
 
-{-| -}
+{-|-}
 (<) : comparable -> comparable -> Bool
 (<) =
-    Native.Basics.lt
+  Native.Basics.lt
 
 
-{-| -}
+{-|-}
 (>) : comparable -> comparable -> Bool
 (>) =
-    Native.Basics.gt
+  Native.Basics.gt
 
 
-{-| -}
+{-|-}
 (<=) : comparable -> comparable -> Bool
 (<=) =
-    Native.Basics.le
+  Native.Basics.le
 
 
-{-| -}
+{-|-}
 (>=) : comparable -> comparable -> Bool
 (>=) =
-    Native.Basics.ge
+  Native.Basics.ge
 
 
 infix 4 ==
-
-
 infix 4 /=
-
-
 infix 4 <
-
-
 infix 4 >
-
-
 infix 4 <=
-
-
 infix 4 >=
 
 
@@ -426,30 +344,25 @@ These are also the only values that work as `Dict` keys or `Set` members.
 -}
 compare : comparable -> comparable -> Order
 compare =
-    Native.Basics.compare
+  Native.Basics.compare
 
 
 {-| Represents the relative ordering of two things.
 The relations are less than, equal to, and greater than.
 -}
-type Order
-    = LT
-    | EQ
-    | GT
+type Order = LT | EQ | GT
 
 
-{-| Find the smaller of two comparables.
--}
+{-| Find the smaller of two comparables. -}
 min : comparable -> comparable -> comparable
 min =
-    Native.Basics.min
+  Native.Basics.min
 
 
-{-| Find the larger of two comparables.
--}
+{-| Find the larger of two comparables. -}
 max : comparable -> comparable -> comparable
 max =
-    Native.Basics.max
+  Native.Basics.max
 
 
 {-| The logical AND operator. `True` if both inputs are `True`.
@@ -460,7 +373,7 @@ and just return `False` overall.
 -}
 (&&) : Bool -> Bool -> Bool
 (&&) =
-    Native.Basics.and
+  Native.Basics.and
 
 
 {-| The logical OR operator. `True` if one or both inputs are `True`.
@@ -471,20 +384,17 @@ and just return `True` overall.
 -}
 (||) : Bool -> Bool -> Bool
 (||) =
-    Native.Basics.or
+  Native.Basics.or
 
 
 infixr 3 &&
-
-
 infixr 2 ||
 
 
-{-| The exclusive-or operator. `True` if exactly one input is `True`.
--}
+{-| The exclusive-or operator. `True` if exactly one input is `True`. -}
 xor : Bool -> Bool -> Bool
 xor =
-    Native.Basics.xor
+  Native.Basics.xor
 
 
 {-| Negate a boolean value.
@@ -494,46 +404,39 @@ xor =
 -}
 not : Bool -> Bool
 not =
-    Native.Basics.not
-
+  Native.Basics.not
 
 
 -- Conversions
 
-
-{-| Round a number to the nearest integer.
--}
+{-| Round a number to the nearest integer. -}
 round : Float -> Int
 round =
-    Native.Basics.round
+  Native.Basics.round
 
 
-{-| Truncate a number, rounding towards zero.
--}
+{-| Truncate a number, rounding towards zero. -}
 truncate : Float -> Int
 truncate =
-    Native.Basics.truncate
+  Native.Basics.truncate
 
 
-{-| Floor function, rounding down.
--}
+{-| Floor function, rounding down. -}
 floor : Float -> Int
 floor =
-    Native.Basics.floor
+  Native.Basics.floor
 
 
-{-| Ceiling function, rounding up.
--}
+{-| Ceiling function, rounding up. -}
 ceiling : Float -> Int
 ceiling =
-    Native.Basics.ceiling
+  Native.Basics.ceiling
 
 
-{-| Convert an integer into a float.
--}
+{-| Convert an integer into a float. -}
 toFloat : Int -> Float
 toFloat =
-    Native.Basics.toFloat
+  Native.Basics.toFloat
 
 
 {-| Determine whether a float is an undefined or unrepresentable number.
@@ -547,7 +450,7 @@ numbers](http://en.wikipedia.org/wiki/NaN).
 -}
 isNaN : Float -> Bool
 isNaN =
-    Native.Basics.isNaN
+  Native.Basics.isNaN
 
 
 {-| Determine whether a float is positive or negative infinity.
@@ -562,7 +465,7 @@ Notice that NaN is not infinite! For float `n` to be finite implies that
 -}
 isInfinite : Float -> Bool
 isInfinite =
-    Native.Basics.isInfinite
+  Native.Basics.isInfinite
 
 
 {-| Turn any kind of value into a string. When you view the resulting string
@@ -574,7 +477,7 @@ with `Text.fromString` it should look just like the value it came from.
 -}
 toString : a -> String
 toString =
-    Native.Utils.toString
+  Native.Utils.toString
 
 
 {-| Put two appendable things together. This includes strings, lists, and text.
@@ -584,13 +487,13 @@ toString =
 -}
 (++) : appendable -> appendable -> appendable
 (++) =
-    Native.Utils.append
+  Native.Utils.append
+
+
 infixr 5 ++
 
 
-
 -- Function Helpers
-
 
 {-| Function composition, passing results along in the suggested direction. For
 example, the following code checks if the square root of a number is odd:
@@ -607,7 +510,7 @@ So our example expands out to something like this:
 -}
 (<<) : (b -> c) -> (a -> b) -> (a -> c)
 (<<) g f x =
-    g (f x)
+  g (f x)
 
 
 {-| Function composition, passing results along in the suggested direction. For
@@ -620,7 +523,7 @@ reads nicely in expressions like: `filter (not << isRegistered) students`
 -}
 (>>) : (a -> b) -> (b -> c) -> (a -> c)
 (>>) f g x =
-    g (f x)
+  g (f x)
 
 
 {-| Forward function application `x |> f == f x`. This function is useful
@@ -638,7 +541,7 @@ This can also be written as:
 -}
 (|>) : a -> (a -> b) -> b
 (|>) x f =
-    f x
+  f x
 
 
 {-| Backward function application `f <| x == f x`. This function is useful for
@@ -652,18 +555,12 @@ This can also be written as:
 -}
 (<|) : (a -> b) -> a -> b
 (<|) f x =
-    f x
+  f x
 
 
 infixr 9 <<
-
-
 infixl 9 >>
-
-
 infixr 0 <|
-
-
 infixl 0 |>
 
 
@@ -672,7 +569,7 @@ infixl 0 |>
 -}
 identity : a -> a
 identity x =
-    x
+  x
 
 
 {-| Create a function that *always* returns the same value. Useful with
@@ -685,30 +582,29 @@ functions like `map`:
 -}
 always : a -> b -> a
 always a _ =
-    a
+  a
 
 
-{-| Flip the order of the first two arguments to a function.
--}
+{-| Flip the order of the first two arguments to a function. -}
 flip : (a -> b -> c) -> (b -> a -> c)
 flip f b a =
-    f a b
+  f a b
 
 
 {-| Change how arguments are passed to a function.
 This splits paired arguments into two separate arguments.
 -}
-curry : (( a, b ) -> c) -> a -> b -> c
+curry : ((a,b) -> c) -> a -> b -> c
 curry f a b =
-    f ( a, b )
+  f (a,b)
 
 
 {-| Change how arguments are passed to a function.
 This combines two arguments into a single pair.
 -}
-uncurry : (a -> b -> c) -> ( a, b ) -> c
-uncurry f ( a, b ) =
-    f a b
+uncurry : (a -> b -> c) -> (a,b) -> c
+uncurry f (a,b) =
+  f a b
 
 
 {-| A value that can never happen! For context:
@@ -729,8 +625,7 @@ API can only accept HTML without event handlers, so I require `Html Never` and
 users can give `Html msg` and everything will go fine. Generally speaking, you
 do not want `Never` in your return types though.
 -}
-type Never
-    = JustOneMore Never
+type Never = JustOneMore Never
 
 
 {-| A function that can never be called. Seems extremely pointless, but it
@@ -752,4 +647,4 @@ ever calls me!
 -}
 never : Never -> a
 never (JustOneMore nvr) =
-    never nvr
+  never nvr

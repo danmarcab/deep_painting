@@ -1,38 +1,12 @@
-module Json.Decode
-    exposing
-        ( Decoder
-        , string
-        , bool
-        , int
-        , float
-        , nullable
-        , list
-        , array
-        , dict
-        , keyValuePairs
-        , field
-        , at
-        , index
-        , maybe
-        , oneOf
-        , decodeString
-        , decodeValue
-        , Value
-        , map
-        , map2
-        , map3
-        , map4
-        , map5
-        , map6
-        , map7
-        , map8
-        , lazy
-        , value
-        , null
-        , succeed
-        , fail
-        , andThen
-        )
+module Json.Decode exposing
+  ( Decoder, string, bool, int, float
+  , nullable, list, array, dict, keyValuePairs
+  , field, at, index
+  , maybe, oneOf
+  , decodeString, decodeValue, Value
+  , map, map2, map3, map4, map5, map6, map7, map8
+  , lazy, value, null, succeed, fail, andThen
+  )
 
 {-| Turn JSON values into Elm values. Definitely check out this [intro to
 JSON decoders][guide] to get a feel for how this library works!
@@ -68,6 +42,7 @@ errors.
 @docs lazy, value, null, succeed, fail, andThen
 -}
 
+
 import Array exposing (Array)
 import Dict exposing (Dict)
 import Json.Encode as JsEncode
@@ -77,13 +52,13 @@ import Result exposing (Result(..))
 import Native.Json
 
 
+
 -- PRIMITIVES
 
 
 {-| A value that knows how to decode JSON values.
 -}
-type Decoder a
-    = Decoder
+type Decoder a = Decoder
 
 
 {-| Decode a JSON string into an Elm `String`.
@@ -96,7 +71,7 @@ type Decoder a
 -}
 string : Decoder String
 string =
-    Native.Json.decodePrimitive "string"
+  Native.Json.decodePrimitive "string"
 
 
 {-| Decode a JSON boolean into an Elm `Bool`.
@@ -109,7 +84,7 @@ string =
 -}
 bool : Decoder Bool
 bool =
-    Native.Json.decodePrimitive "bool"
+  Native.Json.decodePrimitive "bool"
 
 
 {-| Decode a JSON number into an Elm `Int`.
@@ -122,7 +97,7 @@ bool =
 -}
 int : Decoder Int
 int =
-    Native.Json.decodePrimitive "int"
+  Native.Json.decodePrimitive "int"
 
 
 {-| Decode a JSON number into an Elm `Float`.
@@ -135,7 +110,7 @@ int =
 -}
 float : Decoder Float
 float =
-    Native.Json.decodePrimitive "float"
+  Native.Json.decodePrimitive "float"
 
 
 
@@ -151,10 +126,10 @@ float =
 -}
 nullable : Decoder a -> Decoder (Maybe a)
 nullable decoder =
-    oneOf
-        [ null Nothing
-        , map Just decoder
-        ]
+  oneOf
+    [ null Nothing
+    , map Just decoder
+    ]
 
 
 {-| Decode a JSON array into an Elm `List`.
@@ -164,7 +139,7 @@ nullable decoder =
 -}
 list : Decoder a -> Decoder (List a)
 list decoder =
-    Native.Json.decodeContainer "list" decoder
+  Native.Json.decodeContainer "list" decoder
 
 
 {-| Decode a JSON array into an Elm `Array`.
@@ -174,7 +149,7 @@ list decoder =
 -}
 array : Decoder a -> Decoder (Array a)
 array decoder =
-    Native.Json.decodeContainer "array" decoder
+  Native.Json.decodeContainer "array" decoder
 
 
 {-| Decode a JSON object into an Elm `Dict`.
@@ -184,7 +159,7 @@ array decoder =
 -}
 dict : Decoder a -> Decoder (Dict String a)
 dict decoder =
-    map Dict.fromList (keyValuePairs decoder)
+  map Dict.fromList (keyValuePairs decoder)
 
 
 {-| Decode a JSON object into an Elm `List` of pairs.
@@ -192,9 +167,9 @@ dict decoder =
     decodeString (keyValuePairs int) "{ \"alice\": 42, \"bob\": 99 }"
       == [("alice", 42), ("bob", 99)]
 -}
-keyValuePairs : Decoder a -> Decoder (List ( String, a ))
+keyValuePairs : Decoder a -> Decoder (List (String, a))
 keyValuePairs =
-    Native.Json.decodeKeyValuePairs
+  Native.Json.decodeKeyValuePairs
 
 
 
@@ -275,7 +250,7 @@ fields, this means you probably want it *outside* a use of `field` or `at`.
 -}
 maybe : Decoder a -> Decoder (Maybe a)
 maybe decoder =
-    Native.Json.decodeContainer "maybe" decoder
+  Native.Json.decodeContainer "maybe" decoder
 
 
 {-| Try a bunch of different decoders. This can be useful if the JSON may come
@@ -373,31 +348,31 @@ map3 =
     Native.Json.map3
 
 
-{-| -}
+{-|-}
 map4 : (a -> b -> c -> d -> value) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder value
 map4 =
     Native.Json.map4
 
 
-{-| -}
+{-|-}
 map5 : (a -> b -> c -> d -> e -> value) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e -> Decoder value
 map5 =
     Native.Json.map5
 
 
-{-| -}
+{-|-}
 map6 : (a -> b -> c -> d -> e -> f -> value) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e -> Decoder f -> Decoder value
 map6 =
     Native.Json.map6
 
 
-{-| -}
+{-|-}
 map7 : (a -> b -> c -> d -> e -> f -> g -> value) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e -> Decoder f -> Decoder g -> Decoder value
 map7 =
     Native.Json.map7
 
 
-{-| -}
+{-|-}
 map8 : (a -> b -> c -> d -> e -> f -> g -> h -> value) -> Decoder a -> Decoder b -> Decoder c -> Decoder d -> Decoder e -> Decoder f -> Decoder g -> Decoder h -> Decoder value
 map8 =
     Native.Json.map8
@@ -416,7 +391,7 @@ fails for some reason.
 -}
 decodeString : Decoder a -> String -> Result String a
 decodeString =
-    Native.Json.runOnString
+  Native.Json.runOnString
 
 
 {-| Run a `Decoder` on some JSON `Value`. You can send these JSON values
@@ -424,13 +399,12 @@ through ports, so that is probably the main time you would use this function.
 -}
 decodeValue : Decoder a -> Value -> Result String a
 decodeValue =
-    Native.Json.run
+  Native.Json.run
 
 
 {-| A JSON value.
 -}
-type alias Value =
-    JsEncode.Value
+type alias Value = JsEncode.Value
 
 
 
@@ -447,7 +421,7 @@ This is handy when used with `oneOf` or `andThen`.
 -}
 succeed : a -> Decoder a
 succeed =
-    Native.Json.succeed
+  Native.Json.succeed
 
 
 {-| Ignore the JSON and make the decoder fail. This is handy when used with
@@ -458,7 +432,7 @@ See the [`andThen`](#andThen) docs for an example.
 -}
 fail : String -> Decoder a
 fail =
-    Native.Json.fail
+  Native.Json.fail
 
 
 {-| Create decoders that depend on previous results. If you are creating
@@ -488,7 +462,7 @@ versioned data, you might do something like this:
 -}
 andThen : (a -> Decoder b) -> Decoder a -> Decoder b
 andThen =
-    Native.Json.andThen
+  Native.Json.andThen
 
 
 {-| Sometimes you have JSON with recursive structure, like nested comments.
@@ -519,7 +493,7 @@ structures [here][].
 -}
 lazy : (() -> Decoder a) -> Decoder a
 lazy thunk =
-    andThen thunk (succeed ())
+  andThen thunk (succeed ())
 
 
 {-| Do not do anything with a JSON value, just bring it into Elm as a `Value`.
@@ -529,7 +503,7 @@ about its structure.
 -}
 value : Decoder Value
 value =
-    Native.Json.decodePrimitive "value"
+  Native.Json.decodePrimitive "value"
 
 
 {-| Decode a `null` value into some Elm value.
@@ -543,4 +517,4 @@ So if you ever see a `null`, this will return whatever value you specified.
 -}
 null : a -> Decoder a
 null =
-    Native.Json.decodeNull
+  Native.Json.decodeNull

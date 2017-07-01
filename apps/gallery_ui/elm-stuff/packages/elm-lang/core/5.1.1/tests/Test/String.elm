@@ -66,7 +66,7 @@ tests =
                 , goodFloat "-3.14" -3.14
                 , goodFloat "0.12" 0.12
                 , goodFloat ".12" 0.12
-                , goodFloat "1e-42" 1.0e-42
+                , goodFloat "1e-42" 1e-42
                 , goodFloat "6.022e23" 6.022e23
                 , goodFloat "6.022E23" 6.022e23
                 , goodFloat "6.022e+23" 6.022e23
@@ -84,31 +84,27 @@ tests =
 
 goodInt : String -> Int -> Test
 goodInt str int =
-    test str <|
-        \_ ->
-            Expect.equal (Ok int) (String.toInt str)
+    test str <| \_ ->
+        Expect.equal (Ok int) (String.toInt str)
 
 
 badInt : String -> Test
 badInt str =
-    test str <|
-        \_ ->
-            Expect.equal
-                (Err ("could not convert string '" ++ str ++ "' to an Int"))
-                (String.toInt str)
+    test str <| \_ ->
+        Expect.equal
+            (Err ("could not convert string '" ++ str ++ "' to an Int"))
+            (String.toInt str)
 
 
 goodFloat : String -> Float -> Test
 goodFloat str float =
-    test str <|
-        \_ ->
-            Expect.equal (Ok float) (String.toFloat str)
+    test str <| \_ ->
+        Expect.equal (Ok float) (String.toFloat str)
 
 
 badFloat : String -> Test
 badFloat str =
-    test str <|
-        \_ ->
-            Expect.equal
-                (Err ("could not convert string '" ++ str ++ "' to a Float"))
-                (String.toFloat str)
+    test str <| \_ ->
+        Expect.equal
+            (Err ("could not convert string '" ++ str ++ "' to a Float"))
+            (String.toFloat str)

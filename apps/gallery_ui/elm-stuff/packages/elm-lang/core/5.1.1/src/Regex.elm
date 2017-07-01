@@ -1,16 +1,9 @@
-module Regex
-    exposing
-        ( Regex
-        , regex
-        , escape
-        , caseInsensitive
-        , HowMany(..)
-        , Match
-        , contains
-        , find
-        , replace
-        , split
-        )
+module Regex exposing
+  ( Regex
+  , regex, escape, caseInsensitive
+  , HowMany(..), Match
+  , contains, find, replace, split
+  )
 
 {-| A library for working with regular expressions. It uses [the
 same kind of regular expressions accepted by JavaScript](https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions).
@@ -36,8 +29,7 @@ import Native.Regex
 
 {-| A regular expression, describing a certain set of strings.
 -}
-type Regex
-    = Regex
+type Regex = Regex
 
 
 {-| Escape strings to be regular expressions, making all special characters
@@ -46,7 +38,7 @@ of `a`&rsquo;s that start at the beginning of the line.
 -}
 escape : String -> String
 escape =
-    Native.Regex.escape
+  Native.Regex.escape
 
 
 {-| Create a Regex that matches patterns [as specified in JavaScript](https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Writing_a_Regular_Expression_Pattern).
@@ -57,14 +49,14 @@ instead, which escapes the backslash.
 -}
 regex : String -> Regex
 regex =
-    Native.Regex.regex
+  Native.Regex.regex
 
 
-{-| Make a regex case insensitive
--}
+
+{-| Make a regex case insensitive -}
 caseInsensitive : Regex -> Regex
 caseInsensitive =
-    Native.Regex.caseInsensitive
+  Native.Regex.caseInsensitive
 
 
 {-| Check to see if a Regex is contained in a string.
@@ -77,7 +69,7 @@ caseInsensitive =
 -}
 contains : Regex -> String -> Bool
 contains =
-    Native.Regex.contains
+  Native.Regex.contains
 
 
 {-| A `Match` represents all of the details about a particular match in a string.
@@ -109,9 +101,7 @@ type alias Match =
 `replace All` would replace every match, but `replace (AtMost 2)` would
 replace at most two matches (i.e. zero, one, two, but never three or more).
 -}
-type HowMany
-    = All
-    | AtMost Int
+type HowMany = All | AtMost Int
 
 
 {-| Find matches in a string:
@@ -128,7 +118,7 @@ type HowMany
 -}
 find : HowMany -> Regex -> String -> List Match
 find =
-    Native.Regex.find
+  Native.Regex.find
 
 
 {-| Replace matches. The function from `Match` to `String` lets
@@ -144,7 +134,7 @@ you use the details of a specific match when making replacements.
 -}
 replace : HowMany -> Regex -> (Match -> String) -> String -> String
 replace =
-    Native.Regex.replace
+  Native.Regex.replace
 
 
 {-| Split a string, using the regex as the separator.
@@ -155,4 +145,4 @@ replace =
 -}
 split : HowMany -> Regex -> String -> List String
 split =
-    Native.Regex.split
+  Native.Regex.split

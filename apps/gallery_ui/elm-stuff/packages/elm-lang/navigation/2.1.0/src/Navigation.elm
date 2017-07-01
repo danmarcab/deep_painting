@@ -1,17 +1,10 @@
-effect module Navigation
-    where { command = MyCmd, subscription = MySub }
-    exposing
-        ( back
-        , forward
-        , load
-        , reload
-        , reloadAndSkipCache
-        , newUrl
-        , modifyUrl
-        , program
-        , programWithFlags
-        , Location
-        )
+effect module Navigation where { command = MyCmd, subscription = MySub } exposing
+  ( back, forward
+  , load, reload, reloadAndSkipCache
+  , newUrl, modifyUrl
+  , program, programWithFlags
+  , Location
+  )
 
 {-| This is a library for managing browser navigation yourself.
 
@@ -34,12 +27,14 @@ request to your servers. Instead, you manage the changes yourself in Elm.
 
 -}
 
+
 import Dom.LowLevel exposing (onWindow)
 import Html exposing (Html)
 import Json.Decode as Json
 import Native.Navigation
 import Process
 import Task exposing (Task)
+
 
 
 -- PROGRAMS
@@ -62,31 +57,32 @@ includes things exposed by this library, like `back` and `newUrl`, as well as
 whenever the user clicks the back or forward buttons of the browsers. So if
 the URL changes, you will hear about it in your `update` function.
 -}
-program :
-    (Location -> msg)
-    -> { init : Location -> ( model, Cmd msg )
-       , update : msg -> model -> ( model, Cmd msg )
-       , view : model -> Html msg
-       , subscriptions : model -> Sub msg
-       }
-    -> Program Never model msg
+program
+  : (Location -> msg)
+  ->
+    { init : Location -> (model, Cmd msg)
+    , update : msg -> model -> (model, Cmd msg)
+    , view : model -> Html msg
+    , subscriptions : model -> Sub msg
+    }
+  -> Program Never model msg
 program locationToMessage stuff =
-    let
-        subs model =
-            Sub.batch
-                [ subscription (Monitor locationToMessage)
-                , stuff.subscriptions model
-                ]
+  let
+    subs model =
+      Sub.batch
+        [ subscription (Monitor locationToMessage)
+        , stuff.subscriptions model
+        ]
 
-        init =
-            stuff.init (Native.Navigation.getLocation ())
-    in
-        Html.program
-            { init = init
-            , view = stuff.view
-            , update = stuff.update
-            , subscriptions = subs
-            }
+    init =
+      stuff.init (Native.Navigation.getLocation ())
+  in
+    Html.program
+      { init = init
+      , view = stuff.view
+      , update = stuff.update
+      , subscriptions = subs
+      }
 
 
 {-| Works the same as [`program`](#program), but it can also handle flags.
@@ -94,31 +90,32 @@ See [`Html.programWithFlags`][doc] for more information.
 
 [doc]: http://package.elm-lang.org/packages/elm-lang/html/latest/Html#programWithFlags
 -}
-programWithFlags :
-    (Location -> msg)
-    -> { init : flags -> Location -> ( model, Cmd msg )
-       , update : msg -> model -> ( model, Cmd msg )
-       , view : model -> Html msg
-       , subscriptions : model -> Sub msg
-       }
-    -> Program flags model msg
+programWithFlags
+  : (Location -> msg)
+  ->
+    { init : flags -> Location -> (model, Cmd msg)
+    , update : msg -> model -> (model, Cmd msg)
+    , view : model -> Html msg
+    , subscriptions : model -> Sub msg
+    }
+  -> Program flags model msg
 programWithFlags locationToMessage stuff =
-    let
-        subs model =
-            Sub.batch
-                [ subscription (Monitor locationToMessage)
-                , stuff.subscriptions model
-                ]
+  let
+    subs model =
+      Sub.batch
+        [ subscription (Monitor locationToMessage)
+        , stuff.subscriptions model
+        ]
 
-        init flags =
-            stuff.init flags (Native.Navigation.getLocation ())
-    in
-        Html.programWithFlags
-            { init = init
-            , view = stuff.view
-            , update = stuff.update
-            , subscriptions = subs
-            }
+    init flags =
+      stuff.init flags (Native.Navigation.getLocation ())
+  in
+    Html.programWithFlags
+      { init = init
+      , view = stuff.view
+      , update = stuff.update
+      , subscriptions = subs
+      }
 
 
 
@@ -135,7 +132,7 @@ other website!
 -}
 back : Int -> Cmd msg
 back n =
-    command (Jump -n)
+  command (Jump -n)
 
 
 {-| Go forward some number of pages. So `forward 1` goes forward one page, and
@@ -149,7 +146,7 @@ whatever website they visited next!
 -}
 forward : Int -> Cmd msg
 forward n =
-    command (Jump n)
+  command (Jump n)
 
 
 {-| Leave the current page and load the given URL. **This always results in a
@@ -162,7 +159,7 @@ the URL without a page load.
 -}
 load : String -> Cmd msg
 load url =
-    command (Visit url)
+  command (Visit url)
 
 
 {-| Reload the current page. **This always results in a page load!**
@@ -172,7 +169,7 @@ that you are not loading any cached resources.
 -}
 reload : Cmd msg
 reload =
-    command (Reload False)
+  command (Reload False)
 
 
 {-| Reload the current page without using the browser cache. **This always
@@ -180,7 +177,7 @@ results in a page load!** It is more common to want [`reload`](reload).
 -}
 reloadAndSkipCache : Cmd msg
 reloadAndSkipCache =
-    command (Reload True)
+  command (Reload True)
 
 
 
@@ -196,7 +193,7 @@ making a different choice.
 -}
 newUrl : String -> Cmd msg
 newUrl url =
-    command (New url)
+  command (New url)
 
 
 {-| Modify the current URL. This *will not* add a new entry to the browser
@@ -204,7 +201,7 @@ history. It just changes the one you are on right now.
 -}
 modifyUrl : String -> Cmd msg
 modifyUrl url =
-    command (Modify url)
+  command (Modify url)
 
 
 
@@ -223,58 +220,57 @@ in your `update` function.
 as described [here](https://developer.mozilla.org/en-US/docs/Web/API/Location).
 -}
 type alias Location =
-    { href : String
-    , host : String
-    , hostname : String
-    , protocol : String
-    , origin : String
-    , port_ : String
-    , pathname : String
-    , search : String
-    , hash : String
-    , username : String
-    , password : String
-    }
-
+  { href : String
+  , host : String
+  , hostname : String
+  , protocol : String
+  , origin : String
+  , port_ : String
+  , pathname : String
+  , search : String
+  , hash : String
+  , username : String
+  , password : String
+  }
 
 
 -- EFFECT MANAGER
 
 
 type MyCmd msg
-    = Jump Int
-    | New String
-    | Modify String
-    | Visit String
-    | Reload Bool
+  = Jump Int
+  | New String
+  | Modify String
+  | Visit String
+  | Reload Bool
 
 
 cmdMap : (a -> b) -> MyCmd a -> MyCmd b
 cmdMap _ myCmd =
-    case myCmd of
-        Jump n ->
-            Jump n
+  case myCmd of
+    Jump n ->
+      Jump n
 
-        New url ->
-            New url
+    New url ->
+      New url
 
-        Modify url ->
-            Modify url
+    Modify url ->
+      Modify url
 
-        Visit url ->
-            Visit url
+    Visit url ->
+        Visit url
 
-        Reload skipCache ->
-            Reload skipCache
+    Reload skipCache ->
+        Reload skipCache
 
 
-type MySub msg
-    = Monitor (Location -> msg)
+type MySub msg =
+  Monitor (Location -> msg)
 
 
 subMap : (a -> b) -> MySub a -> MySub b
 subMap func (Monitor tagger) =
-    Monitor (tagger >> func)
+  Monitor (tagger >> func)
 
 
 
@@ -282,14 +278,14 @@ subMap func (Monitor tagger) =
 
 
 type alias State msg =
-    { subs : List (MySub msg)
-    , popWatcher : Maybe PopWatcher
-    }
+  { subs : List (MySub msg)
+  , popWatcher : Maybe PopWatcher
+  }
 
 
 type PopWatcher
-    = Normal Process.Id
-    | InternetExplorer Process.Id Process.Id
+  = Normal Process.Id
+  | InternetExplorer Process.Id Process.Id
 
 
 
@@ -298,7 +294,7 @@ type PopWatcher
 
 init : Task Never (State msg)
 init =
-    Task.succeed (State [] Nothing)
+  Task.succeed (State [] Nothing)
 
 
 
@@ -307,12 +303,12 @@ init =
 
 onSelfMsg : Platform.Router msg Location -> Location -> State msg -> Task Never (State msg)
 onSelfMsg router location state =
-    notify router state.subs location
-        &> Task.succeed state
+  notify router state.subs location
+    &> Task.succeed state
 
 
 (&>) task1 task2 =
-    Task.andThen (\_ -> task2) task1
+  Task.andThen (\_ -> task2) task1
 
 
 
@@ -320,78 +316,80 @@ onSelfMsg router location state =
 
 
 onEffects : Platform.Router msg Location -> List (MyCmd msg) -> List (MySub msg) -> State msg -> Task Never (State msg)
-onEffects router cmds subs { popWatcher } =
-    let
-        stepState =
-            case ( subs, popWatcher ) of
-                ( [], Just watcher ) ->
-                    killPopWatcher watcher
-                        &> Task.succeed (State subs Nothing)
+onEffects router cmds subs {popWatcher} =
+  let
+    stepState =
+      case (subs, popWatcher) of
+        ([], Just watcher) ->
+          killPopWatcher watcher
+            &> Task.succeed (State subs Nothing)
 
-                ( _ :: _, Nothing ) ->
-                    Task.map (State subs << Just) (spawnPopWatcher router)
+        (_ :: _, Nothing) ->
+          Task.map (State subs << Just) (spawnPopWatcher router)
 
-                ( _, _ ) ->
-                    Task.succeed (State subs popWatcher)
-    in
-        Task.sequence (List.map (cmdHelp router subs) cmds)
-            &> stepState
+        (_, _) ->
+          Task.succeed (State subs popWatcher)
+
+  in
+    Task.sequence (List.map (cmdHelp router subs) cmds)
+      &> stepState
 
 
 cmdHelp : Platform.Router msg Location -> List (MySub msg) -> MyCmd msg -> Task Never ()
 cmdHelp router subs cmd =
-    case cmd of
-        Jump n ->
-            go n
+  case cmd of
+    Jump n ->
+      go n
 
-        New url ->
-            pushState url
-                |> Task.andThen (notify router subs)
+    New url ->
+      pushState url
+        |> Task.andThen (notify router subs)
 
-        Modify url ->
-            replaceState url
-                |> Task.andThen (notify router subs)
+    Modify url ->
+      replaceState url
+        |> Task.andThen (notify router subs)
 
-        Visit url ->
-            setLocation url
+    Visit url ->
+      setLocation url
 
-        Reload skipCache ->
-            reloadPage skipCache
+    Reload skipCache ->
+      reloadPage skipCache
+
 
 
 notify : Platform.Router msg Location -> List (MySub msg) -> Location -> Task x ()
 notify router subs location =
-    let
-        send (Monitor tagger) =
-            Platform.sendToApp router (tagger location)
-    in
-        Task.sequence (List.map send subs)
-            &> Task.succeed ()
+  let
+    send (Monitor tagger) =
+      Platform.sendToApp router (tagger location)
+  in
+    Task.sequence (List.map send subs)
+      &> Task.succeed ()
 
 
 setLocation : String -> Task x ()
 setLocation =
-    Native.Navigation.setLocation
+  Native.Navigation.setLocation
 
 
 reloadPage : Bool -> Task x ()
 reloadPage =
-    Native.Navigation.reloadPage
+  Native.Navigation.reloadPage
 
 
 go : Int -> Task x ()
 go =
-    Native.Navigation.go
+  Native.Navigation.go
 
 
 pushState : String -> Task x Location
 pushState =
-    Native.Navigation.pushState
+  Native.Navigation.pushState
 
 
 replaceState : String -> Task x Location
 replaceState =
-    Native.Navigation.replaceState
+  Native.Navigation.replaceState
 
 
 
@@ -400,25 +398,27 @@ replaceState =
 
 spawnPopWatcher : Platform.Router msg Location -> Task x PopWatcher
 spawnPopWatcher router =
-    let
-        reportLocation _ =
-            Platform.sendToSelf router (Native.Navigation.getLocation ())
-    in
-        if Native.Navigation.isInternetExplorer11 () then
-            Task.map2 InternetExplorer
-                (Process.spawn (onWindow "popstate" Json.value reportLocation))
-                (Process.spawn (onWindow "hashchange" Json.value reportLocation))
-        else
-            Task.map Normal <|
-                Process.spawn (onWindow "popstate" Json.value reportLocation)
+  let
+    reportLocation _ =
+      Platform.sendToSelf router (Native.Navigation.getLocation ())
+  in
+    if Native.Navigation.isInternetExplorer11 () then
+      Task.map2 InternetExplorer
+        (Process.spawn (onWindow "popstate" Json.value reportLocation))
+        (Process.spawn (onWindow "hashchange" Json.value reportLocation))
+
+    else
+      Task.map Normal <|
+        Process.spawn (onWindow "popstate" Json.value reportLocation)
+
 
 
 killPopWatcher : PopWatcher -> Task x ()
 killPopWatcher popWatcher =
-    case popWatcher of
-        Normal pid ->
-            Process.kill pid
+  case popWatcher of
+    Normal pid ->
+      Process.kill pid
 
-        InternetExplorer pid1 pid2 ->
-            Process.kill pid1
-                &> Process.kill pid2
+    InternetExplorer pid1 pid2 ->
+      Process.kill pid1
+        &> Process.kill pid2

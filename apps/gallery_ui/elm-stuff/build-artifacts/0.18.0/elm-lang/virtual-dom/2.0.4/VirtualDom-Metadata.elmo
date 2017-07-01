@@ -377,8 +377,8 @@ var _elm_lang$virtual_dom$VirtualDom_Metadata$decode = function (value) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'VirtualDom.Metadata',
 			{
-				start: {line: 230, column: 5},
-				end: {line: 240, column: 30}
+				start: {line: 229, column: 3},
+				end: {line: 239, column: 20}
 			},
 			_p25)('Compiler is generating bad metadata. Report this at <https://github.com/elm-lang/virtual-dom/issues>.');
 	} else {

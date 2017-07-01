@@ -1,11 +1,10 @@
-module Platform.Cmd
-    exposing
-        ( Cmd
-        , map
-        , batch
-        , none
-        , (!)
-        )
+module Platform.Cmd exposing
+  ( Cmd
+  , map
+  , batch
+  , none
+  , (!)
+  )
 
 {-|
 
@@ -40,29 +39,29 @@ ever, commands will make more sense as you work through [the Elm Architecture
 Tutorial](http://guide.elm-lang.org/architecture/index.html) and see how they
 fit into a real application!
 -}
-type Cmd msg
-    = Cmd
+type Cmd msg = Cmd
 
 
-{-| -}
+{-|-}
 map : (a -> msg) -> Cmd a -> Cmd msg
 map =
-    Native.Platform.map
+  Native.Platform.map
 
 
-{-| -}
+{-|-}
 batch : List (Cmd msg) -> Cmd msg
 batch =
-    Native.Platform.batch
+  Native.Platform.batch
 
 
-{-| -}
+{-|-}
 none : Cmd msg
 none =
-    batch []
+  batch []
 
 
-{-| -}
-(!) : model -> List (Cmd msg) -> ( model, Cmd msg )
+{-|-}
+(!) : model -> List (Cmd msg) -> (model, Cmd msg)
 (!) model commands =
-    ( model, batch commands )
+  (model, batch commands)
+

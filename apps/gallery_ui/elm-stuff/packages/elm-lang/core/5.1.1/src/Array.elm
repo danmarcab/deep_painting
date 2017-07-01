@@ -1,25 +1,11 @@
-module Array
-    exposing
-        ( Array
-        , empty
-        , repeat
-        , initialize
-        , fromList
-        , isEmpty
-        , length
-        , push
-        , append
-        , get
-        , set
-        , slice
-        , toList
-        , toIndexedList
-        , map
-        , indexedMap
-        , filter
-        , foldl
-        , foldr
-        )
+module Array exposing
+  ( Array
+  , empty, repeat, initialize, fromList
+  , isEmpty, length, push, append
+  , get, set
+  , slice, toList, toIndexedList
+  , map, indexedMap, filter, foldl, foldr
+  )
 
 {-| A library for fast immutable arrays. The elements in an array must have the
 same type. The arrays are implemented in Relaxed Radix Balanced-Trees for fast
@@ -54,8 +40,7 @@ import List
 (`Array Int`) or strings (`Array String`) or any other type of value you can
 dream up.
 -}
-type Array a
-    = Array
+type Array a = Array
 
 
 {-| Initialize an array. `initialize n f` creates an array of length `n` with
@@ -67,7 +52,7 @@ the element at index `i` initialized to the result of `(f i)`.
 -}
 initialize : Int -> (Int -> a) -> Array a
 initialize =
-    Native.Array.initialize
+  Native.Array.initialize
 
 
 {-| Creates an array with a given length, filled with a default element.
@@ -79,14 +64,14 @@ Notice that `repeat 3 x` is the same as `initialize 3 (always x)`.
 -}
 repeat : Int -> a -> Array a
 repeat n e =
-    initialize n (always e)
+  initialize n (always e)
 
 
 {-| Create an array from a list.
 -}
 fromList : List a -> Array a
 fromList =
-    Native.Array.fromList
+  Native.Array.fromList
 
 
 {-| Create a list of elements from an array.
@@ -95,24 +80,21 @@ fromList =
 -}
 toList : Array a -> List a
 toList =
-    Native.Array.toList
-
+  Native.Array.toList
 
 
 -- TODO: make this a native function.
-
-
 {-| Create an indexed list from an array. Each element of the array will be
 paired with its index.
 
     toIndexedList (fromList ["cat","dog"]) == [(0,"cat"), (1,"dog")]
 -}
-toIndexedList : Array a -> List ( Int, a )
+toIndexedList : Array a -> List (Int, a)
 toIndexedList array =
-    List.map2
-        (,)
-        (List.range 0 (Native.Array.length array - 1))
-        (Native.Array.toList array)
+  List.map2
+    (,)
+    (List.range 0 (Native.Array.length array - 1))
+    (Native.Array.toList array)
 
 
 {-| Apply a function on every element in an array.
@@ -121,7 +103,7 @@ toIndexedList array =
 -}
 map : (a -> b) -> Array a -> Array b
 map =
-    Native.Array.map
+  Native.Array.map
 
 
 {-| Apply a function on every element with its index as first argument.
@@ -130,7 +112,7 @@ map =
 -}
 indexedMap : (Int -> a -> b) -> Array a -> Array b
 indexedMap =
-    Native.Array.indexedMap
+  Native.Array.indexedMap
 
 
 {-| Reduce an array from the left. Read `foldl` as &ldquo;fold from the left&rdquo;.
@@ -139,7 +121,7 @@ indexedMap =
 -}
 foldl : (a -> b -> b) -> b -> Array a -> b
 foldl =
-    Native.Array.foldl
+  Native.Array.foldl
 
 
 {-| Reduce an array from the right. Read `foldr` as &ldquo;fold from the right&rdquo;.
@@ -148,7 +130,7 @@ foldl =
 -}
 foldr : (a -> b -> b) -> b -> Array a -> b
 foldr =
-    Native.Array.foldr
+  Native.Array.foldr
 
 
 {-| Keep only elements that satisfy the predicate:
@@ -157,15 +139,14 @@ foldr =
 -}
 filter : (a -> Bool) -> Array a -> Array a
 filter isOkay arr =
-    let
-        update x xs =
-            if isOkay x then
-                Native.Array.push x xs
-            else
-                xs
-    in
-        Native.Array.foldl update Native.Array.empty arr
-
+  let
+    update x xs =
+      if isOkay x then
+        Native.Array.push x xs
+      else
+        xs
+  in
+    Native.Array.foldl update Native.Array.empty arr
 
 {-| Return an empty array.
 
@@ -173,7 +154,7 @@ filter isOkay arr =
 -}
 empty : Array a
 empty =
-    Native.Array.empty
+  Native.Array.empty
 
 
 {-| Push an element to the end of an array.
@@ -182,7 +163,7 @@ empty =
 -}
 push : a -> Array a -> Array a
 push =
-    Native.Array.push
+  Native.Array.push
 
 
 {-| Return Just the element at the index or Nothing if the index is out of range.
@@ -195,10 +176,10 @@ push =
 -}
 get : Int -> Array a -> Maybe a
 get i array =
-    if 0 <= i && i < Native.Array.length array then
-        Just (Native.Array.get i array)
-    else
-        Nothing
+  if 0 <= i && i < Native.Array.length array then
+    Just (Native.Array.get i array)
+  else
+    Nothing
 
 
 {-| Set the element at a particular index. Returns an updated array.
@@ -208,7 +189,7 @@ If the index is out of range, the array is unaltered.
 -}
 set : Int -> a -> Array a -> Array a
 set =
-    Native.Array.set
+  Native.Array.set
 
 
 {-| Get a sub-section of an array: `(slice start end array)`. The `start` is a
@@ -229,7 +210,7 @@ This makes it pretty easy to `pop` the last element off of an array: `slice 0 -1
 -}
 slice : Int -> Int -> Array a -> Array a
 slice =
-    Native.Array.slice
+  Native.Array.slice
 
 
 {-| Return the length of an array.
@@ -238,7 +219,7 @@ slice =
 -}
 length : Array a -> Int
 length =
-    Native.Array.length
+  Native.Array.length
 
 
 {-| Determine if an array is empty.
@@ -256,4 +237,4 @@ isEmpty array =
 -}
 append : Array a -> Array a -> Array a
 append =
-    Native.Array.append
+  Native.Array.append

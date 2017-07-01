@@ -1,3 +1,4 @@
+var _user$project$Page_Gallery$defaultImg = 'not found';
 var _user$project$Page_Gallery$paintingView = function (painting) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -32,7 +33,8 @@ var _user$project$Page_Gallery$paintingView = function (painting) {
 							_elm_lang$html$Html$img,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
+								_0: _elm_lang$html$Html_Attributes$src(
+									A2(_elm_lang$core$Maybe$withDefault, _user$project$Page_Gallery$defaultImg, painting.stylePath)),
 								_1: {ctor: '[]'}
 							},
 							{ctor: '[]'}),

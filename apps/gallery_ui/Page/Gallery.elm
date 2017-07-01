@@ -102,5 +102,10 @@ paintingView painting =
         [ class "painting_preview framed" ]
         [ h4 [] [ text painting.name ]
         , a [ Route.href (Route.Details painting.name) ]
-            [ img [ src painting.stylePath ] [] ]
+            [ img [ src (Maybe.withDefault defaultImg painting.stylePath) ] [] ]
         ]
+
+
+defaultImg : String
+defaultImg =
+    "not found"

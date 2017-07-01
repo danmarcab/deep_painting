@@ -1,14 +1,8 @@
-module Platform
-    exposing
-        ( Program
-        , program
-        , programWithFlags
-        , Task
-        , ProcessId
-        , Router
-        , sendToApp
-        , sendToSelf
-        )
+module Platform exposing
+  ( Program, program, programWithFlags
+  , Task, ProcessId
+  , Router, sendToApp, sendToSelf
+  )
 
 {-|
 
@@ -38,6 +32,7 @@ import Platform.Cmd exposing (Cmd)
 import Platform.Sub exposing (Sub)
 
 
+
 -- PROGRAMS
 
 
@@ -54,8 +49,7 @@ Honestly, it is totally normal if this seems crazy at first. The best way to
 understand is to work through [guide.elm-lang.org](http://guide.elm-lang.org/).
 It makes way more sense in context!
 -}
-type Program flags model msg
-    = Program
+type Program flags model msg = Program
 
 
 {-| Create a [headless][] program. This is great if you want to use Elm as the
@@ -70,14 +64,14 @@ Initializing a headless program from JavaScript looks like this:
 var app = Elm.MyThing.worker();
 ```
 -}
-program :
-    { init : ( model, Cmd msg )
-    , update : msg -> model -> ( model, Cmd msg )
+program
+  : { init : (model, Cmd msg)
+    , update : msg -> model -> (model, Cmd msg)
     , subscriptions : model -> Sub msg
     }
-    -> Program Never model msg
+  -> Program Never model msg
 program =
-    Native.Platform.program
+  Native.Platform.program
 
 
 {-| Same as [`program`](#program), but you can provide flags. Initializing a
@@ -90,34 +84,31 @@ var app = Elm.MyThing.worker({ user: 'Tom', token: 1234 });
 Whatever argument you provide to `worker` will get converted to an Elm value,
 allowing you to configure your Elm program however you want from JavaScript!
 -}
-programWithFlags :
-    { init : flags -> ( model, Cmd msg )
-    , update : msg -> model -> ( model, Cmd msg )
+programWithFlags
+  : { init : flags -> (model, Cmd msg)
+    , update : msg -> model -> (model, Cmd msg)
     , subscriptions : model -> Sub msg
     }
-    -> Program flags model msg
+  -> Program flags model msg
 programWithFlags =
-    Native.Platform.programWithFlags
+  Native.Platform.programWithFlags
 
 
 
 -- TASKS and PROCESSES
 
-
 {-| Head over to the documentation for the [`Task`](Task) module for more
 information on this. It is only defined here because it is a platform
 primitive.
 -}
-type Task err ok
-    = Task
+type Task err ok = Task
 
 
 {-| Head over to the documentation for the [`Process`](Process) module for
 information on this. It is only defined here because it is a platform
 primitive.
 -}
-type ProcessId
-    = ProcessId
+type ProcessId = ProcessId
 
 
 
@@ -127,8 +118,8 @@ type ProcessId
 {-| An effect manager has access to a “router” that routes messages between
 the main app and your individual effect manager.
 -}
-type Router appMsg selfMsg
-    = Router
+type Router appMsg selfMsg =
+  Router
 
 
 {-| Send the router a message for the main loop of your app. This message will
@@ -136,7 +127,7 @@ be handled by the overall `update` function, just like events from `Html`.
 -}
 sendToApp : Router msg a -> msg -> Task x ()
 sendToApp =
-    Native.Platform.sendToApp
+  Native.Platform.sendToApp
 
 
 {-| Send the router a message for your effect manager. This message will
@@ -147,8 +138,8 @@ As an example, the effect manager for web sockets
 -}
 sendToSelf : Router a msg -> msg -> Task x ()
 sendToSelf =
-    Native.Platform.sendToSelf
+  Native.Platform.sendToSelf
 
 
 hack =
-    Native.Scheduler.succeed
+  Native.Scheduler.succeed

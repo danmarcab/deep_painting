@@ -1,10 +1,9 @@
-module Process
-    exposing
-        ( Id
-        , spawn
-        , sleep
-        , kill
-        )
+module Process exposing
+  ( Id
+  , spawn
+  , sleep
+  , kill
+  )
 
 {-|
 
@@ -65,7 +64,7 @@ concurrent, but not necessarily parallel. So even though JS runs within a
 single OS-level thread, Elm can still run things concurrently.
 -}
 type alias Id =
-    Platform.ProcessId
+  Platform.ProcessId
 
 
 {-| Run a task in its own light-weight process. In the following example,
@@ -82,7 +81,7 @@ come in a later release!
 -}
 spawn : Task x a -> Task y Id
 spawn =
-    Native.Scheduler.spawn
+  Native.Scheduler.spawn
 
 
 {-| Block progress on the current process for a given amount of time. The
@@ -93,7 +92,7 @@ delay work until later.
 -}
 sleep : Time -> Task x ()
 sleep =
-    Native.Scheduler.sleep
+  Native.Scheduler.sleep
 
 
 {-| Sometimes you `spawn` a process, but later decide it would be a waste to
@@ -103,4 +102,5 @@ flight, it will also abort the request.
 -}
 kill : Id -> Task x ()
 kill =
-    Native.Scheduler.kill
+  Native.Scheduler.kill
+

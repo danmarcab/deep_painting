@@ -92,8 +92,8 @@ var _elm_lang$virtual_dom$VirtualDom_History$undone = function (getResult) {
 		return _elm_lang$core$Native_Utils.crashCase(
 			'VirtualDom.History',
 			{
-				start: {line: 191, column: 5},
-				end: {line: 196, column: 45}
+				start: {line: 195, column: 3},
+				end: {line: 200, column: 39}
 			},
 			_p5)('Bug in History.get');
 	}
@@ -348,8 +348,8 @@ var _elm_lang$virtual_dom$VirtualDom_History$get = F3(
 				return _elm_lang$core$Native_Utils.crashCase(
 					'VirtualDom.History',
 					{
-						start: {line: 162, column: 13},
-						end: {line: 168, column: 107}
+						start: {line: 165, column: 7},
+						end: {line: 171, column: 95}
 					},
 					_p37)('UI should only let you ask for real indexes!');
 			} else {

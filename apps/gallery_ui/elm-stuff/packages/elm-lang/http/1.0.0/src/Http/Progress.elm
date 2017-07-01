@@ -1,9 +1,7 @@
-effect module Http.Progress
-    where { subscription = MySub }
-    exposing
-        ( Progress(..)
-        , track
-        )
+effect module Http.Progress where { subscription = MySub } exposing
+  ( Progress(..)
+  , track
+  )
 
 {-| Track the progress of an HTTP request. This can be useful if you are
 requesting a large amount of data and want to show the user a progress bar
@@ -21,12 +19,14 @@ Here is an example usage: [demo][] and [code][].
 
 -}
 
+
 import Dict
 import Http
-import Http.Internal exposing (Request(Request))
+import Http.Internal exposing ( Request(Request) )
 import Task exposing (Task)
 import Platform exposing (Router)
 import Process
+
 
 
 -- PROGRESS
@@ -46,10 +46,10 @@ you would say:
 You will end up with `Fail` or `Done` depending on the success of the request.
 -}
 type Progress data
-    = None
-    | Some { bytes : Int, bytesExpected : Int }
-    | Fail Http.Error
-    | Done data
+  = None
+  | Some { bytes : Int, bytesExpected : Int}
+  | Fail Http.Error
+  | Done data
 
 
 
@@ -65,40 +65,39 @@ See it in action in this example: [demo][] and [code][].
 -}
 track : String -> (Progress data -> msg) -> Http.Request data -> Sub msg
 track id toMessage (Request request) =
-    subscription <|
-        Track id <|
-            { request = Http.Internal.map (Done >> toMessage) request
-            , toProgress = Some >> toMessage
-            , toError = Fail >> toMessage
-            }
+  subscription <| Track id <|
+    { request = Http.Internal.map (Done >> toMessage) request
+    , toProgress = Some >> toMessage
+    , toError = Fail >> toMessage
+    }
 
 
 type alias TrackedRequest msg =
-    { request : Http.Internal.RawRequest msg
-    , toProgress : { bytes : Int, bytesExpected : Int } -> msg
-    , toError : Http.Error -> msg
-    }
+  { request : Http.Internal.RawRequest msg
+  , toProgress : { bytes : Int, bytesExpected : Int } -> msg
+  , toError : Http.Error -> msg
+  }
 
 
 map : (a -> b) -> TrackedRequest a -> TrackedRequest b
 map func { request, toProgress, toError } =
-    { request = Http.Internal.map func request
-    , toProgress = toProgress >> func
-    , toError = toError >> func
-    }
+  { request = Http.Internal.map func request
+  , toProgress = toProgress >> func
+  , toError = toError >> func
+  }
 
 
 
 -- SUBSCRIPTIONS
 
 
-type MySub msg
-    = Track String (TrackedRequest msg)
+type MySub msg =
+  Track String (TrackedRequest msg)
 
 
 subMap : (a -> b) -> MySub a -> MySub b
 subMap func (Track id trackedRequest) =
-    Track id (map func trackedRequest)
+  Track id (map func trackedRequest)
 
 
 
@@ -106,12 +105,12 @@ subMap func (Track id trackedRequest) =
 
 
 type alias State =
-    Dict.Dict String Process.Id
+  Dict.Dict String Process.Id
 
 
 init : Task Never State
 init =
-    Task.succeed Dict.empty
+  Task.succeed Dict.empty
 
 
 
@@ -120,51 +119,51 @@ init =
 
 onEffects : Platform.Router msg Never -> List (MySub msg) -> State -> Task Never State
 onEffects router subs state =
-    let
-        subDict =
-            collectSubs subs
+  let
+    subDict =
+      collectSubs subs
 
-        leftStep id process ( dead, ongoing, new ) =
-            ( Process.kill process :: dead
-            , ongoing
-            , new
-            )
+    leftStep id process (dead, ongoing, new) =
+      ( Process.kill process :: dead
+      , ongoing
+      , new
+      )
 
-        bothStep id process _ ( dead, ongoing, new ) =
-            ( dead
-            , Dict.insert id process ongoing
-            , new
-            )
+    bothStep id process _ (dead, ongoing, new) =
+      ( dead
+      , Dict.insert id process ongoing
+      , new
+      )
 
-        rightStep id trackedRequest ( dead, ongoing, new ) =
-            ( dead
-            , ongoing
-            , ( id, trackedRequest ) :: new
-            )
+    rightStep id trackedRequest (dead, ongoing, new) =
+      ( dead
+      , ongoing
+      , (id, trackedRequest) :: new
+      )
 
-        ( dead, ongoing, new ) =
-            Dict.merge leftStep bothStep rightStep state subDict ( [], Dict.empty, [] )
-    in
-        Task.sequence dead
-            |> Task.andThen (\_ -> spawnRequests router new ongoing)
+    (dead, ongoing, new) =
+      Dict.merge leftStep bothStep rightStep state subDict ([], Dict.empty, [])
+  in
+    Task.sequence dead
+      |> Task.andThen (\_ -> spawnRequests router new ongoing)
 
 
-spawnRequests : Router msg Never -> List ( String, TrackedRequest msg ) -> State -> Task Never State
+spawnRequests : Router msg Never -> List (String, TrackedRequest msg) -> State -> Task Never State
 spawnRequests router trackedRequests state =
-    case trackedRequests of
-        [] ->
-            Task.succeed state
+  case trackedRequests of
+    [] ->
+      Task.succeed state
 
-        ( id, trackedRequest ) :: others ->
-            Process.spawn (toTask router trackedRequest)
-                |> Task.andThen (\process -> spawnRequests router others (Dict.insert id process state))
+    (id, trackedRequest) :: others ->
+      Process.spawn (toTask router trackedRequest)
+        |> Task.andThen (\process -> spawnRequests router others (Dict.insert id process state))
 
 
 toTask : Router msg Never -> TrackedRequest msg -> Task Never ()
 toTask router { request, toProgress, toError } =
-    Native.Http.toTask request (Just (Platform.sendToApp router << toProgress))
-        |> Task.andThen (Platform.sendToApp router)
-        |> Task.onError (Platform.sendToApp router << toError)
+  Native.Http.toTask request (Just (Platform.sendToApp router << toProgress))
+    |> Task.andThen (Platform.sendToApp router)
+    |> Task.onError (Platform.sendToApp router << toError)
 
 
 
@@ -172,24 +171,24 @@ toTask router { request, toProgress, toError } =
 
 
 type alias SubDict msg =
-    Dict.Dict String (TrackedRequest msg)
+  Dict.Dict String (TrackedRequest msg)
 
 
 collectSubs : List (MySub msg) -> SubDict msg
 collectSubs subs =
-    List.foldl addSub Dict.empty subs
+  List.foldl addSub Dict.empty subs
 
 
 addSub : MySub msg -> SubDict msg -> SubDict msg
 addSub (Track id trackedRequest) subDict =
-    let
-        request =
-            trackedRequest.request
+  let
+    request =
+      trackedRequest.request
 
-        uid =
-            id ++ request.method ++ request.url
-    in
-        Dict.insert uid trackedRequest subDict
+    uid =
+      id ++ request.method ++ request.url
+  in
+    Dict.insert uid trackedRequest subDict
 
 
 
@@ -198,4 +197,4 @@ addSub (Track id trackedRequest) subDict =
 
 onSelfMsg : Platform.Router msg Never -> Never -> State -> Task Never State
 onSelfMsg router _ state =
-    Task.succeed state
+  Task.succeed state

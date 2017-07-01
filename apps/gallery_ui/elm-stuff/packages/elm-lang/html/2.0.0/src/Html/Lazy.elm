@@ -1,9 +1,6 @@
-module Html.Lazy
-    exposing
-        ( lazy
-        , lazy2
-        , lazy3
-        )
+module Html.Lazy exposing
+  ( lazy, lazy2, lazy3
+  )
 
 {-| Since all Elm functions are pure we have a guarantee that the same input
 will always result in the same output. This module gives us tools to be lazy
@@ -34,18 +31,18 @@ we know if the input to `view` is the same, the output must be the same!
 -}
 lazy : (a -> Html msg) -> a -> Html msg
 lazy =
-    VirtualDom.lazy
+  VirtualDom.lazy
 
 
 {-| Same as `lazy` but checks on two arguments.
 -}
 lazy2 : (a -> b -> Html msg) -> a -> b -> Html msg
 lazy2 =
-    VirtualDom.lazy2
+  VirtualDom.lazy2
 
 
 {-| Same as `lazy` but checks on three arguments.
 -}
 lazy3 : (a -> b -> c -> Html msg) -> a -> b -> c -> Html msg
 lazy3 =
-    VirtualDom.lazy3
+  VirtualDom.lazy3

@@ -9876,13 +9876,88 @@ var _evancz$url_parser$UrlParser$intParam = function (name) {
 	return A2(_evancz$url_parser$UrlParser$customParam, name, _evancz$url_parser$UrlParser$intParamHelp);
 };
 
+var _user$project$Data_Painting$readyToStart = function (painting) {
+	return (!_elm_lang$core$Native_Utils.eq(painting.contentPath, _elm_lang$core$Maybe$Nothing)) && (!_elm_lang$core$Native_Utils.eq(painting.stylePath, _elm_lang$core$Maybe$Nothing));
+};
+var _user$project$Data_Painting$setStylePath = F2(
+	function (path, painting) {
+		return _elm_lang$core$String$isEmpty(path) ? _elm_lang$core$Native_Utils.update(
+			painting,
+			{stylePath: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
+			painting,
+			{
+				stylePath: _elm_lang$core$Maybe$Just(path)
+			});
+	});
+var _user$project$Data_Painting$setContentPath = F2(
+	function (path, painting) {
+		return _elm_lang$core$String$isEmpty(path) ? _elm_lang$core$Native_Utils.update(
+			painting,
+			{contentPath: _elm_lang$core$Maybe$Nothing}) : _elm_lang$core$Native_Utils.update(
+			painting,
+			{
+				contentPath: _elm_lang$core$Maybe$Just(path)
+			});
+	});
+var _user$project$Data_Painting$setIterations = F2(
+	function (num, _p0) {
+		var _p1 = _p0;
+		var newSettings = _elm_lang$core$Native_Utils.update(
+			_p1.settings,
+			{iterations: num});
+		return _elm_lang$core$Native_Utils.update(
+			_p1,
+			{settings: newSettings});
+	});
+var _user$project$Data_Painting$setOutputWidth = F2(
+	function (width, _p2) {
+		var _p3 = _p2;
+		var newSettings = _elm_lang$core$Native_Utils.update(
+			_p3.settings,
+			{outputWidth: width});
+		return _elm_lang$core$Native_Utils.update(
+			_p3,
+			{settings: newSettings});
+	});
+var _user$project$Data_Painting$setVariationWeight = F2(
+	function (weight, _p4) {
+		var _p5 = _p4;
+		var newSettings = _elm_lang$core$Native_Utils.update(
+			_p5.settings,
+			{variationWeight: weight});
+		return _elm_lang$core$Native_Utils.update(
+			_p5,
+			{settings: newSettings});
+	});
+var _user$project$Data_Painting$setStyleWeight = F2(
+	function (weight, _p6) {
+		var _p7 = _p6;
+		var newSettings = _elm_lang$core$Native_Utils.update(
+			_p7.settings,
+			{styleWeight: weight});
+		return _elm_lang$core$Native_Utils.update(
+			_p7,
+			{settings: newSettings});
+	});
+var _user$project$Data_Painting$setContentWeight = F2(
+	function (weight, _p8) {
+		var _p9 = _p8;
+		var newSettings = _elm_lang$core$Native_Utils.update(
+			_p9.settings,
+			{contentWeight: weight});
+		return _elm_lang$core$Native_Utils.update(
+			_p9,
+			{settings: newSettings});
+	});
+var _user$project$Data_Painting$initialSettings = {iterations: 10, contentWeight: 0.1, styleWeight: 100.0, variationWeight: 1.0, outputWidth: 400};
 var _user$project$Data_Painting$Painting = F6(
 	function (a, b, c, d, e, f) {
 		return {name: a, status: b, contentPath: c, stylePath: d, settings: e, iterations: f};
 	});
-var _user$project$Data_Painting$Settings = function (a) {
-	return {iterations: a};
-};
+var _user$project$Data_Painting$Settings = F5(
+	function (a, b, c, d, e) {
+		return {iterations: a, contentWeight: b, styleWeight: c, variationWeight: d, outputWidth: e};
+	});
 var _user$project$Data_Painting$Iteration = F2(
 	function (a, b) {
 		return {path: a, loss: b};
@@ -9894,14 +9969,10 @@ var _user$project$Data_Painting$initialPainting = function (name) {
 	return {
 		name: name,
 		status: _user$project$Data_Painting$New,
-		contentPath: 'http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg',
-		stylePath: 'http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg',
-		settings: {iterations: 5},
-		iterations: {
-			ctor: '::',
-			_0: {path: 'http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg', loss: 0.1},
-			_1: {ctor: '[]'}
-		}
+		contentPath: _elm_lang$core$Maybe$Nothing,
+		stylePath: _elm_lang$core$Maybe$Nothing,
+		settings: _user$project$Data_Painting$initialSettings,
+		iterations: {ctor: '[]'}
 	};
 };
 
@@ -10006,6 +10077,7 @@ var _user$project$Route$fromLocation = function (location) {
 	return _elm_lang$core$String$isEmpty(location.hash) ? _elm_lang$core$Maybe$Just(_user$project$Route$Gallery) : A2(_evancz$url_parser$UrlParser$parseHash, _user$project$Route$route, location);
 };
 
+var _user$project$Page_Gallery$defaultImg = 'not found';
 var _user$project$Page_Gallery$paintingView = function (painting) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -10040,7 +10112,8 @@ var _user$project$Page_Gallery$paintingView = function (painting) {
 							_elm_lang$html$Html$img,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
+								_0: _elm_lang$html$Html_Attributes$src(
+									A2(_elm_lang$core$Maybe$withDefault, _user$project$Page_Gallery$defaultImg, painting.stylePath)),
 								_1: {ctor: '[]'}
 							},
 							{ctor: '[]'}),
@@ -10222,106 +10295,74 @@ var _user$project$Page_Gallery$view = function (model) {
 				})));
 };
 
-var _user$project$Page_Details$resultView = function (_p0) {
-	var _p1 = _p0;
-	var _p4 = _p1._0.painting;
-	var index = function () {
-		var _p2 = _p1._0.resultFrame;
-		if (_p2.ctor === 'Last') {
-			return _elm_lang$core$List$length(_p4.iterations);
-		} else {
-			return _p2._0;
+var _user$project$Page_Details$contentList = {
+	ctor: '::',
+	_0: {ctor: '_Tuple2', _0: 'Cadiz', _1: 'http://www.cadizturismo.com/media/fotos/image_61020.jpeg'},
+	_1: {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'London', _1: 'http://www.hdfondos.eu/pictures/2013/0803/1/bridge-england-united-kingdom-big-ben-thames-night-london-street-lights-cities-river-reflection-clock-watch-time-images-198692.jpg'},
+		_1: {
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'Dani', _1: 'https://www.mymedsandme.com/uploads/img/our-team/_large/daniel-cabillas.jpg'},
+			_1: {ctor: '[]'}
 		}
-	}();
-	var maybeIteration = function (idx) {
-		return _elm_lang$core$List$head(
-			A2(_elm_lang$core$List$drop, idx - 1, _p4.iterations));
-	};
-	var _p3 = maybeIteration(index);
-	if (_p3.ctor === 'Just') {
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('details-result framed'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$h4,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text('result'),
-						_1: {ctor: '[]'}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$img,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$src(_p3._0.path),
-							_1: {ctor: '[]'}
-						},
-						{ctor: '[]'}),
-					_1: {ctor: '[]'}
-				}
-			});
-	} else {
-		return _elm_lang$html$Html$text('Nothing to show yet.');
 	}
 };
-var _user$project$Page_Details$editableSourcesView = function (painting) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{
+var _user$project$Page_Details$styleList = {
+	ctor: '::',
+	_0: {ctor: '_Tuple2', _0: 'Starry night', _1: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg'},
+	_1: {
+		ctor: '::',
+		_0: {ctor: '_Tuple2', _0: 'The Scream', _1: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/1200px-The_Scream.jpg'},
+		_1: {
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$h4,
-				{ctor: '[]'},
+			_0: {ctor: '_Tuple2', _0: 'Picasso self portrait', _1: 'https://uploads2.wikiart.org/images/pablo-picasso/self-portrait-1907.jpg'},
+			_1: {ctor: '[]'}
+		}
+	}
+};
+var _user$project$Page_Details$optionsFromList = function (list) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (_p0) {
+			var _p1 = _p0;
+			return A2(
+				_elm_lang$html$Html$option,
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('content'),
+					_0: _elm_lang$html$Html_Attributes$value(_p1._1),
 					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$img,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$src(painting.contentPath),
-						_1: {ctor: '[]'}
-					},
-					{ctor: '[]'}),
-				_1: {
+				},
+				{
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$h4,
-						{ctor: '[]'},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('style'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$img,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
-								_1: {ctor: '[]'}
-							},
-							{ctor: '[]'}),
-						_1: {ctor: '[]'}
-					}
-				}
-			}
+					_0: _elm_lang$html$Html$text(_p1._0),
+					_1: {ctor: '[]'}
+				});
+		},
+		{
+			ctor: '::',
+			_0: {ctor: '_Tuple2', _0: 'Please select', _1: ''},
+			_1: list
 		});
+};
+var _user$project$Page_Details$maybeSourceImg = function (maybePath) {
+	var _p2 = maybePath;
+	if (_p2.ctor === 'Just') {
+		return {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$img,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$src(_p2._0),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'}),
+			_1: {ctor: '[]'}
+		};
+	} else {
+		return {ctor: '[]'};
+	}
 };
 var _user$project$Page_Details$readOnlySourcesView = function (painting) {
 	return A2(
@@ -10340,13 +10381,13 @@ var _user$project$Page_Details$readOnlySourcesView = function (painting) {
 			_1: {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$img,
+					_elm_lang$html$Html$div,
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$src(painting.contentPath),
+						_0: _elm_lang$html$Html_Attributes$class('source_preview'),
 						_1: {ctor: '[]'}
 					},
-					{ctor: '[]'}),
+					_user$project$Page_Details$maybeSourceImg(painting.contentPath)),
 				_1: {
 					ctor: '::',
 					_0: A2(
@@ -10360,31 +10401,306 @@ var _user$project$Page_Details$readOnlySourcesView = function (painting) {
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$img,
+							_elm_lang$html$Html$div,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
+								_0: _elm_lang$html$Html_Attributes$class('source_preview'),
 								_1: {ctor: '[]'}
 							},
-							{ctor: '[]'}),
+							_user$project$Page_Details$maybeSourceImg(painting.stylePath)),
 						_1: {ctor: '[]'}
 					}
 				}
 			}
 		});
 };
-var _user$project$Page_Details$sourcesView = function (_p5) {
-	var _p6 = _p5;
-	var _p8 = _p6._0.painting;
-	var view = function () {
-		var _p7 = _p8.status;
-		switch (_p7.ctor) {
-			case 'New':
-				return _user$project$Page_Details$editableSourcesView(_p8);
-			case 'InProgress':
-				return _user$project$Page_Details$readOnlySourcesView(_p8);
+var _user$project$Page_Details$Model = function (a) {
+	return {ctor: 'Model', _0: a};
+};
+var _user$project$Page_Details$update = F2(
+	function (msg, _p3) {
+		var _p4 = _p3;
+		var _p6 = _p4._0;
+		var _p5 = msg;
+		switch (_p5.ctor) {
+			case 'UpdateIterations':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setIterations, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateContentWeight':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setContentWeight, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateStyleWeight':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setStyleWeight, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateVariationWeight':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setVariationWeight, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateOutputWidth':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setOutputWidth, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateContentPath':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setContentPath, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateStylePath':
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(
+						_elm_lang$core$Native_Utils.update(
+							_p6,
+							{
+								painting: A2(_user$project$Data_Painting$setStylePath, _p5._0, _p6.painting)
+							})),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
-				return _user$project$Page_Details$readOnlySourcesView(_p8);
+				return {
+					ctor: '_Tuple2',
+					_0: _user$project$Page_Details$Model(_p6),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Page_Details$Last = {ctor: 'Last'};
+var _user$project$Page_Details$init = function (name) {
+	return _elm_lang$core$Task$succeed(
+		_user$project$Page_Details$Model(
+			{
+				painting: _user$project$Data_Painting$initialPainting(name),
+				resultFrame: _user$project$Page_Details$Last
+			}));
+};
+var _user$project$Page_Details$decoder = _elm_lang$core$Json_Decode$succeed(
+	_user$project$Page_Details$Model(
+		{
+			painting: _user$project$Data_Painting$initialPainting('name'),
+			resultFrame: _user$project$Page_Details$Last
+		}));
+var _user$project$Page_Details$Exactly = function (a) {
+	return {ctor: 'Exactly', _0: a};
+};
+var _user$project$Page_Details$StartPainting = {ctor: 'StartPainting'};
+var _user$project$Page_Details$resultView = function (_p7) {
+	var _p8 = _p7;
+	var _p12 = _p8._0.painting;
+	var index = function () {
+		var _p9 = _p8._0.resultFrame;
+		if (_p9.ctor === 'Last') {
+			return _elm_lang$core$List$length(_p12.iterations);
+		} else {
+			return _p9._0;
+		}
+	}();
+	var maybeIteration = function (idx) {
+		return _elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, idx - 1, _p12.iterations));
+	};
+	var content = function () {
+		var _p10 = _p12.status;
+		if (_p10.ctor === 'New') {
+			return _user$project$Data_Painting$readyToStart(_p12) ? A2(
+				_elm_lang$html$Html$button,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Events$onClick(_user$project$Page_Details$StartPainting),
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Start Painting!'),
+					_1: {ctor: '[]'}
+				}) : A2(
+				_elm_lang$html$Html$p,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Enter setting, and select content and style to start painting'),
+					_1: {ctor: '[]'}
+				});
+		} else {
+			var _p11 = maybeIteration(index);
+			if (_p11.ctor === 'Just') {
+				return A2(
+					_elm_lang$html$Html$img,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src(_p11._0.path),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'});
+			} else {
+				return A2(
+					_elm_lang$html$Html$p,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Nothing to show yet.'),
+						_1: {ctor: '[]'}
+					});
+			}
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('details-result framed'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('result'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: content,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Page_Details$UpdateStylePath = function (a) {
+	return {ctor: 'UpdateStylePath', _0: a};
+};
+var _user$project$Page_Details$UpdateContentPath = function (a) {
+	return {ctor: 'UpdateContentPath', _0: a};
+};
+var _user$project$Page_Details$editableSourcesView = function (painting) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('content'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$select,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$Page_Details$UpdateContentPath),
+						_1: {ctor: '[]'}
+					},
+					_user$project$Page_Details$optionsFromList(_user$project$Page_Details$contentList)),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('source_preview'),
+							_1: {ctor: '[]'}
+						},
+						_user$project$Page_Details$maybeSourceImg(painting.contentPath)),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$h4,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('style'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$select,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onInput(_user$project$Page_Details$UpdateStylePath),
+									_1: {ctor: '[]'}
+								},
+								_user$project$Page_Details$optionsFromList(_user$project$Page_Details$styleList)),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$div,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$class('source_preview'),
+										_1: {ctor: '[]'}
+									},
+									_user$project$Page_Details$maybeSourceImg(painting.stylePath)),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		});
+};
+var _user$project$Page_Details$sourcesView = function (_p13) {
+	var _p14 = _p13;
+	var _p16 = _p14._0.painting;
+	var view = function () {
+		var _p15 = _p16.status;
+		switch (_p15.ctor) {
+			case 'New':
+				return _user$project$Page_Details$editableSourcesView(_p16);
+			case 'InProgress':
+				return _user$project$Page_Details$readOnlySourcesView(_p16);
+			default:
+				return _user$project$Page_Details$readOnlySourcesView(_p16);
 		}
 	}();
 	return A2(
@@ -10400,60 +10716,178 @@ var _user$project$Page_Details$sourcesView = function (_p5) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Page_Details$readOnlySettingsView = function (settings) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$li,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'iterations: ',
-							_elm_lang$core$Basics$toString(settings.iterations))),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		});
+var _user$project$Page_Details$UpdateOutputWidth = function (a) {
+	return {ctor: 'UpdateOutputWidth', _0: a};
 };
-var _user$project$Page_Details$editableSettingsView = function (settings) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$li,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							'iterations: ',
-							_elm_lang$core$Basics$toString(settings.iterations))),
-					_1: {ctor: '[]'}
-				}),
-			_1: {ctor: '[]'}
-		});
+var _user$project$Page_Details$UpdateVariationWeight = function (a) {
+	return {ctor: 'UpdateVariationWeight', _0: a};
 };
-var _user$project$Page_Details$settingsView = function (_p9) {
-	var _p10 = _p9;
-	var _p12 = _p10._0.painting;
-	var view = function () {
-		var _p11 = _p12.status;
-		switch (_p11.ctor) {
+var _user$project$Page_Details$UpdateStyleWeight = function (a) {
+	return {ctor: 'UpdateStyleWeight', _0: a};
+};
+var _user$project$Page_Details$UpdateContentWeight = function (a) {
+	return {ctor: 'UpdateContentWeight', _0: a};
+};
+var _user$project$Page_Details$UpdateIterations = function (a) {
+	return {ctor: 'UpdateIterations', _0: a};
+};
+var _user$project$Page_Details$settingsViewHelp = F2(
+	function (settings, disabled) {
+		var rangeInput = F6(
+			function (_p17, msg, label, val, toSlider, toVal) {
+				var _p18 = _p17;
+				var parsedToVal = function (str) {
+					var _p19 = _elm_lang$core$String$toFloat(str);
+					if (_p19.ctor === 'Ok') {
+						return toVal(_p19._0);
+					} else {
+						return val;
+					}
+				};
+				return A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										label,
+										_elm_lang$core$Basics$toString(val))),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$input,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('range'),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html_Attributes$min(
+											_elm_lang$core$Basics$toString(_p18._0)),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html_Attributes$max(
+												_elm_lang$core$Basics$toString(_p18._1)),
+											_1: {
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$value(
+													_elm_lang$core$Basics$toString(
+														toSlider(val))),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$step(
+														_elm_lang$core$Basics$toString(_p18._2)),
+													_1: {
+														ctor: '::',
+														_0: _elm_lang$html$Html_Events$onInput(
+															function (_p20) {
+																return msg(
+																	parsedToVal(_p20));
+															}),
+														_1: {
+															ctor: '::',
+															_0: _elm_lang$html$Html_Attributes$disabled(disabled),
+															_1: {ctor: '[]'}
+														}
+													}
+												}
+											}
+										}
+									}
+								},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
+						}
+					});
+			});
+		var linRangeInput = F4(
+			function (range, msg, label, val) {
+				return A6(rangeInput, range, msg, label, val, _elm_lang$core$Basics$identity, _elm_lang$core$Basics$identity);
+			});
+		var exp10 = function (exp) {
+			return Math.pow(10, exp);
+		};
+		var log10 = _elm_lang$core$Basics$logBase(10);
+		var expRangeInput = F4(
+			function (range, msg, label, val) {
+				return A6(rangeInput, range, msg, label, val, log10, exp10);
+			});
+		return A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{
+				ctor: '::',
+				_0: A4(
+					linRangeInput,
+					{ctor: '_Tuple3', _0: 3, _1: 50, _2: 1},
+					function (_p21) {
+						return _user$project$Page_Details$UpdateIterations(
+							_elm_lang$core$Basics$round(_p21));
+					},
+					'Interations: ',
+					_elm_lang$core$Basics$toFloat(settings.iterations)),
+				_1: {
+					ctor: '::',
+					_0: A4(
+						expRangeInput,
+						{ctor: '_Tuple3', _0: -10, _1: 10, _2: 1},
+						_user$project$Page_Details$UpdateContentWeight,
+						'Content weight: ',
+						settings.contentWeight),
+					_1: {
+						ctor: '::',
+						_0: A4(
+							expRangeInput,
+							{ctor: '_Tuple3', _0: -10, _1: 10, _2: 1},
+							_user$project$Page_Details$UpdateStyleWeight,
+							'Style weight: ',
+							settings.styleWeight),
+						_1: {
+							ctor: '::',
+							_0: A4(
+								expRangeInput,
+								{ctor: '_Tuple3', _0: -10, _1: 10, _2: 1},
+								_user$project$Page_Details$UpdateVariationWeight,
+								'Variation weight: ',
+								settings.variationWeight),
+							_1: {
+								ctor: '::',
+								_0: A4(
+									linRangeInput,
+									{ctor: '_Tuple3', _0: 100, _1: 600, _2: 50},
+									function (_p22) {
+										return _user$project$Page_Details$UpdateOutputWidth(
+											_elm_lang$core$Basics$round(_p22));
+									},
+									'Output width (px): ',
+									_elm_lang$core$Basics$toFloat(settings.outputWidth)),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			});
+	});
+var _user$project$Page_Details$settingsView = function (_p23) {
+	var _p24 = _p23;
+	var _p26 = _p24._0.painting;
+	var disabled = function () {
+		var _p25 = _p26.status;
+		switch (_p25.ctor) {
 			case 'New':
-				return _user$project$Page_Details$editableSettingsView(_p12.settings);
+				return false;
 			case 'InProgress':
-				return _user$project$Page_Details$readOnlySettingsView(_p12.settings);
+				return true;
 			default:
-				return _user$project$Page_Details$readOnlySettingsView(_p12.settings);
+				return true;
 		}
 	}();
 	return A2(
@@ -10475,7 +10909,7 @@ var _user$project$Page_Details$settingsView = function (_p9) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: view,
+				_0: A2(_user$project$Page_Details$settingsViewHelp, _p26.settings, disabled),
 				_1: {ctor: '[]'}
 			}
 		});
@@ -10509,33 +10943,6 @@ var _user$project$Page_Details$view = function (model) {
 			}
 		});
 };
-var _user$project$Page_Details$update = F2(
-	function (msg, model) {
-		var _p13 = msg;
-		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-	});
-var _user$project$Page_Details$Model = function (a) {
-	return {ctor: 'Model', _0: a};
-};
-var _user$project$Page_Details$Last = {ctor: 'Last'};
-var _user$project$Page_Details$init = function (name) {
-	return _elm_lang$core$Task$succeed(
-		_user$project$Page_Details$Model(
-			{
-				painting: _user$project$Data_Painting$initialPainting(name),
-				resultFrame: _user$project$Page_Details$Last
-			}));
-};
-var _user$project$Page_Details$decoder = _elm_lang$core$Json_Decode$succeed(
-	_user$project$Page_Details$Model(
-		{
-			painting: _user$project$Data_Painting$initialPainting('name'),
-			resultFrame: _user$project$Page_Details$Last
-		}));
-var _user$project$Page_Details$Exactly = function (a) {
-	return {ctor: 'Exactly', _0: a};
-};
-var _user$project$Page_Details$None = {ctor: 'None'};
 
 var _user$project$Page_NotFound$view = A2(
 	_elm_lang$html$Html$div,

@@ -1,11 +1,26 @@
-module Data.Painting exposing (Painting, Status(..), Settings, Iteration, initialPainting)
+module Data.Painting
+    exposing
+        ( Painting
+        , Status(..)
+        , Settings
+        , Iteration
+        , initialPainting
+        , setIterations
+        , setContentWeight
+        , setStyleWeight
+        , setVariationWeight
+        , setOutputWidth
+        , setContentPath
+        , setStylePath
+        , readyToStart
+        )
 
 
 type alias Painting =
     { name : String
     , status : Status
-    , contentPath : String
-    , stylePath : String
+    , contentPath : Maybe String
+    , stylePath : Maybe String
     , settings : Settings
     , iterations : List Iteration
     }
@@ -18,7 +33,12 @@ type Status
 
 
 type alias Settings =
-    { iterations : Int }
+    { iterations : Int
+    , contentWeight : Float
+    , styleWeight : Float
+    , variationWeight : Float
+    , outputWidth : Int
+    }
 
 
 type alias Iteration =
@@ -31,8 +51,84 @@ initialPainting : String -> Painting
 initialPainting name =
     { name = name
     , status = New
-    , contentPath = "http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg"
-    , stylePath = "http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg"
-    , settings = { iterations = 5 }
-    , iterations = [ { path = "http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg", loss = 0.1 } ]
+    , contentPath = Nothing
+    , stylePath = Nothing
+    , settings = initialSettings
+    , iterations = []
     }
+
+
+initialSettings : Settings
+initialSettings =
+    { iterations = 10
+    , contentWeight = 0.1
+    , styleWeight = 100.0
+    , variationWeight = 1.0
+    , outputWidth = 400
+    }
+
+
+setContentWeight : Float -> Painting -> Painting
+setContentWeight weight ({ settings } as painting) =
+    let
+        newSettings =
+            { settings | contentWeight = weight }
+    in
+        { painting | settings = newSettings }
+
+
+setStyleWeight : Float -> Painting -> Painting
+setStyleWeight weight ({ settings } as painting) =
+    let
+        newSettings =
+            { settings | styleWeight = weight }
+    in
+        { painting | settings = newSettings }
+
+
+setVariationWeight : Float -> Painting -> Painting
+setVariationWeight weight ({ settings } as painting) =
+    let
+        newSettings =
+            { settings | variationWeight = weight }
+    in
+        { painting | settings = newSettings }
+
+
+setOutputWidth : Int -> Painting -> Painting
+setOutputWidth width ({ settings } as painting) =
+    let
+        newSettings =
+            { settings | outputWidth = width }
+    in
+        { painting | settings = newSettings }
+
+
+setIterations : Int -> Painting -> Painting
+setIterations num ({ settings } as painting) =
+    let
+        newSettings =
+            { settings | iterations = num }
+    in
+        { painting | settings = newSettings }
+
+
+setContentPath : String -> Painting -> Painting
+setContentPath path painting =
+    if String.isEmpty path then
+        { painting | contentPath = Nothing }
+    else
+        { painting | contentPath = Just path }
+
+
+setStylePath : String -> Painting -> Painting
+setStylePath path painting =
+    if String.isEmpty path then
+        { painting | stylePath = Nothing }
+    else
+        { painting | stylePath = Just path }
+
+
+readyToStart : Painting -> Bool
+readyToStart painting =
+    painting.contentPath /= Nothing && painting.stylePath /= Nothing

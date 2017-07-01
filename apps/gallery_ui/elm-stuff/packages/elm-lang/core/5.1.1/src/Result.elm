@@ -1,17 +1,10 @@
-module Result
-    exposing
-        ( Result(..)
-        , withDefault
-        , map
-        , map2
-        , map3
-        , map4
-        , map5
-        , andThen
-        , toMaybe
-        , fromMaybe
-        , mapError
-        )
+module Result exposing
+  ( Result(..)
+  , withDefault
+  , map, map2, map3, map4, map5
+  , andThen
+  , toMaybe, fromMaybe, mapError
+  )
 
 {-| A `Result` is the result of a computation that may fail. This is a great
 way to manage errors in Elm.
@@ -29,7 +22,7 @@ way to manage errors in Elm.
 @docs withDefault, toMaybe, fromMaybe, mapError
 -}
 
-import Maybe exposing (Maybe(Just, Nothing))
+import Maybe exposing ( Maybe(Just, Nothing) )
 
 
 {-| A `Result` is either `Ok` meaning the computation succeeded, or it is an
@@ -48,12 +41,12 @@ return a given default value. The following examples try to parse integers.
 -}
 withDefault : a -> Result x a -> a
 withDefault def result =
-    case result of
-        Ok a ->
-            a
+  case result of
+    Ok a ->
+        a
 
-        Err _ ->
-            def
+    Err _ ->
+        def
 
 
 {-| Apply a function to a result. If the result is `Ok`, it will be converted.
@@ -65,11 +58,8 @@ If the result is an `Err`, the same error value will propagate through.
 map : (a -> value) -> Result x a -> Result x value
 map func ra =
     case ra of
-        Ok a ->
-            Ok (func a)
-
-        Err e ->
-            Err e
+      Ok a -> Ok (func a)
+      Err e -> Err e
 
 
 {-| Apply a function to two results, if both results are `Ok`. If not,
@@ -81,75 +71,43 @@ the first argument which is an `Err` will propagate through.
 -}
 map2 : (a -> b -> value) -> Result x a -> Result x b -> Result x value
 map2 func ra rb =
-    case ( ra, rb ) of
-        ( Ok a, Ok b ) ->
-            Ok (func a b)
-
-        ( Err x, _ ) ->
-            Err x
-
-        ( _, Err x ) ->
-            Err x
+    case (ra,rb) of
+      (Ok a, Ok b) -> Ok (func a b)
+      (Err x, _) -> Err x
+      (_, Err x) -> Err x
 
 
-{-| -}
+{-|-}
 map3 : (a -> b -> c -> value) -> Result x a -> Result x b -> Result x c -> Result x value
 map3 func ra rb rc =
-    case ( ra, rb, rc ) of
-        ( Ok a, Ok b, Ok c ) ->
-            Ok (func a b c)
-
-        ( Err x, _, _ ) ->
-            Err x
-
-        ( _, Err x, _ ) ->
-            Err x
-
-        ( _, _, Err x ) ->
-            Err x
+    case (ra,rb,rc) of
+      (Ok a, Ok b, Ok c) -> Ok (func a b c)
+      (Err x, _, _) -> Err x
+      (_, Err x, _) -> Err x
+      (_, _, Err x) -> Err x
 
 
-{-| -}
+{-|-}
 map4 : (a -> b -> c -> d -> value) -> Result x a -> Result x b -> Result x c -> Result x d -> Result x value
 map4 func ra rb rc rd =
-    case ( ra, rb, rc, rd ) of
-        ( Ok a, Ok b, Ok c, Ok d ) ->
-            Ok (func a b c d)
-
-        ( Err x, _, _, _ ) ->
-            Err x
-
-        ( _, Err x, _, _ ) ->
-            Err x
-
-        ( _, _, Err x, _ ) ->
-            Err x
-
-        ( _, _, _, Err x ) ->
-            Err x
+    case (ra,rb,rc,rd) of
+      (Ok a, Ok b, Ok c, Ok d) -> Ok (func a b c d)
+      (Err x, _, _, _) -> Err x
+      (_, Err x, _, _) -> Err x
+      (_, _, Err x, _) -> Err x
+      (_, _, _, Err x) -> Err x
 
 
-{-| -}
+{-|-}
 map5 : (a -> b -> c -> d -> e -> value) -> Result x a -> Result x b -> Result x c -> Result x d -> Result x e -> Result x value
 map5 func ra rb rc rd re =
-    case ( ra, rb, rc, rd, re ) of
-        ( Ok a, Ok b, Ok c, Ok d, Ok e ) ->
-            Ok (func a b c d e)
-
-        ( Err x, _, _, _, _ ) ->
-            Err x
-
-        ( _, Err x, _, _, _ ) ->
-            Err x
-
-        ( _, _, Err x, _, _ ) ->
-            Err x
-
-        ( _, _, _, Err x, _ ) ->
-            Err x
-
-        ( _, _, _, _, Err x ) ->
-            Err x
+    case (ra,rb,rc,rd,re) of
+      (Ok a, Ok b, Ok c, Ok d, Ok e) -> Ok (func a b c d e)
+      (Err x, _, _, _, _) -> Err x
+      (_, Err x, _, _, _) -> Err x
+      (_, _, Err x, _, _) -> Err x
+      (_, _, _, Err x, _) -> Err x
+      (_, _, _, _, Err x) -> Err x
 
 
 {-| Chain together a sequence of computations that may fail. It is helpful
@@ -189,11 +147,11 @@ code.
 andThen : (a -> Result x b) -> Result x a -> Result x b
 andThen callback result =
     case result of
-        Ok value ->
-            callback value
+      Ok value ->
+        callback value
 
-        Err msg ->
-            Err msg
+      Err msg ->
+        Err msg
 
 
 {-| Transform an `Err` value. For example, say the errors we get have too much
@@ -213,11 +171,11 @@ information:
 mapError : (x -> y) -> Result x a -> Result y a
 mapError f result =
     case result of
-        Ok v ->
-            Ok v
+      Ok v ->
+        Ok v
 
-        Err e ->
-            Err (f e)
+      Err e ->
+        Err (f e)
 
 
 {-| Convert to a simpler `Maybe` if the actual error message is not needed or
@@ -232,11 +190,8 @@ you need to interact with some code that primarily uses maybes.
 toMaybe : Result x a -> Maybe a
 toMaybe result =
     case result of
-        Ok v ->
-            Just v
-
-        Err _ ->
-            Nothing
+      Ok  v -> Just v
+      Err _ -> Nothing
 
 
 {-| Convert from a simple `Maybe` to interact with some code that primarily
@@ -251,8 +206,5 @@ uses `Results`.
 fromMaybe : x -> Maybe a -> Result x a
 fromMaybe err maybe =
     case maybe of
-        Just v ->
-            Ok v
-
-        Nothing ->
-            Err err
+      Just v  -> Ok v
+      Nothing -> Err err

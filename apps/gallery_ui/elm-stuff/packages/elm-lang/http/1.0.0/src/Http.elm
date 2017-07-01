@@ -1,30 +1,13 @@
-module Http
-    exposing
-        ( Request
-        , send
-        , Error(..)
-        , getString
-        , get
-        , post
-        , request
-        , Header
-        , header
-        , Body
-        , emptyBody
-        , jsonBody
-        , stringBody
-        , multipartBody
-        , Part
-        , stringPart
-        , Expect
-        , expectString
-        , expectJson
-        , expectStringResponse
-        , Response
-        , encodeUri
-        , decodeUri
-        , toTask
-        )
+module Http exposing
+  ( Request, send, Error(..)
+  , getString, get
+  , post
+  , request
+  , Header, header
+  , Body, emptyBody, jsonBody, stringBody, multipartBody, Part, stringPart
+  , Expect, expectString, expectJson, expectStringResponse, Response
+  , encodeUri, decodeUri, toTask
+  )
 
 {-| Create and send HTTP requests.
 
@@ -66,13 +49,14 @@ import Task exposing (Task)
 import Time exposing (Time)
 
 
+
 -- REQUESTS
 
 
 {-| Describes an HTTP request.
 -}
 type alias Request a =
-    Http.Internal.Request a
+  Http.Internal.Request a
 
 
 {-| Send a `Request`. We could get the text of “War and Peace” like this:
@@ -100,7 +84,7 @@ type alias Request a =
 -}
 send : (Result Error a -> msg) -> Request a -> Cmd msg
 send resultToMessage request =
-    Task.attempt resultToMessage (toTask request)
+  Task.attempt resultToMessage (toTask request)
 
 
 {-| Convert a `Request` into a `Task`. This is only really useful if you want
@@ -108,7 +92,7 @@ to chain together a bunch of requests (or any other tasks) in a single command.
 -}
 toTask : Request a -> Task Error a
 toTask (Http.Internal.Request request) =
-    Native.Http.toTask request Nothing
+  Native.Http.toTask request Nothing
 
 
 {-| A `Request` can fail in a couple ways:
@@ -126,11 +110,11 @@ toTask (Http.Internal.Request request) =
 [sc]: https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 -}
 type Error
-    = BadUrl String
-    | Timeout
-    | NetworkError
-    | BadStatus (Response String)
-    | BadPayload String (Response String)
+  = BadUrl String
+  | Timeout
+  | NetworkError
+  | BadStatus (Response String)
+  | BadPayload String (Response String)
 
 
 
@@ -147,15 +131,15 @@ type Error
 -}
 getString : String -> Request String
 getString url =
-    request
-        { method = "GET"
-        , headers = []
-        , url = url
-        , body = emptyBody
-        , expect = expectString
-        , timeout = Nothing
-        , withCredentials = False
-        }
+  request
+    { method = "GET"
+    , headers = []
+    , url = url
+    , body = emptyBody
+    , expect = expectString
+    , timeout = Nothing
+    , withCredentials = False
+    }
 
 
 {-| Create a `GET` request and try to decode the response body from JSON to
@@ -174,15 +158,15 @@ You can learn more about how JSON decoders work [here][] in the guide.
 -}
 get : String -> Decode.Decoder a -> Request a
 get url decoder =
-    request
-        { method = "GET"
-        , headers = []
-        , url = url
-        , body = emptyBody
-        , expect = expectJson decoder
-        , timeout = Nothing
-        , withCredentials = False
-        }
+  request
+    { method = "GET"
+    , headers = []
+    , url = url
+    , body = emptyBody
+    , expect = expectJson decoder
+    , timeout = Nothing
+    , withCredentials = False
+    }
 
 
 
@@ -209,15 +193,15 @@ JSON decoders.
 -}
 post : String -> Body -> Decode.Decoder a -> Request a
 post url body decoder =
-    request
-        { method = "POST"
-        , headers = []
-        , url = url
-        , body = body
-        , expect = expectJson decoder
-        , timeout = Nothing
-        , withCredentials = False
-        }
+  request
+    { method = "POST"
+    , headers = []
+    , url = url
+    , body = body
+    , expect = expectJson decoder
+    , timeout = Nothing
+    , withCredentials = False
+    }
 
 
 
@@ -239,8 +223,8 @@ this:
         , withCredentials = False
         }
 -}
-request :
-    { method : String
+request
+  : { method : String
     , headers : List Header
     , url : String
     , body : Body
@@ -248,9 +232,9 @@ request :
     , timeout : Maybe Time
     , withCredentials : Bool
     }
-    -> Request a
+  -> Request a
 request =
-    Http.Internal.Request
+  Http.Internal.Request
 
 
 
@@ -262,8 +246,7 @@ request =
 
 [here]: https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
 -}
-type alias Header =
-    Http.Internal.Header
+type alias Header = Http.Internal.Header
 
 
 {-| Create a `Header`.
@@ -281,7 +264,7 @@ why you need it.
 -}
 header : String -> String -> Header
 header =
-    Http.Internal.Header
+  Http.Internal.Header
 
 
 
@@ -290,8 +273,7 @@ header =
 
 {-| Represents the body of a `Request`.
 -}
-type alias Body =
-    Http.Internal.Body
+type alias Body = Http.Internal.Body
 
 
 {-| Create an empty body for your `Request`. This is useful for GET requests
@@ -299,7 +281,7 @@ and POST requests where you are not sending any data.
 -}
 emptyBody : Body
 emptyBody =
-    Http.Internal.EmptyBody
+  Http.Internal.EmptyBody
 
 
 {-| Put some JSON value in the body of your `Request`. This will automatically
@@ -307,7 +289,7 @@ add the `Content-Type: application/json` header.
 -}
 jsonBody : Encode.Value -> Body
 jsonBody value =
-    Http.Internal.StringBody "application/json" (Encode.encode 0 value)
+  Http.Internal.StringBody "application/json" (Encode.encode 0 value)
 
 
 {-| Put some string in the body of your `Request`. Defining `jsonBody` looks
@@ -327,7 +309,7 @@ MIME type matches your data. Some servers are strict about this!
 -}
 stringBody : String -> String -> Body
 stringBody =
-    Http.Internal.StringBody
+  Http.Internal.StringBody
 
 
 {-| Create multi-part bodies for your `Request`, automatically adding the
@@ -335,14 +317,14 @@ stringBody =
 -}
 multipartBody : List Part -> Body
 multipartBody =
-    Native.Http.multipart
+  Native.Http.multipart
 
 
 {-| Contents of a multi-part body. Right now it only supports strings, but we
 will support blobs and files when we get an API for them in Elm.
 -}
 type Part
-    = StringPart String String
+  = StringPart String String
 
 
 {-| A named chunk of string data.
@@ -355,7 +337,7 @@ type Part
 -}
 stringPart : String -> String -> Part
 stringPart =
-    StringPart
+  StringPart
 
 
 
@@ -365,14 +347,14 @@ stringPart =
 {-| Logic for interpreting a response body.
 -}
 type alias Expect a =
-    Http.Internal.Expect a
+  Http.Internal.Expect a
 
 
 {-| Expect the response body to be a `String`.
 -}
 expectString : Expect String
 expectString =
-    expectStringResponse (\response -> Ok response.body)
+  expectStringResponse (\response -> Ok response.body)
 
 
 {-| Expect the response body to be JSON. You provide a `Decoder` to turn that
@@ -381,7 +363,7 @@ does not match the decoder, the request will resolve to a `BadPayload` error.
 -}
 expectJson : Decode.Decoder a -> Expect a
 expectJson decoder =
-    expectStringResponse (\response -> Decode.decodeString decoder response.body)
+  expectStringResponse (\response -> Decode.decodeString decoder response.body)
 
 
 {-| Maybe you want the whole `Response`: status code, headers, body, etc. This
@@ -390,7 +372,7 @@ lets you get all of that information. From there you can use functions like
 -}
 expectStringResponse : (Response String -> Result String a) -> Expect a
 expectStringResponse =
-    Native.Http.expectStringResponse
+  Native.Http.expectStringResponse
 
 
 {-| The response from a `Request`.
@@ -414,7 +396,7 @@ It work just like `encodeURIComponent` in JavaScript.
 -}
 encodeUri : String -> String
 encodeUri =
-    Native.Http.encodeUri
+  Native.Http.encodeUri
 
 
 {-| Use this to unescape query parameters. It converts things like `%2F` to
@@ -425,4 +407,5 @@ It works just like `decodeURIComponent` in JavaScript.
 -}
 decodeUri : String -> Maybe String
 decodeUri =
-    Native.Http.decodeUri
+  Native.Http.decodeUri
+

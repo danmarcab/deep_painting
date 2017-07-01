@@ -1,44 +1,14 @@
-module List
-    exposing
-        ( isEmpty
-        , length
-        , reverse
-        , member
-        , head
-        , tail
-        , filter
-        , take
-        , drop
-        , singleton
-        , repeat
-        , range
-        , (::)
-        , append
-        , concat
-        , intersperse
-        , partition
-        , unzip
-        , map
-        , map2
-        , map3
-        , map4
-        , map5
-        , filterMap
-        , concatMap
-        , indexedMap
-        , foldr
-        , foldl
-        , sum
-        , product
-        , maximum
-        , minimum
-        , all
-        , any
-        , scanl
-        , sort
-        , sortBy
-        , sortWith
-        )
+module List exposing
+  ( isEmpty, length, reverse, member
+  , head, tail, filter, take, drop
+  , singleton, repeat, range, (::), append, concat, intersperse
+  , partition, unzip
+  , map, map2, map3, map4, map5
+  , filterMap, concatMap, indexedMap
+  , foldr, foldl
+  , sum, product, maximum, minimum, all, any, scanl
+  , sort, sortBy, sortWith
+  )
 
 {-| A library for manipulating lists of values. Every value in a
 list must have the same type.
@@ -79,7 +49,7 @@ The current sentiment is that it is already quite error prone once you get to
 
 import Basics exposing (..)
 import Maybe
-import Maybe exposing (Maybe(Just, Nothing))
+import Maybe exposing ( Maybe(Just,Nothing) )
 import Native.List
 
 
@@ -90,7 +60,9 @@ import Native.List
 -}
 (::) : a -> List a -> List a
 (::) =
-    Native.List.cons
+  Native.List.cons
+
+
 infixr 5 ::
 
 
@@ -101,12 +73,12 @@ infixr 5 ::
 -}
 head : List a -> Maybe a
 head list =
-    case list of
-        x :: xs ->
-            Just x
+  case list of
+    x :: xs ->
+      Just x
 
-        [] ->
-            Nothing
+    [] ->
+      Nothing
 
 
 {-| Extract the rest of the list.
@@ -116,12 +88,12 @@ head list =
 -}
 tail : List a -> Maybe (List a)
 tail list =
-    case list of
-        x :: xs ->
-            Just xs
+  case list of
+    x :: xs ->
+      Just xs
 
-        [] ->
-            Nothing
+    [] ->
+      Nothing
 
 
 {-| Determine if a list is empty.
@@ -130,12 +102,12 @@ tail list =
 -}
 isEmpty : List a -> Bool
 isEmpty xs =
-    case xs of
-        [] ->
-            True
+  case xs of
+    [] ->
+      True
 
-        _ ->
-            False
+    _ ->
+      False
 
 
 {-| Figure out whether a list contains a value.
@@ -145,7 +117,7 @@ isEmpty xs =
 -}
 member : a -> List a -> Bool
 member x xs =
-    any (\a -> a == x) xs
+  any (\a -> a == x) xs
 
 
 {-| Apply a function to every element of a list.
@@ -156,7 +128,7 @@ member x xs =
 -}
 map : (a -> b) -> List a -> List b
 map f xs =
-    foldr (\x acc -> f x :: acc) [] xs
+  foldr (\x acc -> f x :: acc) [] xs
 
 
 {-| Same as `map` but the function is also applied to the index of each
@@ -166,7 +138,7 @@ element (starting at zero).
 -}
 indexedMap : (Int -> a -> b) -> List a -> List b
 indexedMap f xs =
-    map2 f (range 0 (length xs - 1)) xs
+  map2 f (range 0 (length xs - 1)) xs
 
 
 {-| Reduce a list from the left.
@@ -175,12 +147,12 @@ indexedMap f xs =
 -}
 foldl : (a -> b -> b) -> b -> List a -> b
 foldl func acc list =
-    case list of
-        [] ->
-            acc
+  case list of
+    [] ->
+      acc
 
-        x :: xs ->
-            foldl func (func x acc) xs
+    x :: xs ->
+      foldl func (func x acc) xs
 
 
 {-| Reduce a list from the right.
@@ -189,7 +161,7 @@ foldl func acc list =
 -}
 foldr : (a -> b -> b) -> b -> List a -> b
 foldr =
-    Native.List.foldr
+  Native.List.foldr
 
 
 {-| Reduce a list from the left, building up all of the intermediate results into a list.
@@ -198,18 +170,16 @@ foldr =
 -}
 scanl : (a -> b -> b) -> b -> List a -> List b
 scanl f b xs =
-    let
-        scan1 x accAcc =
-            case accAcc of
-                acc :: _ ->
-                    f x acc :: accAcc
+  let
+    scan1 x accAcc =
+      case accAcc of
+        acc :: _ ->
+          f x acc :: accAcc
 
-                [] ->
-                    []
-
-        -- impossible
-    in
-        reverse (foldl scan1 [ b ] xs)
+        [] ->
+          [] -- impossible
+  in
+    reverse (foldl scan1 [b] xs)
 
 
 {-| Keep only elements that satisfy the predicate.
@@ -218,14 +188,15 @@ scanl f b xs =
 -}
 filter : (a -> Bool) -> List a -> List a
 filter pred xs =
-    let
-        conditionalCons front back =
-            if pred front then
-                front :: back
-            else
-                back
-    in
-        foldr conditionalCons [] xs
+  let
+    conditionalCons front back =
+      if pred front then
+        front :: back
+
+      else
+        back
+  in
+    foldr conditionalCons [] xs
 
 
 {-| Apply a function that may succeed to all values in the list, but only keep
@@ -244,17 +215,17 @@ the successes.
 -}
 filterMap : (a -> Maybe b) -> List a -> List b
 filterMap f xs =
-    foldr (maybeCons f) [] xs
+  foldr (maybeCons f) [] xs
 
 
 maybeCons : (a -> Maybe b) -> a -> List b -> List b
 maybeCons f mx xs =
-    case f mx of
-        Just x ->
-            x :: xs
+  case f mx of
+    Just x ->
+      x :: xs
 
-        Nothing ->
-            xs
+    Nothing ->
+      xs
 
 
 {-| Determine the length of a list.
@@ -263,7 +234,7 @@ maybeCons f mx xs =
 -}
 length : List a -> Int
 length xs =
-    foldl (\_ i -> i + 1) 0 xs
+  foldl (\_ i -> i + 1) 0 xs
 
 
 {-| Reverse a list.
@@ -272,7 +243,7 @@ length xs =
 -}
 reverse : List a -> List a
 reverse list =
-    foldl (::) [] list
+  foldl (::) [] list
 
 
 {-| Determine if all elements satisfy the predicate.
@@ -283,7 +254,7 @@ reverse list =
 -}
 all : (a -> Bool) -> List a -> Bool
 all isOkay list =
-    not (any (not << isOkay) list)
+  not (any (not << isOkay) list)
 
 
 {-| Determine if any elements satisfy the predicate.
@@ -294,16 +265,17 @@ all isOkay list =
 -}
 any : (a -> Bool) -> List a -> Bool
 any isOkay list =
-    case list of
-        [] ->
-            False
+  case list of
+    [] ->
+      False
 
-        x :: xs ->
-            -- note: (isOkay x || any isOkay xs) would not get TCO
-            if isOkay x then
-                True
-            else
-                any isOkay xs
+    x :: xs ->
+      -- note: (isOkay x || any isOkay xs) would not get TCO
+      if isOkay x then
+        True
+
+      else
+        any isOkay xs
 
 
 {-| Put two lists together.
@@ -315,12 +287,12 @@ You can also use [the `(++)` operator](Basics#++) to append lists.
 -}
 append : List a -> List a -> List a
 append xs ys =
-    case ys of
-        [] ->
-            xs
+  case ys of
+    [] ->
+      xs
 
-        _ ->
-            foldr (::) ys xs
+    _ ->
+      foldr (::) ys xs
 
 
 {-| Concatenate a bunch of lists into a single list:
@@ -329,7 +301,7 @@ append xs ys =
 -}
 concat : List (List a) -> List a
 concat lists =
-    foldr append [] lists
+  foldr append [] lists
 
 
 {-| Map a given function onto a list and flatten the resulting lists.
@@ -338,7 +310,7 @@ concat lists =
 -}
 concatMap : (a -> List b) -> List a -> List b
 concatMap f list =
-    concat (map f list)
+  concat (map f list)
 
 
 {-| Get the sum of the list elements.
@@ -347,7 +319,7 @@ concatMap f list =
 -}
 sum : List number -> number
 sum numbers =
-    foldl (+) 0 numbers
+  foldl (+) 0 numbers
 
 
 {-| Get the product of the list elements.
@@ -356,7 +328,7 @@ sum numbers =
 -}
 product : List number -> number
 product numbers =
-    foldl (*) 1 numbers
+  foldl (*) 1 numbers
 
 
 {-| Find the maximum element in a non-empty list.
@@ -366,12 +338,12 @@ product numbers =
 -}
 maximum : List comparable -> Maybe comparable
 maximum list =
-    case list of
-        x :: xs ->
-            Just (foldl max x xs)
+  case list of
+    x :: xs ->
+      Just (foldl max x xs)
 
-        _ ->
-            Nothing
+    _ ->
+      Nothing
 
 
 {-| Find the minimum element in a non-empty list.
@@ -381,12 +353,12 @@ maximum list =
 -}
 minimum : List comparable -> Maybe comparable
 minimum list =
-    case list of
-        x :: xs ->
-            Just (foldl min x xs)
+  case list of
+    x :: xs ->
+      Just (foldl min x xs)
 
-        _ ->
-            Nothing
+    _ ->
+      Nothing
 
 
 {-| Partition a list based on a predicate. The first list contains all values
@@ -396,16 +368,17 @@ not.
     partition (\x -> x < 3) [0,1,2,3,4,5] == ([0,1,2], [3,4,5])
     partition isEven        [0,1,2,3,4,5] == ([0,2,4], [1,3,5])
 -}
-partition : (a -> Bool) -> List a -> ( List a, List a )
+partition : (a -> Bool) -> List a -> (List a, List a)
 partition pred list =
-    let
-        step x ( trues, falses ) =
-            if pred x then
-                ( x :: trues, falses )
-            else
-                ( trues, x :: falses )
-    in
-        foldr step ( [], [] ) list
+  let
+    step x (trues, falses) =
+      if pred x then
+        (x :: trues, falses)
+
+      else
+        (trues, x :: falses)
+  in
+    foldr step ([],[]) list
 
 
 {-| Combine two lists, combining them with the given function.
@@ -421,38 +394,38 @@ If one list is longer, the extra elements are dropped.
 -}
 map2 : (a -> b -> result) -> List a -> List b -> List result
 map2 =
-    Native.List.map2
+  Native.List.map2
 
 
-{-| -}
+{-|-}
 map3 : (a -> b -> c -> result) -> List a -> List b -> List c -> List result
 map3 =
-    Native.List.map3
+  Native.List.map3
 
 
-{-| -}
+{-|-}
 map4 : (a -> b -> c -> d -> result) -> List a -> List b -> List c -> List d -> List result
 map4 =
-    Native.List.map4
+  Native.List.map4
 
 
-{-| -}
+{-|-}
 map5 : (a -> b -> c -> d -> e -> result) -> List a -> List b -> List c -> List d -> List e -> List result
 map5 =
-    Native.List.map5
+  Native.List.map5
 
 
 {-| Decompose a list of tuples into a tuple of lists.
 
     unzip [(0, True), (17, False), (1337, True)] == ([0,17,1337], [True,False,True])
 -}
-unzip : List ( a, b ) -> ( List a, List b )
+unzip : List (a,b) -> (List a, List b)
 unzip pairs =
-    let
-        step ( x, y ) ( xs, ys ) =
-            ( x :: xs, y :: ys )
-    in
-        foldr step ( [], [] ) pairs
+  let
+    step (x,y) (xs,ys) =
+      (x :: xs, y :: ys)
+  in
+    foldr step ([], []) pairs
 
 
 {-| Places the given value between all members of the given list.
@@ -461,19 +434,19 @@ unzip pairs =
 -}
 intersperse : a -> List a -> List a
 intersperse sep xs =
-    case xs of
-        [] ->
-            []
+  case xs of
+    [] ->
+      []
 
-        hd :: tl ->
-            let
-                step x rest =
-                    sep :: x :: rest
+    hd :: tl ->
+      let
+        step x rest =
+          sep :: x :: rest
 
-                spersed =
-                    foldr step [] tl
-            in
-                hd :: spersed
+        spersed =
+          foldr step [] tl
+      in
+        hd :: spersed
 
 
 {-| Take the first *n* members of a list.
@@ -482,53 +455,52 @@ intersperse sep xs =
 -}
 take : Int -> List a -> List a
 take n list =
-    takeFast 0 n list
+  takeFast 0 n list
 
 
 takeFast : Int -> Int -> List a -> List a
 takeFast ctr n list =
-    if n <= 0 then
-        []
-    else
-        case ( n, list ) of
-            ( _, [] ) ->
-                list
+  if n <= 0 then
+    []
+  else
+    case ( n, list ) of
+      ( _, [] ) ->
+        list
 
-            ( 1, x :: _ ) ->
-                [ x ]
+      ( 1, x :: _ ) ->
+        [ x ]
 
-            ( 2, x :: y :: _ ) ->
-                [ x, y ]
+      ( 2, x :: y :: _ ) ->
+        [ x, y ]
 
-            ( 3, x :: y :: z :: _ ) ->
-                [ x, y, z ]
+      ( 3, x :: y :: z :: _ ) ->
+        [ x, y, z ]
 
-            ( _, x :: y :: z :: w :: tl ) ->
-                if ctr > 1000 then
-                    x :: y :: z :: w :: takeTailRec (n - 4) tl
-                else
-                    x :: y :: z :: w :: takeFast (ctr + 1) (n - 4) tl
+      ( _, x :: y :: z :: w :: tl ) ->
+        if ctr > 1000 then
+          x :: y :: z :: w :: takeTailRec (n - 4) tl
+        else
+          x :: y :: z :: w :: takeFast (ctr + 1) (n - 4) tl
 
-            _ ->
-                list
-
+      _ ->
+        list
 
 takeTailRec : Int -> List a -> List a
 takeTailRec n list =
-    reverse (takeReverse n list [])
+  reverse (takeReverse n list [])
 
 
 takeReverse : Int -> List a -> List a -> List a
 takeReverse n list taken =
-    if n <= 0 then
+  if n <= 0 then
+    taken
+  else
+    case list of
+      [] ->
         taken
-    else
-        case list of
-            [] ->
-                taken
 
-            x :: xs ->
-                takeReverse (n - 1) xs (x :: taken)
+      x :: xs ->
+        takeReverse (n - 1) xs (x :: taken)
 
 
 {-| Drop the first *n* members of a list.
@@ -537,15 +509,16 @@ takeReverse n list taken =
 -}
 drop : Int -> List a -> List a
 drop n list =
-    if n <= 0 then
-        list
-    else
-        case list of
-            [] ->
-                list
+  if n <= 0 then
+    list
 
-            x :: xs ->
-                drop (n - 1) xs
+  else
+    case list of
+      [] ->
+        list
+
+      x :: xs ->
+        drop (n-1) xs
 
 
 {-| Create a list with only one element:
@@ -555,7 +528,7 @@ drop n list =
 -}
 singleton : a -> List a
 singleton value =
-    [ value ]
+  [value]
 
 
 {-| Create a list with *n* copies of a value:
@@ -564,15 +537,16 @@ singleton value =
 -}
 repeat : Int -> a -> List a
 repeat n value =
-    repeatHelp [] n value
+  repeatHelp [] n value
 
 
 repeatHelp : List a -> Int -> a -> List a
 repeatHelp result n value =
-    if n <= 0 then
-        result
-    else
-        repeatHelp (value :: result) (n - 1) value
+  if n <= 0 then
+    result
+
+  else
+    repeatHelp (value :: result) (n-1) value
 
 
 {-| Create a list of numbers, every element increasing by one.
@@ -584,15 +558,16 @@ You give the lowest and highest number that should be in the list.
 -}
 range : Int -> Int -> List Int
 range lo hi =
-    rangeHelp lo hi []
+  rangeHelp lo hi []
 
 
 rangeHelp : Int -> Int -> List Int -> List Int
 rangeHelp lo hi list =
-    if lo <= hi then
-        rangeHelp lo (hi - 1) (hi :: list)
-    else
-        list
+  if lo <= hi then
+    rangeHelp lo (hi - 1) (hi :: list)
+
+  else
+    list
 
 
 {-| Sort values from lowest to highest
@@ -601,7 +576,7 @@ rangeHelp lo hi list =
 -}
 sort : List comparable -> List comparable
 sort xs =
-    sortBy identity xs
+  sortBy identity xs
 
 
 {-| Sort values by a derived property.
@@ -615,9 +590,9 @@ sort xs =
 
     sortBy String.length ["mouse","cat"] == ["cat","mouse"]
 -}
-sortBy : (a -> comparable) -> List a -> List a
+sortBy : (a -> comparable) ->  List a -> List a
 sortBy =
-    Native.List.sortBy
+  Native.List.sortBy
 
 
 {-| Sort values with a custom comparison function.
@@ -633,6 +608,6 @@ sortBy =
 This is also the most general sort function, allowing you
 to define any other: `sort == sortWith compare`
 -}
-sortWith : (a -> a -> Order) -> List a -> List a
+sortWith : (a -> a -> Order) ->  List a -> List a
 sortWith =
-    Native.List.sortWith
+  Native.List.sortWith

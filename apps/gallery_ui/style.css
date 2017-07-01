@@ -82,6 +82,11 @@ main {
     zoom: 8;
 }
 
+.source_preview img{
+    max-height: 160px;
+    max-width: 160px;
+}
+
 .framed{
     background-color: aliceblue;
     border: 1px solid dodgerblue;
