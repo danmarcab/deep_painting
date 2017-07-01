@@ -3,6 +3,7 @@ defmodule DeepPainting.Mixfile do
 
   def project do
     [apps_path: "apps",
+     apps: [:gallery, :studio],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps()]

@@ -1,0 +1,100 @@
+body {
+    font-family: Helvetica;
+    margin: auto;
+    width: 1024px;
+}
+
+header {
+    background-color: dodgerblue;
+    color: whitesmoke;
+    padding: 20px;
+}
+
+header .header-buttons a {
+    color: gray;
+    text-decoration: none;
+    float: right;
+    border: 1px solid gray;
+    background-color: aliceblue;
+    padding: 5px;
+    position: relative;
+    bottom: 20px;
+}
+
+.gallery-search {
+    float: right;
+    position: relative;
+    bottom: 25px;
+}
+
+main {
+    background-color: whitesmoke;
+    color: gray;
+    padding: 20px;
+}
+
+.gallery h2{
+    margin: auto 10px;
+}
+
+.clearfix {
+    clear: both;
+}
+
+.painting_preview {
+    width: 200px;
+    height: 200px;
+    margin: 20px;
+    float: left;
+}
+
+.painting_preview h4{
+    margin: 5px;
+}
+
+.painting_preview img{
+    max-height: 160px;
+    max-width: 160px;
+}
+
+.details-settings{
+    float: left;
+    width: 242px;
+    height: 460px;
+}
+
+.details-source{
+    float: left;
+    margin: 0 20px;
+    width: 200px;
+    height: 460px;
+}
+
+.details-result{
+    float: left;
+    width: 496px;
+    height: 460px;
+}
+
+.details-result img{
+    max-height: 90%;
+    max-width: 100%;
+    zoom: 8;
+}
+
+.framed{
+    background-color: aliceblue;
+    border: 1px solid dodgerblue;
+    text-align: center;
+}
+
+.framed h4{
+    margin: 5px;
+    text-align: center;
+}
+
+footer {
+    background-color: dodgerblue;
+    color: whitesmoke;
+    padding: 20px;
+}

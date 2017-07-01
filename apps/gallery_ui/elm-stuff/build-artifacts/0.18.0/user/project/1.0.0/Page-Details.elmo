@@ -1,0 +1,314 @@
+var _user$project$Page_Details$resultView = function (_p0) {
+	var _p1 = _p0;
+	var _p4 = _p1._0.painting;
+	var index = function () {
+		var _p2 = _p1._0.resultFrame;
+		if (_p2.ctor === 'Last') {
+			return _elm_lang$core$List$length(_p4.iterations);
+		} else {
+			return _p2._0;
+		}
+	}();
+	var maybeIteration = function (idx) {
+		return _elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, idx - 1, _p4.iterations));
+	};
+	var _p3 = maybeIteration(index);
+	if (_p3.ctor === 'Just') {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('details-result framed'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h4,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('result'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$img,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$src(_p3._0.path),
+							_1: {ctor: '[]'}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				}
+			});
+	} else {
+		return _elm_lang$html$Html$text('Nothing to show yet.');
+	}
+};
+var _user$project$Page_Details$editableSourcesView = function (painting) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('content'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$img,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src(painting.contentPath),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h4,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('style'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$img,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Page_Details$readOnlySourcesView = function (painting) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('content'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$img,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$src(painting.contentPath),
+						_1: {ctor: '[]'}
+					},
+					{ctor: '[]'}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$h4,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('style'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$img,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Page_Details$sourcesView = function (_p5) {
+	var _p6 = _p5;
+	var _p8 = _p6._0.painting;
+	var view = function () {
+		var _p7 = _p8.status;
+		switch (_p7.ctor) {
+			case 'New':
+				return _user$project$Page_Details$editableSourcesView(_p8);
+			case 'InProgress':
+				return _user$project$Page_Details$readOnlySourcesView(_p8);
+			default:
+				return _user$project$Page_Details$readOnlySourcesView(_p8);
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('details-source framed'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: view,
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Page_Details$readOnlySettingsView = function (settings) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$li,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'iterations: ',
+							_elm_lang$core$Basics$toString(settings.iterations))),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Page_Details$editableSettingsView = function (settings) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$li,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'iterations: ',
+							_elm_lang$core$Basics$toString(settings.iterations))),
+					_1: {ctor: '[]'}
+				}),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Page_Details$settingsView = function (_p9) {
+	var _p10 = _p9;
+	var _p12 = _p10._0.painting;
+	var view = function () {
+		var _p11 = _p12.status;
+		switch (_p11.ctor) {
+			case 'New':
+				return _user$project$Page_Details$editableSettingsView(_p12.settings);
+			case 'InProgress':
+				return _user$project$Page_Details$readOnlySettingsView(_p12.settings);
+			default:
+				return _user$project$Page_Details$readOnlySettingsView(_p12.settings);
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('details-settings framed'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('settings'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: view,
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Page_Details$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _user$project$Page_Details$settingsView(model),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Page_Details$sourcesView(model),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Page_Details$resultView(model),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('clearfix'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _user$project$Page_Details$update = F2(
+	function (msg, model) {
+		var _p13 = msg;
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Page_Details$Model = function (a) {
+	return {ctor: 'Model', _0: a};
+};
+var _user$project$Page_Details$Last = {ctor: 'Last'};
+var _user$project$Page_Details$init = function (name) {
+	return _elm_lang$core$Task$succeed(
+		_user$project$Page_Details$Model(
+			{
+				painting: _user$project$Data_Painting$initialPainting(name),
+				resultFrame: _user$project$Page_Details$Last
+			}));
+};
+var _user$project$Page_Details$decoder = _elm_lang$core$Json_Decode$succeed(
+	_user$project$Page_Details$Model(
+		{
+			painting: _user$project$Data_Painting$initialPainting('name'),
+			resultFrame: _user$project$Page_Details$Last
+		}));
+var _user$project$Page_Details$Exactly = function (a) {
+	return {ctor: 'Exactly', _0: a};
+};
+var _user$project$Page_Details$None = {ctor: 'None'};

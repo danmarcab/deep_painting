@@ -1,0 +1,215 @@
+var _user$project$Page_Gallery$paintingView = function (painting) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('painting_preview framed'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h4,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(painting.name),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _user$project$Route$href(
+							_user$project$Route$Details(painting.name)),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$img,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$src(painting.stylePath),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Page_Gallery$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		if (_p0.ctor === 'Search') {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{filter: _p0._0}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		} else {
+			return {
+				ctor: '_Tuple2',
+				_0: _elm_lang$core$Native_Utils.update(
+					model,
+					{filter: ''}),
+				_1: _elm_lang$core$Platform_Cmd$none
+			};
+		}
+	});
+var _user$project$Page_Gallery$decoder = _elm_lang$core$Json_Decode$succeed(
+	{
+		paintings: {ctor: '[]'},
+		filter: ''
+	});
+var _user$project$Page_Gallery$init = _elm_lang$core$Task$succeed(
+	{
+		paintings: {
+			ctor: '::',
+			_0: _user$project$Data_Painting$initialPainting('p1'),
+			_1: {
+				ctor: '::',
+				_0: _user$project$Data_Painting$initialPainting('p2'),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Data_Painting$initialPainting('p3'),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Data_Painting$initialPainting('p4'),
+						_1: {
+							ctor: '::',
+							_0: _user$project$Data_Painting$initialPainting('p5'),
+							_1: {
+								ctor: '::',
+								_0: _user$project$Data_Painting$initialPainting('p6'),
+								_1: {
+									ctor: '::',
+									_0: _user$project$Data_Painting$initialPainting('p7'),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		filter: ''
+	});
+var _user$project$Page_Gallery$Model = F2(
+	function (a, b) {
+		return {paintings: a, filter: b};
+	});
+var _user$project$Page_Gallery$ClearSearch = {ctor: 'ClearSearch'};
+var _user$project$Page_Gallery$Search = function (a) {
+	return {ctor: 'Search', _0: a};
+};
+var _user$project$Page_Gallery$searchView = function (filter) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('gallery-search'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$input,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$value(filter),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(_user$project$Page_Gallery$Search),
+						_1: {ctor: '[]'}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$a,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Page_Gallery$ClearSearch),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Clear'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Page_Gallery$view = function (model) {
+	var filter = function (p) {
+		return A2(_elm_lang$core$String$contains, model.filter, p.name) ? _elm_lang$core$Maybe$Just(p) : _elm_lang$core$Maybe$Nothing;
+	};
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('gallery'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h2,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Gallery'),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Page_Gallery$searchView(model.filter),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$div,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$class('clearfix'),
+								_1: {ctor: '[]'}
+							},
+							{ctor: '[]'}),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$List$filterMap,
+					function (_p1) {
+						return A2(
+							_elm_lang$core$Maybe$map,
+							_user$project$Page_Gallery$paintingView,
+							filter(_p1));
+					},
+					model.paintings),
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$div,
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class('clearfix'),
+							_1: {ctor: '[]'}
+						},
+						{ctor: '[]'}),
+					_1: {ctor: '[]'}
+				})));
+};

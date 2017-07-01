@@ -1,0 +1,74 @@
+var _user$project$Views_Page$viewFooter = A2(
+	_elm_lang$html$Html$footer,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('Daniel Marin Cabillas - 2017'),
+		_1: {ctor: '[]'}
+	});
+var _user$project$Views_Page$viewContent = function (content) {
+	return A2(
+		_elm_lang$html$Html$main_,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: content,
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Views_Page$viewHeader = function (buttons) {
+	return A2(
+		_elm_lang$html$Html$header,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h1,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('Deep Painting'),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('header-buttons'),
+						_1: {ctor: '[]'}
+					},
+					buttons),
+				_1: {ctor: '[]'}
+			}
+		});
+};
+var _user$project$Views_Page$frame = F3(
+	function (isLoading, headerButtons, content) {
+		return A2(
+			_elm_lang$html$Html$div,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$classList(
+					{
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'page-loading', _1: isLoading},
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: _user$project$Views_Page$viewHeader(headerButtons),
+				_1: {
+					ctor: '::',
+					_0: _user$project$Views_Page$viewContent(content),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Views_Page$viewFooter,
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});

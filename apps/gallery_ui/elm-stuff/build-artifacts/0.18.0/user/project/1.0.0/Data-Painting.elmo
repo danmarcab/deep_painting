@@ -1,0 +1,28 @@
+var _user$project$Data_Painting$Painting = F6(
+	function (a, b, c, d, e, f) {
+		return {name: a, status: b, contentPath: c, stylePath: d, settings: e, iterations: f};
+	});
+var _user$project$Data_Painting$Settings = function (a) {
+	return {iterations: a};
+};
+var _user$project$Data_Painting$Iteration = F2(
+	function (a, b) {
+		return {path: a, loss: b};
+	});
+var _user$project$Data_Painting$Done = {ctor: 'Done'};
+var _user$project$Data_Painting$InProgress = {ctor: 'InProgress'};
+var _user$project$Data_Painting$New = {ctor: 'New'};
+var _user$project$Data_Painting$initialPainting = function (name) {
+	return {
+		name: name,
+		status: _user$project$Data_Painting$New,
+		contentPath: 'http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg',
+		stylePath: 'http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg',
+		settings: {iterations: 5},
+		iterations: {
+			ctor: '::',
+			_0: {path: 'http://is2.mzstatic.com/image/thumb/Purple111/v4/c1/f1/a3/c1f1a320-189a-46a3-e4a0-47d895630d2d/source/175x175bb.jpg', loss: 0.1},
+			_1: {ctor: '[]'}
+		}
+	};
+};
