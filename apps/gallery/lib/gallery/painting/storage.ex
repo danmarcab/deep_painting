@@ -5,9 +5,19 @@ defmodule Gallery.Painting.Storage do
   alias Gallery.Painting
 
   @doc """
-  Starts storage
+  Returns if need to be supervised (process) or not (ets, dets...)
+  """
+  @callback supervise?() :: boolean
+
+  @doc """
+  Starts storage and link
   """
   @callback start_link() :: Supervisor.on_start()
+
+  @doc """
+  Starts storage
+  """
+  @callback start() :: :ok | :error
 
   @doc """
   Finds a return a painting by name.
@@ -29,4 +39,6 @@ defmodule Gallery.Painting.Storage do
   Save a painting in the storage. If a painting with the same name exists, it will update it.
   """
   @callback save(Painting.t) :: :ok | {:error, atom}
+
+  @optional_callbacks start_link: 0, start: 0
 end

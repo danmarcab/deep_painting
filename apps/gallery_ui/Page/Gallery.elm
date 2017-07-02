@@ -20,10 +20,14 @@ import Phoenix.Channel as Channel exposing (Channel)
 
 type Model
     = Loading
-    | Loaded
-        { paintings : Dict String Painting
-        , filter : String
-        }
+    | Loaded LoadedModel
+
+
+type alias LoadedModel =
+    { paintings : Dict String Painting
+    , filter : String
+    , newName : String
+    }
 
 
 init : Task PageLoadError Model
@@ -38,6 +42,7 @@ init =
 type Msg
     = Search String
     | ClearSearch
+    | UpdateNewName String
     | InitGallery Json.Decode.Value
     | UpdatePainting Json.Decode.Value
 
@@ -50,7 +55,7 @@ update msg model =
                 InitGallery json ->
                     case Json.Decode.decodeValue (Json.Decode.dict Painting.decoder) json of
                         Ok paintings ->
-                            ( Loaded { paintings = paintings, filter = "" }, Cmd.none )
+                            ( Loaded { paintings = paintings, filter = "", newName = "" }, Cmd.none )
 
                         Err err ->
                             let
@@ -66,6 +71,9 @@ update msg model =
             case msg of
                 Search string ->
                     ( Loaded { model | filter = string }, Cmd.none )
+
+                UpdateNewName string ->
+                    ( Loaded { model | newName = string }, Cmd.none )
 
                 ClearSearch ->
                     ( Loaded { model | filter = "" }, Cmd.none )
@@ -132,6 +140,7 @@ view model =
 
                 Loaded loaded ->
                     [ searchView loaded.filter
+                    , createView loaded
                     , div [ class "clearfix" ] []
                     ]
                         ++ (List.filterMap (filter loaded.filter >> Maybe.map paintingView) <| Dict.values loaded.paintings)
@@ -164,3 +173,29 @@ paintingView painting =
 defaultImg : String
 defaultImg =
     "not found"
+
+
+createView : LoadedModel -> Html Msg
+createView loaded =
+    let
+        alreadyThere =
+            Dict.member loaded.newName loaded.paintings
+
+        valid =
+            not (String.isEmpty loaded.newName)
+
+        content =
+            case ( alreadyThere, valid ) of
+                ( True, _ ) ->
+                    text "Name already taken"
+
+                ( False, False ) ->
+                    text "Enter a name to create a new painting"
+
+                ( False, True ) ->
+                    a [ Route.href (Route.Details loaded.newName) ] [ text "Create" ]
+    in
+        div []
+            [ input [ onInput UpdateNewName, value loaded.newName ] []
+            , content
+            ]

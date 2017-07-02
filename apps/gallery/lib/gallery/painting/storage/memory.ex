@@ -3,6 +3,10 @@ defmodule Gallery.Painting.Storage.Memory do
 
   @behaviour Gallery.Painting.Storage
 
+  def supervise?() do
+    true
+  end
+
   def start_link() do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end

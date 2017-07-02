@@ -173,13 +173,14 @@ view model =
                     [ H.p [] [ text "loading......" ] ]
 
                 Loaded loadedModel ->
-                    [ settingsView loadedModel
+                    [ H.h2 [] [ text loadedModel.painting.name ]
+                    , settingsView loadedModel
                     , sourcesView loadedModel
                     , resultView loadedModel
                     , div [ class "clearfix" ] []
                     ]
     in
-        div [] content
+        div [ class "details" ] content
 
 
 settingsView : LoadedModel -> Html Msg
