@@ -1,4 +1,4 @@
-defmodule Studio.Painting do
+defmodule Gallery.Painting do
   @moduledoc """
   Module to create and manipulate Paintings. A painting has a status that can be:
 
@@ -26,8 +26,8 @@ defmodule Studio.Painting do
 
   """
 
-  alias Studio.Painting.Settings
-  alias Studio.Painting.Iteration
+  alias Gallery.Painting.Settings
+  alias Gallery.Painting.Iteration
 
   defstruct name: nil, content: nil, style: nil, settings: nil, status: :not_ready, iterations: []
 

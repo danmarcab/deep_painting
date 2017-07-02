@@ -13,7 +13,12 @@ module Data.Painting
         , setContentPath
         , setStylePath
         , readyToStart
+        , decoder
+        , encode
         )
+
+import Json.Decode exposing (Decoder)
+import Json.Encode
 
 
 type alias Painting =
@@ -27,9 +32,10 @@ type alias Painting =
 
 
 type Status
-    = New
+    = NotReady
+    | Ready
     | InProgress
-    | Done
+    | Complete
 
 
 type alias Settings =
@@ -50,7 +56,7 @@ type alias Iteration =
 initialPainting : String -> Painting
 initialPainting name =
     { name = name
-    , status = New
+    , status = NotReady
     , contentPath = Nothing
     , stylePath = Nothing
     , settings = initialSettings
@@ -132,3 +138,113 @@ setStylePath path painting =
 readyToStart : Painting -> Bool
 readyToStart painting =
     painting.contentPath /= Nothing && painting.stylePath /= Nothing
+
+
+decoder : Decoder Painting
+decoder =
+    Json.Decode.map6 Painting
+        (Json.Decode.field "name" Json.Decode.string)
+        (Json.Decode.field "status" statusDecoder)
+        (Json.Decode.field "content" maybeStringDecoder)
+        (Json.Decode.field "style" maybeStringDecoder)
+        (Json.Decode.field "settings" settingsDecoder)
+        (Json.Decode.field "iterations" <| Json.Decode.list iterationDecoder)
+
+
+maybeStringDecoder : Decoder (Maybe String)
+maybeStringDecoder =
+    let
+        filterEmpty str =
+            if String.isEmpty str then
+                Nothing
+            else
+                Just str
+    in
+        Json.Decode.map filterEmpty Json.Decode.string
+
+
+statusDecoder : Decoder Status
+statusDecoder =
+    Json.Decode.string
+        |> Json.Decode.andThen
+            (\str ->
+                case str of
+                    "not_ready" ->
+                        Json.Decode.succeed NotReady
+
+                    "ready" ->
+                        Json.Decode.succeed Ready
+
+                    "in_progress" ->
+                        Json.Decode.succeed InProgress
+
+                    "complete" ->
+                        Json.Decode.succeed Complete
+
+                    status ->
+                        Json.Decode.fail ("Unexpected status: " ++ status)
+            )
+
+
+settingsDecoder : Decoder Settings
+settingsDecoder =
+    Json.Decode.map5 Settings
+        (Json.Decode.field "iterations" Json.Decode.int)
+        (Json.Decode.field "content_weight" Json.Decode.float)
+        (Json.Decode.field "style_weight" Json.Decode.float)
+        (Json.Decode.field "variation_weight" Json.Decode.float)
+        (Json.Decode.field "output_width" Json.Decode.int)
+
+
+iterationDecoder : Decoder Iteration
+iterationDecoder =
+    Json.Decode.map2 Iteration
+        (Json.Decode.field "file_name" Json.Decode.string)
+        (Json.Decode.field "loss" Json.Decode.float)
+
+
+encode : Painting -> Json.Encode.Value
+encode painting =
+    Json.Encode.object
+        [ ( "name", Json.Encode.string painting.name )
+        , ( "status", encodeStatus painting.status )
+        , ( "content", Maybe.map Json.Encode.string painting.contentPath |> Maybe.withDefault Json.Encode.null )
+        , ( "style", Maybe.map Json.Encode.string painting.stylePath |> Maybe.withDefault Json.Encode.null )
+        , ( "settings", encodeSettings painting.settings )
+        , ( "iterations", Json.Encode.list <| List.map encodeIteration painting.iterations )
+        ]
+
+
+encodeStatus : Status -> Json.Encode.Value
+encodeStatus status =
+    case status of
+        NotReady ->
+            Json.Encode.string "new"
+
+        Ready ->
+            Json.Encode.string "ready"
+
+        InProgress ->
+            Json.Encode.string "in_progress"
+
+        Complete ->
+            Json.Encode.string "complete"
+
+
+encodeSettings : Settings -> Json.Encode.Value
+encodeSettings settings =
+    Json.Encode.object
+        [ ( "iterations", Json.Encode.int settings.iterations )
+        , ( "content_weight", Json.Encode.float settings.contentWeight )
+        , ( "style_weight", Json.Encode.float settings.styleWeight )
+        , ( "variation_weight", Json.Encode.float settings.variationWeight )
+        , ( "output_width", Json.Encode.int settings.outputWidth )
+        ]
+
+
+encodeIteration : Iteration -> Json.Encode.Value
+encodeIteration iteration =
+    Json.Encode.object
+        [ ( "file_name", Json.Encode.string iteration.path )
+        , ( "loss", Json.Encode.float iteration.loss )
+        ]

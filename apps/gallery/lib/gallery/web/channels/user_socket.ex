@@ -2,7 +2,7 @@ defmodule Gallery.Web.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Gallery.Web.RoomChannel
+  channel "painting:*", Gallery.Web.PaintingChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

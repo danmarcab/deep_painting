@@ -8,16 +8,24 @@ import Http
 import Json.Decode
 import Page.Errored exposing (PageLoadError, pageLoadError)
 import Task exposing (Task)
+import Phoenix
+import Phoenix.Push as Push
+import Phoenix.Socket as Socket exposing (Socket)
+import Phoenix.Channel as Channel exposing (Channel)
 
 
 -- MODEL --
 
 
 type Model
-    = Model
-        { painting : Painting
-        , resultFrame : ResultFrame
-        }
+    = Loading String
+    | Loaded LoadedModel
+
+
+type alias LoadedModel =
+    { painting : Painting
+    , resultFrame : ResultFrame
+    }
 
 
 type ResultFrame
@@ -27,18 +35,7 @@ type ResultFrame
 
 init : String -> Task PageLoadError Model
 init name =
-    Task.succeed <| Model { painting = Painting.initialPainting name, resultFrame = Last }
-
-
-
---    Http.get "" decoder
---        |> Http.toTask
---        |> Task.mapError (\_ -> pageLoadError "Could not load Details")
-
-
-decoder : Json.Decode.Decoder Model
-decoder =
-    Json.Decode.succeed <| Model { painting = Painting.initialPainting "name", resultFrame = Last }
+    Task.succeed <| Loading name
 
 
 
@@ -46,7 +43,9 @@ decoder =
 
 
 type Msg
-    = UpdateIterations Int
+    = InitPainting Json.Decode.Value
+    | UpdatePainting Json.Decode.Value
+    | UpdateIterations Int
     | UpdateContentWeight Float
     | UpdateStyleWeight Float
     | UpdateVariationWeight Float
@@ -57,32 +56,108 @@ type Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg (Model model) =
-    case msg of
-        UpdateIterations num ->
-            ( Model { model | painting = Painting.setIterations num model.painting }, Cmd.none )
+update msg model =
+    case model of
+        Loading name ->
+            case msg of
+                InitPainting json ->
+                    let
+                        painting =
+                            case Json.Decode.decodeValue Painting.decoder json of
+                                Ok paint ->
+                                    paint
 
-        UpdateContentWeight weight ->
-            ( Model { model | painting = Painting.setContentWeight weight model.painting }, Cmd.none )
+                                Err err ->
+                                    let
+                                        _ =
+                                            Debug.log "InitPainting: " err
+                                    in
+                                        Painting.initialPainting name
+                    in
+                        ( Loaded { painting = painting, resultFrame = Last }, Cmd.none )
 
-        UpdateStyleWeight weight ->
-            ( Model { model | painting = Painting.setStyleWeight weight model.painting }, Cmd.none )
+                _ ->
+                    ( Loading name, Cmd.none )
 
-        UpdateVariationWeight weight ->
-            ( Model { model | painting = Painting.setVariationWeight weight model.painting }, Cmd.none )
+        Loaded loadedModel ->
+            case msg of
+                UpdatePainting json ->
+                    let
+                        painting =
+                            case Json.Decode.decodeValue Painting.decoder json of
+                                Ok paint ->
+                                    paint
 
-        UpdateOutputWidth width ->
-            ( Model { model | painting = Painting.setOutputWidth width model.painting }, Cmd.none )
+                                Err err ->
+                                    loadedModel.painting
+                    in
+                        ( Loaded { loadedModel | painting = painting }, Cmd.none )
 
-        UpdateContentPath path ->
-            ( Model { model | painting = Painting.setContentPath path model.painting }, Cmd.none )
+                UpdateIterations num ->
+                    ( Loaded { loadedModel | painting = Painting.setIterations num loadedModel.painting }, Cmd.none )
 
-        UpdateStylePath path ->
-            ( Model { model | painting = Painting.setStylePath path model.painting }, Cmd.none )
+                UpdateContentWeight weight ->
+                    ( Loaded { loadedModel | painting = Painting.setContentWeight weight loadedModel.painting }, Cmd.none )
 
-        StartPainting ->
-            --        submit data to server
-            ( Model model, Cmd.none )
+                UpdateStyleWeight weight ->
+                    ( Loaded { loadedModel | painting = Painting.setStyleWeight weight loadedModel.painting }, Cmd.none )
+
+                UpdateVariationWeight weight ->
+                    ( Loaded { loadedModel | painting = Painting.setVariationWeight weight loadedModel.painting }, Cmd.none )
+
+                UpdateOutputWidth width ->
+                    ( Loaded { loadedModel | painting = Painting.setOutputWidth width loadedModel.painting }, Cmd.none )
+
+                UpdateContentPath path ->
+                    ( Loaded { loadedModel | painting = Painting.setContentPath path loadedModel.painting }, Cmd.none )
+
+                UpdateStylePath path ->
+                    ( Loaded { loadedModel | painting = Painting.setStylePath path loadedModel.painting }, Cmd.none )
+
+                StartPainting ->
+                    let
+                        painting =
+                            loadedModel.painting
+
+                        message =
+                            Push.init ("painting:" ++ painting.name) "start"
+                                |> Push.withPayload (Painting.encode painting)
+                    in
+                        ( Loaded loadedModel, Phoenix.push socketUrl message )
+
+                _ ->
+                    ( Loaded loadedModel, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS --
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case model of
+        Loading name ->
+            Phoenix.connect socket [ channel name ]
+
+        Loaded loeadedModel ->
+            Phoenix.connect socket [ channel loeadedModel.painting.name ]
+
+
+socketUrl : String
+socketUrl =
+    "ws://localhost:4000/socket/websocket"
+
+
+socket : Socket Msg
+socket =
+    Socket.init socketUrl
+
+
+channel : String -> Channel Msg
+channel name =
+    Channel.init ("painting:" ++ name)
+        |> Channel.onJoin InitPainting
+        |> Channel.on "update" UpdatePainting
 
 
 
@@ -91,26 +166,37 @@ update msg (Model model) =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ settingsView model
-        , sourcesView model
-        , resultView model
-        , div [ class "clearfix" ] []
-        ]
+    let
+        content =
+            case model of
+                Loading name ->
+                    [ H.p [] [ text "loading......" ] ]
+
+                Loaded loadedModel ->
+                    [ settingsView loadedModel
+                    , sourcesView loadedModel
+                    , resultView loadedModel
+                    , div [ class "clearfix" ] []
+                    ]
+    in
+        div [] content
 
 
-settingsView : Model -> Html Msg
-settingsView (Model { painting }) =
+settingsView : LoadedModel -> Html Msg
+settingsView { painting } =
     let
         disabled =
             case painting.status of
-                New ->
+                NotReady ->
                     False
+
+                Ready ->
+                    True
 
                 InProgress ->
                     True
 
-                Done ->
+                Complete ->
                     True
     in
         div [ class "details-settings framed" ]
@@ -167,18 +253,21 @@ settingsViewHelp settings disabled =
             ]
 
 
-sourcesView : Model -> Html Msg
-sourcesView (Model { painting }) =
+sourcesView : LoadedModel -> Html Msg
+sourcesView { painting } =
     let
         view =
             case painting.status of
-                New ->
+                NotReady ->
                     editableSourcesView painting
+
+                Ready ->
+                    readOnlySourcesView painting
 
                 InProgress ->
                     readOnlySourcesView painting
 
-                Done ->
+                Complete ->
                     readOnlySourcesView painting
     in
         div [ class "details-source framed" ] [ view ]
@@ -216,8 +305,8 @@ maybeSourceImg maybePath =
             []
 
 
-resultView : Model -> Html Msg
-resultView (Model { painting, resultFrame }) =
+resultView : LoadedModel -> Html Msg
+resultView { painting, resultFrame } =
     let
         maybeIteration idx =
             List.drop (idx - 1) painting.iterations
@@ -233,7 +322,7 @@ resultView (Model { painting, resultFrame }) =
 
         content =
             case painting.status of
-                New ->
+                NotReady ->
                     if Painting.readyToStart painting then
                         H.button [ HE.onClick StartPainting ] [ text "Start Painting!" ]
                     else

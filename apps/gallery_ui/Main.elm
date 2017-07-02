@@ -143,7 +143,22 @@ getPage pageState =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
+    case model.pageState of
+        Loaded page ->
+            case page of
+                Details details ->
+                    Sub.map DetailsMsg <| Page.Details.subscriptions details
+
+                _ ->
+                    Sub.none
+
+        TransitioningFrom page ->
+            case page of
+                Details details ->
+                    Sub.map DetailsMsg <| Page.Details.subscriptions details
+
+                _ ->
+                    Sub.none
 
 
 
