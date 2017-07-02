@@ -15,6 +15,12 @@ defmodule Gallery.Painting.Storage do
   @callback find(name :: String.t) :: {:ok, Painting.t} | :error
 
   @doc """
+  Return a map with all paintings on the storage.
+  """
+  @callback all() :: {:ok, %{optional(String.t) => Painting.t}} | :error
+
+
+  @doc """
   Check if a painting with a given name exists.
   """
   @callback exists?(name :: String.t) :: boolean

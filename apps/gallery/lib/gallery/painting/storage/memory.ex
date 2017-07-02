@@ -19,6 +19,10 @@ defmodule Gallery.Painting.Storage.Memory do
     GenServer.call(__MODULE__, {:find, name})
   end
 
+  def all() do
+    GenServer.call(__MODULE__, :all)
+  end
+
   def exists?(name) do
     GenServer.call(__MODULE__, {:exists?, name})
   end
@@ -33,6 +37,10 @@ defmodule Gallery.Painting.Storage.Memory do
 
   def handle_call({:find, name}, _from, state) do
     {:reply, Map.fetch(state, name), state}
+  end
+
+  def handle_call(:all, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_call({:exists?, name}, _from, state) do

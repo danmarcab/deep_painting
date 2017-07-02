@@ -1,5 +1,6 @@
 module Page.Gallery exposing (..)
 
+import Dict exposing (Dict)
 import Html exposing (Html, a, div, h2, h4, img, input, span, text)
 import Html.Attributes exposing (class, src, type_, value)
 import Html.Events exposing (onClick, onInput)
@@ -9,42 +10,25 @@ import Page.Errored exposing (PageLoadError, pageLoadError)
 import Route
 import Task exposing (Task)
 import Data.Painting as Painting exposing (Painting)
+import Phoenix
+import Phoenix.Socket as Socket exposing (Socket)
+import Phoenix.Channel as Channel exposing (Channel)
 
 
 -- MODEL --
 
 
-type alias Model =
-    { paintings : List Painting
-    , filter : String
-    }
+type Model
+    = Loading
+    | Loaded
+        { paintings : Dict String Painting
+        , filter : String
+        }
 
 
 init : Task PageLoadError Model
 init =
-    Task.succeed
-        { paintings =
-            [ Painting.initialPainting "p1"
-            , Painting.initialPainting "p2"
-            , Painting.initialPainting "p3"
-            , Painting.initialPainting "p4"
-            , Painting.initialPainting "p5"
-            , Painting.initialPainting "p6"
-            , Painting.initialPainting "p7"
-            ]
-        , filter = ""
-        }
-
-
-
---    Http.get "" decoder
---        |> Http.toTask
---        |> Task.mapError (\_ -> pageLoadError "Could not load Gallery")
-
-
-decoder : Json.Decode.Decoder Model
-decoder =
-    Json.Decode.succeed { paintings = [], filter = "" }
+    Task.succeed Loading
 
 
 
@@ -54,16 +38,78 @@ decoder =
 type Msg
     = Search String
     | ClearSearch
+    | InitGallery Json.Decode.Value
+    | UpdatePainting Json.Decode.Value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case msg of
-        Search string ->
-            ( { model | filter = string }, Cmd.none )
+    case model of
+        Loading ->
+            case msg of
+                InitGallery json ->
+                    case Json.Decode.decodeValue (Json.Decode.dict Painting.decoder) json of
+                        Ok paintings ->
+                            ( Loaded { paintings = paintings, filter = "" }, Cmd.none )
 
-        ClearSearch ->
-            ( { model | filter = "" }, Cmd.none )
+                        Err err ->
+                            let
+                                _ =
+                                    Debug.log "InitGallery: " err
+                            in
+                                ( model, Cmd.none )
+
+                _ ->
+                    ( model, Cmd.none )
+
+        Loaded model ->
+            case msg of
+                Search string ->
+                    ( Loaded { model | filter = string }, Cmd.none )
+
+                ClearSearch ->
+                    ( Loaded { model | filter = "" }, Cmd.none )
+
+                UpdatePainting json ->
+                    case Json.Decode.decodeValue Painting.decoder json of
+                        Ok painting ->
+                            ( Loaded { model | paintings = Dict.insert painting.name painting model.paintings }, Cmd.none )
+
+                        Err err ->
+                            let
+                                _ =
+                                    Debug.log "UpdatePainting: " err
+                            in
+                                ( Loaded model, Cmd.none )
+
+                _ ->
+                    ( Loaded model, Cmd.none )
+
+
+
+-- SUBSCRIPTIONS --
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Phoenix.connect socket [ channel ]
+
+
+socketUrl : String
+socketUrl =
+    "ws://localhost:4000/socket/websocket"
+
+
+socket : Socket Msg
+socket =
+    Socket.init socketUrl
+
+
+channel : Channel Msg
+channel =
+    Channel.init ("gallery")
+        |> Channel.onJoin InitGallery
+        |> Channel.on "update" UpdatePainting
 
 
 
@@ -73,19 +119,28 @@ update msg model =
 view : Model -> Html Msg
 view model =
     let
-        filter p =
-            if String.contains model.filter p.name then
+        filter filt p =
+            if String.contains filt p.name then
                 Just p
             else
                 Nothing
+
+        content =
+            case model of
+                Loading ->
+                    [ text "loading..." ]
+
+                Loaded loaded ->
+                    [ searchView loaded.filter
+                    , div [ class "clearfix" ] []
+                    ]
+                        ++ (List.filterMap (filter loaded.filter >> Maybe.map paintingView) <| Dict.values loaded.paintings)
+                        ++ [ div [ class "clearfix" ] [] ]
     in
         div [ class "gallery" ] <|
             [ h2 [] [ text "Gallery" ]
-            , searchView model.filter
-            , div [ class "clearfix" ] []
             ]
-                ++ (List.filterMap (filter >> Maybe.map paintingView) model.paintings)
-                ++ [ div [ class "clearfix" ] [] ]
+                ++ content
 
 
 searchView : String -> Html Msg

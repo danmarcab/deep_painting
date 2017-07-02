@@ -3,6 +3,7 @@ defmodule Gallery.Web.UserSocket do
 
   ## Channels
   channel "painting:*", Gallery.Web.PaintingChannel
+  channel "gallery", Gallery.Web.GalleryChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

@@ -24,6 +24,24 @@ defmodule Gallery do
   end
 
   @doc """
+  Returns a map with all exisiting paintings (name of the painting as key, Painting as value)
+
+  ## Examples
+
+      iex> Gallery.create_painting("My painting")
+      :ok
+      iex> Gallery.create_painting("My painting 2")
+      :ok
+      iex> paintings_map = Gallery.all_paintings()
+      iex> Map.keys(paintings_map)
+      ["My painting", "My painting 2"]
+
+  """
+  def all_paintings() do
+    storage().all()
+  end
+
+  @doc """
   Saves a painting with a given name.
 
   ## Examples
@@ -39,6 +57,7 @@ defmodule Gallery do
     :ok = storage().save(painting)
     IO.puts "broadcasting..."
     :ok = Gallery.Web.Endpoint.broadcast("painting:" <> painting.name, "update", painting)
+    :ok = Gallery.Web.Endpoint.broadcast("gallery", "update", painting)
     :ok
   end
 

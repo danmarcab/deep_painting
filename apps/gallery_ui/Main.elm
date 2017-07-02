@@ -146,6 +146,9 @@ subscriptions model =
     case model.pageState of
         Loaded page ->
             case page of
+                Gallery details ->
+                    Sub.map GalleryMsg <| Page.Gallery.subscriptions details
+
                 Details details ->
                     Sub.map DetailsMsg <| Page.Details.subscriptions details
 
@@ -154,6 +157,9 @@ subscriptions model =
 
         TransitioningFrom page ->
             case page of
+                Gallery details ->
+                    Sub.map GalleryMsg <| Page.Gallery.subscriptions details
+
                 Details details ->
                     Sub.map DetailsMsg <| Page.Details.subscriptions details
 

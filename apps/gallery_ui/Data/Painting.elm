@@ -154,13 +154,18 @@ decoder =
 maybeStringDecoder : Decoder (Maybe String)
 maybeStringDecoder =
     let
-        filterEmpty str =
-            if String.isEmpty str then
-                Nothing
-            else
-                Just str
+        filterEmpty maybeStr =
+            case maybeStr of
+                Nothing ->
+                    Nothing
+
+                Just str ->
+                    if String.isEmpty str then
+                        Nothing
+                    else
+                        Just str
     in
-        Json.Decode.map filterEmpty Json.Decode.string
+        Json.Decode.map filterEmpty <| Json.Decode.nullable Json.Decode.string
 
 
 statusDecoder : Decoder Status
