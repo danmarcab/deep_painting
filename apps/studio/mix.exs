@@ -20,7 +20,7 @@ defmodule Studio.Mixfile do
   # Type "mix help compile.app" for more information
   def application do
     # Specify extra applications you'll use from Erlang/Elixir
-    [extra_applications: [:logger, :cowboy, :plug],
+    [extra_applications: [:logger, :cowboy, :httpoison, :plug],
      mod: {Studio.Application, []}]
   end
 
@@ -44,6 +44,7 @@ defmodule Studio.Mixfile do
   defp deps do
     [{:cowboy, "~> 1.0.0"},
      {:plug, "~> 1.0"},
-     {:poison, "~> 3.0"}]
+     {:poison, "~> 3.0"},
+     {:httpoison, "~> 0.12"}]
   end
 end

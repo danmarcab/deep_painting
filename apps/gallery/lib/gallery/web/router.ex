@@ -7,5 +7,7 @@ defmodule Gallery.Web.Router do
 
   scope "/api", Gallery.Web do
     pipe_through :api
+
+    post "/painting/:name/iteration", PaintingController, :add_iteration
   end
 end

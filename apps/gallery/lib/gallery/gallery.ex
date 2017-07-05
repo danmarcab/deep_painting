@@ -56,8 +56,9 @@ defmodule Gallery do
   def save_painting(painting) do
     :ok = storage().save(painting)
     IO.puts "broadcasting..."
-    :ok = Gallery.Web.Endpoint.broadcast("painting:" <> painting.name, "update", painting)
-    :ok = Gallery.Web.Endpoint.broadcast("gallery", "update", painting)
+    painting_to_push = Painting.prepend_path(painting, "http://localhost:4000/paintings/" <> painting.name <> "/")
+    :ok = Gallery.Web.Endpoint.broadcast("painting:" <> painting_to_push.name, "update", painting_to_push)
+    :ok = Gallery.Web.Endpoint.broadcast("gallery", "update", painting_to_push)
     :ok
   end
 

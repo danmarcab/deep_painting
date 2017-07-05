@@ -155,6 +155,14 @@ defmodule Gallery.Painting do
     |> update_status()
   end
 
+  def prepend_path(%__MODULE__{content: content, style: style, iterations: iterations} = p, path) do
+    %{p |
+      content: path <> content,
+      style: path <> style,
+      iterations: iterations |> Enum.map(fn i -> %{i | file_name: path <> i.file_name} end)
+    }
+  end
+
   defp update_status(%__MODULE__{content: nil, status: :not_ready} = p), do: p
   defp update_status(%__MODULE__{style: nil, status: :not_ready} = p), do: p
   defp update_status(%__MODULE__{settings: nil, status: :not_ready} = p), do: p

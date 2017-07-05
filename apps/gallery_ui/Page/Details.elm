@@ -352,15 +352,15 @@ optionsFromList list =
 
 styleList : List ( String, String )
 styleList =
-    [ ( "Starry night", "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" )
-    , ( "The Scream", "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/1200px-The_Scream.jpg" )
-    , ( "Picasso self portrait", "https://uploads2.wikiart.org/images/pablo-picasso/self-portrait-1907.jpg" )
+    [ ( "Starry night", "http://localhost:4000/images/sources/style/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" )
+    , ( "The Scream", "http://localhost:4000/images/sources/style/1200px-The_Scream.jpg" )
+    , ( "Picasso self portrait", "http://localhost:4000/images/sources/style/self-portrait-1907.jpg" )
     ]
 
 
 contentList : List ( String, String )
 contentList =
-    [ ( "Cadiz", "http://www.cadizturismo.com/media/fotos/image_61020.jpeg" )
-    , ( "London", "http://www.hdfondos.eu/pictures/2013/0803/1/bridge-england-united-kingdom-big-ben-thames-night-london-street-lights-cities-river-reflection-clock-watch-time-images-198692.jpg" )
-    , ( "Dani", "https://www.mymedsandme.com/uploads/img/our-team/_large/daniel-cabillas.jpg" )
+    [ ( "Cadiz", "http://localhost:4000/images/sources/content/image_61020.jpeg" )
+    , ( "London", "http://localhost:4000/images/sources/content/bridge-england-united-kingdom-big-ben-thames-night-london-street-lights-cities-river-reflection-clock-watch-time-images-198692.jpg" )
+    , ( "Dani", "http://localhost:4000/images/sources/content/daniel-cabillas.jpg" )
     ]

@@ -127,7 +127,7 @@ defmodule Studio do
 
   # TODO: add doc/tests
   def start_painting(name) do
-    Painter.start_link(name, name: painter_name(name))
+    Painter.start_link(name, name: painter_name(name), watcher: Studio.Painting.Broker)
   end
 
   # TODO: add doc/tests
