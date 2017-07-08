@@ -15,3 +15,5 @@ script:
   - mix test
   - mix dialyzer --halt-exit-status
   - mix credo --ignore design readability --strict
+notifications:
+  email: false
