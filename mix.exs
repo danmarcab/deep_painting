@@ -23,9 +23,9 @@ defmodule DeepPainting.Mixfile do
   # and cannot be accessed from applications inside the apps folder
   defp deps do
     [
-      {:mix_test_watch, "~> 0.3", only: :dev, runtime: false},
+      {:mix_test_watch, "~> 0.3", only: [:dev, :test], runtime: false},
       {:credo, "~> 0.5", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 0.5", only: :dev, runtime: false}
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 end
