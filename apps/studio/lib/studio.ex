@@ -126,7 +126,7 @@ defmodule Studio do
 
   # TODO: add doc/tests
   @spec start_painting(name :: String.t) :: GenServer.on_start
-  def start_painting(name) do
+  def start_painting(name) when is_binary(name) do
     Painter.start_link(name, name: painter_name(name), watcher: Studio.Painting.Broker)
   end
 

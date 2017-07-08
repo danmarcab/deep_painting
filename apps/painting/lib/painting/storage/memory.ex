@@ -6,7 +6,7 @@ defmodule Painting.Storage.Memory do
 
   @behaviour Painting.Storage
 
-  def start(storage, opts \\ []) do
+  def start(storage, _opts \\ []) do
     :ets.new(storage, [:set, :public, :named_table])
     :ok
   end
@@ -30,14 +30,14 @@ defmodule Painting.Storage.Memory do
 
     paintings
     |> List.flatten
-    |> Enum.into %{}
+    |> Enum.into(%{})
   end
 
   def exists?(storage, painting_name) do
     resp = :ets.lookup(storage, painting_name)
 
     case resp do
-      [{^painting_name, painting}] -> true
+      [{^painting_name, _painting}] -> true
       _ -> false
     end
   end

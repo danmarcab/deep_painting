@@ -31,14 +31,14 @@ defmodule Painting.Storage.Disk do
 
     paintings
     |> List.flatten
-    |> Enum.into %{}
+    |> Enum.into(%{})
   end
 
   def exists?(storage, painting_name) do
     resp = :dets.lookup(storage, painting_name)
 
     case resp do
-      [{^painting_name, painting}] -> true
+      [{^painting_name, _painting}] -> true
       _ -> false
     end
   end

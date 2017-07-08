@@ -4,7 +4,7 @@ defmodule Studio.Painter.TestPycasso do
     Port.open({:spawn, code}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
   end
 
-  defp code do
+  defp code() do
 ~S"""
   python -u -c '
 import os
