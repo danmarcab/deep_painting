@@ -5,8 +5,7 @@ defmodule Studio.Painter do
   use GenServer
   require Logger
 
-  alias Studio.Painting
-  alias Studio.Painting.Iteration
+  alias Painting.Iteration
 
   def start_link(name, opts \\ []) do
     GenServer.start_link(__MODULE__, {name, opts}, opts)

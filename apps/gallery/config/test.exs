@@ -9,4 +9,6 @@ config :gallery, Gallery.Web.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-config :gallery, storage: Gallery.Painting.Storage.Memory
+config :gallery, :painting_storage,
+  type: Painting.Storage.Memory,
+  name: :gallery_storage

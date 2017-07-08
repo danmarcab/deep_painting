@@ -1,8 +1,7 @@
-defmodule Studio.PaintingTest do
+defmodule PaintingTest do
   use ExUnit.Case
 
-  alias Studio.Painting
-  alias Studio.Painting.Settings
+  alias Painting.Settings
 
   doctest Painting
 

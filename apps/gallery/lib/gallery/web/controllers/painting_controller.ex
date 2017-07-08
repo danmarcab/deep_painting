@@ -1,8 +1,7 @@
 defmodule Gallery.Web.PaintingController do
   use Gallery.Web, :controller
 
-  alias Gallery.Painting
-  alias Gallery.Painting.Iteration
+  alias Painting.Iteration
 
   def add_iteration(conn, %{"name" => painting_name, "loss" => loss, "file" => file}) do
     IO.inspect "*************"

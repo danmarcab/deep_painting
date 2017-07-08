@@ -41,7 +41,7 @@ defmodule Studio.Web.Router do
       name: name,
       content_path: content_path,
       style_path: style_path,
-      settings: Studio.Painting.Settings.new
+      settings: Painting.Settings.new
     }
   end
 end

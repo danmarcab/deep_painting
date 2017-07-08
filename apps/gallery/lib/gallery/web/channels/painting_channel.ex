@@ -1,8 +1,7 @@
 defmodule Gallery.Web.PaintingChannel do
   use Phoenix.Channel
 
-  alias Gallery.Painting
-  alias Gallery.Painting.Settings
+  alias Painting.Settings
 
   def join("painting:" <> painting_name, _message, socket) do
     resp = case Gallery.find_painting(painting_name) do

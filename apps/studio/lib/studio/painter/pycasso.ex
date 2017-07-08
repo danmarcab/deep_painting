@@ -1,6 +1,5 @@
 defmodule Studio.Painter.Pycasso do
-  alias Studio.Painting
-  alias Studio.Painting.Settings
+  alias Painting.Settings
 
   def start(%Painting{} = painting) do
     executable = Application.get_env(:studio, :pycasso_path)

@@ -6,22 +6,15 @@ defmodule Gallery.Application do
   def start(_type, _args) do
     import Supervisor.Spec
 
-    storage = Application.get_env(:gallery, :storage)
+    # Start painting storage
+    storage_config = Application.get_env(:gallery, :painting_storage)
+    :ok = storage_config[:type].start(storage_config[:name])
 
-    children = if storage.supervise?() do
-      [worker(storage, [])]
-    else
-      storage.start()
-      []
-    end
     # Define workers and child supervisors to be supervised
-    children =
-        children ++ [
-          # Start the endpoint when the application starts
-          supervisor(Gallery.Web.Endpoint, []),
-          # Start your own worker by calling: Gallery.Worker.start_link(arg1, arg2, arg3)
-          # worker(Gallery.Worker, [arg1, arg2, arg3]),
-        ]
+    children = [
+      # Start the endpoint when the application starts
+      supervisor(Gallery.Web.Endpoint, []),
+    ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
     # for other strategies and supported options
