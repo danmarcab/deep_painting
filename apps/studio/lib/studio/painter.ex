@@ -7,16 +7,25 @@ defmodule Studio.Painter do
 
   alias Painting.Iteration
 
-  def start_link(name, opts \\ []) do
-    GenServer.start_link(__MODULE__, {name, opts}, opts)
+  @spec start_link(String.t, Keyword.t) :: GenServer.on_start
+  def start_link(painting_name, opts \\ []) when is_list(opts) do
+    watcher = Keyword.get(opts, :watcher)
+    server_opts = case Keyword.fetch(opts, :name) do
+      {:ok, name} ->
+        [name: name]
+      :error ->
+        []
+    end
+
+    GenServer.start_link(__MODULE__, {painting_name, watcher}, server_opts)
   end
 
-  def init({name, opts}) do
+  def init({name, watcher}) do
     with {:ok, painting} <- Studio.find_painting(name),
          painting <- Painting.start(painting),
          port <- start_port(painting)
     do
-      {:ok, %{port: port, painting: painting, watcher: opts[:watcher]}}
+      {:ok, %{port: port, painting: painting, watcher: watcher}}
     else
       _ -> {:stop, :error}
     end

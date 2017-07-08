@@ -6,25 +6,18 @@ defmodule Studio.Web.Router do
   plug :dispatch
 
   post "/paint" do
-    IO.puts "Params"
-    IO.puts(inspect conn.params)
+    case process_params(conn.params) do
+      %{name: name, content_path: content_path, style_path: style_path, settings: settings} ->
+        Studio.create_painting(name)
+        Studio.add_painting_content(name, content_path)
+        Studio.add_painting_style(name, style_path)
+        Studio.add_painting_settings(name, settings)
+        Studio.start_painting(name)
 
-    # check params and return errors
-    %{
-      name: name,
-      content_path: content_path,
-      style_path: style_path,
-      settings: settings
-    } = process_params(conn.params)
-
-    # paint
-    Studio.create_painting(name)
-    Studio.add_painting_content(name, content_path)
-    Studio.add_painting_style(name, style_path)
-    Studio.add_painting_settings(name, settings)
-    Studio.start_painting(name)
-
-    send_resp(conn, 200, "Painting started")
+        send_resp(conn, 200, "Painting started")
+      :error ->
+        send_resp(conn, 500, "Internal Error")
+    end
   end
   
   def process_params(%{"name" => name, "content" => content_img, "style" => style_img}) do
@@ -44,4 +37,6 @@ defmodule Studio.Web.Router do
       settings: Painting.Settings.new
     }
   end
+  def process_params(_),  do: :error
+
 end

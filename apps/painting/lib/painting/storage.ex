@@ -1,6 +1,6 @@
 defmodule Painting.Storage do
   @moduledoc """
-  Gallery.Painting.Storage defines the contract to store paintings
+  Painting.Storage defines the contract to store/retrive paintings
   """
 
   @doc """
@@ -16,7 +16,7 @@ defmodule Painting.Storage do
   @doc """
   Return a map with all paintings on the storage.
   """
-  @callback all(storage :: atom) :: {:ok, %{optional(String.t) => Painting.t}} | :error
+  @callback all(storage :: atom) :: %{optional(String.t) => Painting.t}
 
 
   @doc """
