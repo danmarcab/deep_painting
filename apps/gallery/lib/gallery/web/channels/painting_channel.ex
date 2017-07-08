@@ -14,7 +14,6 @@ defmodule Gallery.Web.PaintingChannel do
 
   def handle_in("start", payload, socket) do
     painting = payload_to_painting(payload)
-    IO.inspect painting
 
     :ok = Gallery.save_painting(painting)
 
@@ -43,7 +42,8 @@ defmodule Gallery.Web.PaintingChannel do
     end)
 
 
-    Painting.new(name)
+    name
+    |> Painting.new
     |> Painting.add_content(content_name)
     |> Painting.add_style(style_name)
     |> Painting.add_settings(payload_to_settings(settings))
@@ -66,7 +66,7 @@ defmodule Gallery.Web.PaintingChannel do
 
   def send_data(painting) do
     multipart = {:multipart, [{"name", painting.name}, multipart_file(painting.name, "content", painting.content), multipart_file(painting.name, "style", painting.style)]}
-    |> IO.inspect
+
     HTTPoison.post(paint_url(), multipart)
   end
 
@@ -77,7 +77,7 @@ defmodule Gallery.Web.PaintingChannel do
   def multipart_file(painting_name, name, file_name) do
     file_on_disk = painting_path(painting_name) <> file_name
     IO.puts file_on_disk
-    {:file, file_on_disk, { "form-data", [{"name", name}, {"filename", file_name}]}, []}
+    {:file, file_on_disk, {"form-data", [{"name", name}, {"filename", file_name}]}, []}
   end
 
   defp painting_path(name) do

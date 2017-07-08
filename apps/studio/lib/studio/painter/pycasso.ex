@@ -3,7 +3,7 @@ defmodule Studio.Painter.Pycasso do
 
   def start(%Painting{} = painting) do
     executable = Application.get_env(:studio, :pycasso_path)
-    IO.inspect "#{executable} #{args(painting)}"
+
     Port.open({:spawn, "#{executable} #{args(painting)}"}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
   end
 
