@@ -1,4 +1,4 @@
-defmodule Studio.Painting do
+defmodule Gallery.Painting do
   @moduledoc """
   Module to create and manipulate Paintings. A painting has a status that can be:
 
@@ -26,8 +26,8 @@ defmodule Studio.Painting do
 
   """
 
-  alias Studio.Painting.Settings
-  alias Studio.Painting.Iteration
+  alias Gallery.Painting.Settings
+  alias Gallery.Painting.Iteration
 
   defstruct name: nil, content: nil, style: nil, settings: nil, status: :not_ready, iterations: []
 
@@ -153,6 +153,14 @@ defmodule Studio.Painting do
   def add_iteration(%__MODULE__{status: :in_progress} = p, %Iteration{} = iter) do
     %{p | iterations: p.iterations ++ [iter]}
     |> update_status()
+  end
+
+  def prepend_path(%__MODULE__{content: content, style: style, iterations: iterations} = p, path) do
+    %{p |
+      content: path <> content,
+      style: path <> style,
+      iterations: iterations |> Enum.map(fn i -> %{i | file_name: path <> i.file_name} end)
+    }
   end
 
   defp update_status(%__MODULE__{content: nil, status: :not_ready} = p), do: p

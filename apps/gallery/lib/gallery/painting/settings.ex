@@ -1,4 +1,4 @@
-defmodule Studio.Painting.Settings do
+defmodule Gallery.Painting.Settings do
   @moduledoc """
   Module to create and manipulate painting settings.
   """
