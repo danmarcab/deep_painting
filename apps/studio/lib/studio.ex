@@ -3,7 +3,6 @@ defmodule Studio do
   Studio provides funcions to create, set the settings and start the process to create a painting.
   """
 
-  alias Studio.Painting
   alias Studio.Painter
 
   @doc """
@@ -18,10 +17,10 @@ defmodule Studio do
 
   """
   def create_painting(name) do
-    if storage().exists?(name) do
+    if storage().exists?(storage_name(), name) do
       {:error, :already_created}
     else
-      storage().save(Painting.new(name))
+      storage().save(storage_name(), Painting.new(name))
     end
   end
 
@@ -39,9 +38,9 @@ defmodule Studio do
 
   """
   def add_painting_content(name, content) do
-    if storage().exists?(name) do
-      {:ok, painting} = storage().find(name)
-      storage().save(Painting.add_content(painting, content))
+    if storage().exists?(storage_name(), name) do
+      {:ok, painting} = storage().find(storage_name(), name)
+      storage().save(storage_name(), Painting.add_content(painting, content))
     else
       {:error, :not_created}
     end
@@ -61,9 +60,9 @@ defmodule Studio do
 
   """
   def add_painting_style(name, style) do
-    if storage().exists?(name) do
-      {:ok, painting} = storage().find(name)
-      storage().save(Painting.add_style(painting, style))
+    if storage().exists?(storage_name(), name) do
+      {:ok, painting} = storage().find(storage_name(), name)
+      storage().save(storage_name(), Painting.add_style(painting, style))
     else
       {:error, :not_created}
     end
@@ -83,9 +82,9 @@ defmodule Studio do
 
   """
   def add_painting_settings(name, %Painting.Settings{} = settings) do
-    if storage().exists?(name) do
-      {:ok, painting} = storage().find(name)
-      storage().save(Painting.add_settings(painting, settings))
+    if storage().exists?(storage_name(), name) do
+      {:ok, painting} = storage().find(storage_name(), name)
+      storage().save(storage_name(), Painting.add_settings(painting, settings))
     else
       {:error, :not_created}
     end
@@ -106,7 +105,7 @@ defmodule Studio do
 
   """
   def find_painting(name) do
-    storage().find(name)
+    storage().find(storage_name(), name)
   end
 
   @doc """
@@ -122,7 +121,7 @@ defmodule Studio do
 
   """
   def save_painting(painting) do
-    storage().save(painting)
+    storage().save(storage_name(), painting)
   end
 
   # TODO: add doc/tests
@@ -135,8 +134,16 @@ defmodule Studio do
     Painter.stop(painter_name(name))
   end
 
+  def clear_storage() do
+    storage().clear(storage_name())
+  end
+
   defp storage() do
-    Application.get_env(:studio, :storage)
+    Application.get_env(:studio, :painting_storage)[:type]
+  end
+
+  defp storage_name() do
+    Application.get_env(:studio, :painting_storage)[:name]
   end
 
   defp painter_name(painting_name) do

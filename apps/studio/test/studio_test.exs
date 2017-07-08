@@ -1,10 +1,9 @@
 defmodule StudioTest do
   use ExUnit.Case
-  alias Studio.Painting
 
   doctest Studio
 
   setup do
-    :ok = Studio.Painting.Storage.Memory.clear()
+    :ok = Studio.clear_storage()
   end
 end

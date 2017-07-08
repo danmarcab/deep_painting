@@ -1,4 +1,4 @@
-defmodule Studio.Painting.Iteration do
+defmodule Painting.Iteration do
   @moduledoc """
   Module to represent a iteration of a painting.
   """

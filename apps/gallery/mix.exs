@@ -35,6 +35,7 @@ defmodule Gallery.Mixfile do
      {:phoenix_pubsub, "~> 1.0"},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:httpoison, "~> 0.12"}]
+     {:httpoison, "~> 0.12"},
+     {:painting, in_umbrella: true}]
   end
 end

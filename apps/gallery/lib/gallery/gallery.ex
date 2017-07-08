@@ -3,8 +3,6 @@ defmodule Gallery do
   Gallery provides funcions to create, set the settings and start the process to create a painting.
   """
 
-  alias Gallery.Painting
-
   @doc """
   Finds an existing painting with a given name.
 
@@ -20,7 +18,7 @@ defmodule Gallery do
 
   """
   def find_painting(name) do
-    storage().find(name)
+    storage().find(storage_name(), name)
   end
 
   @doc """
@@ -38,7 +36,7 @@ defmodule Gallery do
 
   """
   def all_paintings() do
-    storage().all()
+    storage().all(storage_name())
   end
 
   @doc """
@@ -54,7 +52,7 @@ defmodule Gallery do
 
   """
   def save_painting(painting) do
-    :ok = storage().save(painting)
+    :ok = storage().save(storage_name(), painting)
 
     painting_to_push = prepare_painting_for_ui(painting)
 
@@ -69,7 +67,11 @@ defmodule Gallery do
   end
 
   defp storage() do
-    Application.get_env(:gallery, :storage)
+    Application.get_env(:gallery, :painting_storage)[:type]
+  end
+
+  defp storage_name() do
+    Application.get_env(:gallery, :painting_storage)[:name]
   end
 
 end
