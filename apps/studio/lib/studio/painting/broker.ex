@@ -21,7 +21,7 @@ defmodule Studio.Painting.Broker do
     multipart = {:multipart, [{"loss", Float.to_string(iteration.loss)}, multipart_file("file", iteration.file_name)]}
     |> IO.inspect
 
-    headers = ["Accept": "Application/json; Charset=utf-8"]
+    headers = [{"Accept", "Application/json; Charset=utf-8"}]
     HTTPoison.post(gallery_url(painting_name), multipart, headers)
   end
 

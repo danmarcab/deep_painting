@@ -13,3 +13,4 @@ cache:
     - deps
 script:
   - mix test
+  - mix dialyzer --halt-exit-status

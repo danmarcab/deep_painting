@@ -7,8 +7,13 @@ defmodule Studio.Painter do
 
   alias Painting.Iteration
 
-  def start_link(name, opts \\ []) do
+  @spec start_link(String.t, Keyword.t) :: GenServer.on_start
+  def start_link(name, opts \\ []) when is_list(opts) do
     GenServer.start_link(__MODULE__, {name, opts}, opts)
+  end
+
+  def start_link(_, _) do
+    {:error, :error}
   end
 
   def init({name, opts}) do

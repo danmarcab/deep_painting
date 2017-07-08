@@ -125,6 +125,7 @@ defmodule Studio do
   end
 
   # TODO: add doc/tests
+  @spec start_painting(name :: String.t) :: GenServer.on_start
   def start_painting(name) do
     Painter.start_link(name, name: painter_name(name), watcher: Studio.Painting.Broker)
   end
