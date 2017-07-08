@@ -6,7 +6,7 @@ defmodule Gallery.Web.PaintingChannel do
 
   def join("painting:" <> painting_name, _message, socket) do
     resp = case Gallery.find_painting(painting_name) do
-      {:ok, painting} -> Painting.prepend_path(painting, "http://localhost:4000/paintings/" <> painting.name <> "/" )
+      {:ok, painting} -> Gallery.prepare_painting_for_ui(painting)
       :error -> %{error: :not_found}
     end
 
@@ -54,6 +54,7 @@ defmodule Gallery.Web.PaintingChannel do
     %Settings{iterations: iters, content_weight: co_w, style_weight: st_w, variation_weight: var_w, output_width: out_w}
   end
 
+  # TODO: move to broker
 
   defp start_painting(painting) do
     spawn(fn ->

@@ -12,6 +12,7 @@ import Phoenix
 import Phoenix.Push as Push
 import Phoenix.Socket as Socket exposing (Socket)
 import Phoenix.Channel as Channel exposing (Channel)
+import Page.Details.Loss as Loss
 
 
 -- MODEL --
@@ -25,6 +26,7 @@ type Model
 type alias LoadedModel =
     { painting : Painting
     , resultFrame : ResultFrame
+    , loss : Loss.Model
     }
 
 
@@ -53,6 +55,7 @@ type Msg
     | UpdateContentPath String
     | UpdateStylePath String
     | StartPainting
+    | LossMsg Loss.Msg
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -74,7 +77,7 @@ update msg model =
                                     in
                                         Painting.initialPainting name
                     in
-                        ( Loaded { painting = painting, resultFrame = Last }, Cmd.none )
+                        ( Loaded { painting = painting, resultFrame = Last, loss = Loss.initialModel }, Cmd.none )
 
                 _ ->
                     ( Loading name, Cmd.none )
@@ -124,6 +127,9 @@ update msg model =
                                 |> Push.withPayload (Painting.encode painting)
                     in
                         ( Loaded loadedModel, Phoenix.push socketUrl message )
+
+                LossMsg submsg ->
+                    ( Loaded { loadedModel | loss = Loss.update submsg loadedModel.loss }, Cmd.none )
 
                 _ ->
                     ( Loaded loadedModel, Cmd.none )
@@ -178,6 +184,7 @@ view model =
                     , sourcesView loadedModel
                     , resultView loadedModel
                     , div [ class "clearfix" ] []
+                    , H.map LossMsg <| Loss.view loadedModel.loss loadedModel.painting
                     ]
     in
         div [ class "details" ] content

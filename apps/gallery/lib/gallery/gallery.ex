@@ -55,11 +55,17 @@ defmodule Gallery do
   """
   def save_painting(painting) do
     :ok = storage().save(painting)
+
+    painting_to_push = prepare_painting_for_ui(painting)
+
     IO.puts "broadcasting..."
-    painting_to_push = Painting.prepend_path(painting, "http://localhost:4000/paintings/" <> painting.name <> "/")
     :ok = Gallery.Web.Endpoint.broadcast("painting:" <> painting_to_push.name, "update", painting_to_push)
     :ok = Gallery.Web.Endpoint.broadcast("gallery", "update", painting_to_push)
     :ok
+  end
+
+  def prepare_painting_for_ui(painting) do
+    Painting.prepend_path(painting, "http://localhost:4000/paintings/" <> painting.name <> "/")
   end
 
   defp storage() do

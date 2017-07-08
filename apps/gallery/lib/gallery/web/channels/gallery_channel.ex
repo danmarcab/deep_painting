@@ -4,7 +4,14 @@ defmodule Gallery.Web.GalleryChannel do
   alias Gallery.Painting
 
   def join("gallery", _message, socket) do
-    {:ok, Gallery.all_paintings() , socket}
+    paintings =
+      Gallery.all_paintings()
+      |> Enum.map(fn {name, painting} ->
+        {name, Gallery.prepare_painting_for_ui(painting)}
+      end)
+      |> Enum.into(%{})
+
+    {:ok, paintings, socket}
   end
 
 end
