@@ -1,0 +1,15 @@
+language: elixir
+sudo: false
+otp_release:
+  - 19.3
+elixir:
+  - 1.4.4
+env:
+  global:
+    - MIX_ENV=test
+cache:
+  directories:
+    - _build
+    - deps
+script:
+  - mix test
