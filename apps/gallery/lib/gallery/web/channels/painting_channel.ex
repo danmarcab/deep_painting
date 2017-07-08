@@ -1,4 +1,7 @@
 defmodule Gallery.Web.PaintingChannel do
+  @moduledoc """
+  Channel that manages data for one painting
+  """
   use Phoenix.Channel
 
   require Logger
@@ -42,7 +45,6 @@ defmodule Gallery.Web.PaintingChannel do
       IO.binwrite(file, style_data)
     end)
 
-
     name
     |> Painting.new
     |> Painting.add_content(content_name)
@@ -50,7 +52,11 @@ defmodule Gallery.Web.PaintingChannel do
     |> Painting.add_settings(payload_to_settings(settings))
   end
 
-  defp payload_to_settings(%{"content_weight" => co_w, "style_weight" => st_w, "variation_weight" => var_w, "iterations" => iters, "output_width" => out_w}) do
+  defp payload_to_settings(%{"content_weight" => co_w,
+                             "style_weight" => st_w,
+                             "variation_weight" => var_w,
+                             "iterations" => iters,
+                             "output_width" => out_w}) do
     %Settings{iterations: iters, content_weight: co_w, style_weight: st_w, variation_weight: var_w, output_width: out_w}
   end
 
@@ -68,7 +74,15 @@ defmodule Gallery.Web.PaintingChannel do
   end
 
   defp send_data(%Painting{} = painting) do
-    multipart = {:multipart, [{"name", painting.name}, multipart_file(painting.name, "content", painting.content), multipart_file(painting.name, "style", painting.style)]}
+    multipart =
+      {
+        :multipart,
+        [
+          {"name", painting.name},
+          multipart_file(painting.name, "content", painting.content),
+          multipart_file(painting.name, "style", painting.style)
+        ]
+      }
 
     try do
       HTTPoison.post(paint_url(), multipart)
@@ -78,7 +92,7 @@ defmodule Gallery.Web.PaintingChannel do
     end
   end
 
-  defp paint_url() do
+  defp paint_url do
     "localhost:4001/paint/"
   end
 

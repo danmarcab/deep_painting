@@ -135,15 +135,15 @@ defmodule Studio do
     Painter.stop(painter_name(name))
   end
 
-  def clear_storage() do
+  def clear_storage do
     storage().clear(storage_name())
   end
 
-  defp storage() do
+  defp storage do
     Application.get_env(:studio, :painting_storage)[:type]
   end
 
-  defp storage_name() do
+  defp storage_name do
     Application.get_env(:studio, :painting_storage)[:name]
   end
 

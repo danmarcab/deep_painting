@@ -14,6 +14,6 @@ cache:
 script:
   - mix test
   - mix dialyzer --halt-exit-status
-  - mix credo --ignore design readability --strict
+  - mix credo --strict
 notifications:
   email: false

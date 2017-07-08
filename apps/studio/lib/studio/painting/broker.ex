@@ -1,9 +1,15 @@
 defmodule Studio.Painting.Broker do
+  @moduledoc """
+  This module provides a server that listens to messages of type:
+    {:painter, painting_name, %Painting.Iteration{} = iteration}
+  And makes requests back to gallery with the information of the iteration.
+  """
+
   use GenServer
 
   require Logger
 
-  def start_link() do
+  def start_link do
     GenServer.start_link(__MODULE__, nil, name: __MODULE__)
   end
 
@@ -41,6 +47,7 @@ defmodule Studio.Painting.Broker do
     {:file, file_name, {"form-data", [{"name", name}, {"filename", Path.basename file_name}]}, []}
   end
 
+  # TODO: this should come from the original request from gallery
   defp gallery_url(name) do
     "localhost:4000/api/painting/" <> name <> "/iteration"
   end

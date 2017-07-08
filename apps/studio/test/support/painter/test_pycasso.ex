@@ -1,10 +1,13 @@
 defmodule Studio.Painter.TestPycasso do
+  @moduledoc """
+  Test implementation of a port that resembles pycasso to use with Studio.Painter
+  """
 
   def start(_painting) do
     Port.open({:spawn, code}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
   end
 
-  defp code() do
+  defp code do
 ~S"""
   python -u -c '
 import os

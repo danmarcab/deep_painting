@@ -2,6 +2,7 @@ defmodule Gallery do
   @moduledoc """
   Gallery provides funcions to create, set the settings and start the process to create a painting.
   """
+  alias Gallery.Web.Endpoint
 
   @doc """
   Finds an existing painting with a given name.
@@ -35,7 +36,7 @@ defmodule Gallery do
       ["My painting", "My painting 2"]
 
   """
-  def all_paintings() do
+  def all_paintings do
     storage().all(storage_name())
   end
 
@@ -57,20 +58,25 @@ defmodule Gallery do
     painting_to_push = prepare_painting_for_ui(painting)
 
     IO.puts "broadcasting..."
-    :ok = Gallery.Web.Endpoint.broadcast("painting:" <> painting_to_push.name, "update", painting_to_push)
-    :ok = Gallery.Web.Endpoint.broadcast("gallery", "update", painting_to_push)
+    :ok = Endpoint.broadcast("painting:" <> painting_to_push.name, "update", painting_to_push)
+    :ok = Endpoint.broadcast("gallery", "update", painting_to_push)
     :ok
   end
 
+  def clear_storage do
+    storage().clear(storage_name())
+  end
+
+  #  TODO: move somewhere
   def prepare_painting_for_ui(painting) do
     Painting.prepend_path(painting, "http://localhost:4000/paintings/" <> painting.name <> "/")
   end
 
-  defp storage() do
+  defp storage do
     Application.get_env(:gallery, :painting_storage)[:type]
   end
 
-  defp storage_name() do
+  defp storage_name do
     Application.get_env(:gallery, :painting_storage)[:name]
   end
 

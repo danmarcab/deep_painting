@@ -18,7 +18,6 @@ defmodule Painting.Storage do
   """
   @callback all(storage :: atom) :: %{optional(String.t) => Painting.t}
 
-
   @doc """
   Check if a painting with a given name exists.
   """

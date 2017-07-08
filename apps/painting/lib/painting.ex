@@ -65,7 +65,6 @@ defmodule Painting do
     |> update_status()
   end
 
-
   @doc """
   Adds style to a painting
 

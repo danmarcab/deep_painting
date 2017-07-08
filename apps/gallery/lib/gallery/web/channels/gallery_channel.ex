@@ -1,4 +1,7 @@
 defmodule Gallery.Web.GalleryChannel do
+  @moduledoc """
+  Channel that manages data for all paintings
+  """
   use Phoenix.Channel
 
   def join("gallery", _message, socket) do

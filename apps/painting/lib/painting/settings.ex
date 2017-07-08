@@ -10,6 +10,6 @@ defmodule Painting.Settings do
   @doc """
   Creates empty settings.
   """
-  @spec new() :: t
-  def new(), do: %__MODULE__{}
+  @spec new :: t
+  def new, do: %__MODULE__{}
 end
