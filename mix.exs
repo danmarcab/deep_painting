@@ -6,7 +6,8 @@ defmodule DeepPainting.Mixfile do
      apps: [:painting, :gallery, :studio],
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps()]
+     deps: deps(),
+     dialyzer: [ignore_warnings: "dialyzer.ignore-warnings"]]
   end
 
   # Dependencies can be Hex packages:

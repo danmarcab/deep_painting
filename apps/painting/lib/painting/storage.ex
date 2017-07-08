@@ -1,6 +1,6 @@
 defmodule Painting.Storage do
   @moduledoc """
-  Gallery.Painting.Storage defines the contract to store paintings
+  Painting.Storage defines the contract to store/retrive paintings
   """
 
   @doc """

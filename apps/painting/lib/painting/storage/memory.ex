@@ -1,4 +1,7 @@
 defmodule Painting.Storage.Memory do
+  @moduledoc """
+  Painting.Storage.Memory implements Painting.Storage storing data in memory. Data vanishes after application restarts.
+  """
   use GenServer
 
   @behaviour Painting.Storage

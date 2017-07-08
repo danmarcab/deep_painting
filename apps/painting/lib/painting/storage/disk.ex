@@ -1,4 +1,7 @@
 defmodule Painting.Storage.Disk do
+  @moduledoc """
+  Painting.Storage.Disk implements Painting.Storage storing data in disk. Data stays after application restarts.
+  """
   use GenServer
 
   @behaviour Painting.Storage

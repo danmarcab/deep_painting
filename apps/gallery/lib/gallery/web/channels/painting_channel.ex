@@ -1,6 +1,7 @@
 defmodule Gallery.Web.PaintingChannel do
   use Phoenix.Channel
 
+  require Logger
   alias Painting.Settings
 
   def join("painting:" <> painting_name, _message, socket) do
@@ -55,28 +56,35 @@ defmodule Gallery.Web.PaintingChannel do
 
   # TODO: move to broker
 
-  defp start_painting(painting) do
+  defp start_painting(%Painting{} = painting) do
     spawn(fn ->
-      {:ok, %HTTPoison.Response{status_code: 200}} = send_data(painting)
-
-      painting = Painting.start(painting)
-      :ok = Gallery.save_painting(painting)
+      case send_data(painting) do
+        {:ok, %HTTPoison.Response{status_code: 200}} ->
+          Gallery.save_painting(Painting.start(painting))
+        e ->
+          Logger.error (inspect e)
+      end
     end)
   end
 
-  def send_data(painting) do
+  defp send_data(%Painting{} = painting) do
     multipart = {:multipart, [{"name", painting.name}, multipart_file(painting.name, "content", painting.content), multipart_file(painting.name, "style", painting.style)]}
 
-    HTTPoison.post(paint_url(), multipart)
+    try do
+      HTTPoison.post(paint_url(), multipart)
+    rescue
+      error ->
+        error
+    end
   end
 
-  def paint_url() do
+  defp paint_url() do
     "localhost:4001/paint/"
   end
 
-  def multipart_file(painting_name, name, file_name) do
+  defp multipart_file(painting_name, name, file_name) do
     file_on_disk = painting_path(painting_name) <> file_name
-    IO.puts file_on_disk
+
     {:file, file_on_disk, {"form-data", [{"name", name}, {"filename", file_name}]}, []}
   end
 
