@@ -55,6 +55,7 @@ type Msg
     | UpdateOutputWidth Int
     | UpdateContentPath String
     | UpdateStylePath String
+    | SetInitialType Painting.InitialType
     | StartPainting
     | LossMsg Loss.Msg
     | UpdateResultPos Int
@@ -118,6 +119,9 @@ update msg model =
 
                 UpdateStylePath path ->
                     ( Loaded { loadedModel | painting = Painting.setStylePath path loadedModel.painting }, Cmd.none )
+
+                SetInitialType initialType ->
+                    ( Loaded { loadedModel | painting = Painting.setInitialType initialType loadedModel.painting }, Cmd.none )
 
                 StartPainting ->
                     let
@@ -214,10 +218,7 @@ settingsView ({ painting } as loadedModel) =
     in
         div [ class "details-settings framed" ]
             [ h4 [] [ text "settings" ]
-            , if disabled then
-                H.map LossMsg <| Loss.view loadedModel.loss painting
-              else
-                settingsViewHelp painting.settings disabled
+            , settingsViewHelp painting.settings disabled
             ]
 
 
@@ -229,6 +230,24 @@ settingsViewHelp settings disabled =
         , Range.exponential ( -10, 10, 1 ) UpdateStyleWeight "Style weight: " settings.styleWeight disabled
         , Range.exponential ( -10, 10, 1 ) UpdateVariationWeight "Variation weight: " settings.variationWeight disabled
         , Range.linear ( 100, 600, 50 ) (UpdateOutputWidth << round) "Output width (px): " (toFloat settings.outputWidth) disabled
+        , initialTypeView settings.initialType disabled
+        ]
+
+
+initialTypeView : Painting.InitialType -> Bool -> Html Msg
+initialTypeView initialType disabled =
+    div []
+        [ H.label []
+            [ text "Initial image" ]
+        , div
+            []
+            [ H.input [ HA.type_ "radio", HA.name "initial_type", HA.checked (initialType == Painting.Content), HE.onClick <| SetInitialType Painting.Content ] []
+            , text "Content"
+            , H.input [ HA.type_ "radio", HA.name "initial_type", HA.checked (initialType == Painting.Style), HE.onClick <| SetInitialType Painting.Style ] []
+            , text "Style"
+            , H.input [ HA.type_ "radio", HA.name "initial_type", HA.checked (initialType == Painting.Random), HE.onClick <| SetInitialType Painting.Random ] []
+            , text "Random"
+            ]
         ]
 
 
@@ -310,7 +329,10 @@ resultView { painting, resultFrame } =
                 _ ->
                     case maybeIteration index of
                         Just iteration ->
-                            img [ src iteration.path ] []
+                            div []
+                                [ img [ src iteration.path ] []
+                                , Range.linear ( 0, toFloat <| (List.length painting.iterations) - 1, 1 ) (UpdateResultPos << round) "Interation: " (toFloat index) False
+                                ]
 
                         Nothing ->
                             H.p [] [ text "Nothing to show yet." ]
@@ -318,7 +340,6 @@ resultView { painting, resultFrame } =
         div [ class "details-result framed" ]
             [ h4 [] [ text "result" ]
             , content
-            , Range.linear ( 0, toFloat painting.settings.iterations, 1 ) (UpdateResultPos << round) "Interation: " (toFloat index) False
             ]
 
 

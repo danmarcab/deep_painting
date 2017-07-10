@@ -3,6 +3,7 @@ module Data.Painting
         ( Painting
         , Status(..)
         , Settings
+        , InitialType(..)
         , Iteration
         , initialPainting
         , setIterations
@@ -12,6 +13,7 @@ module Data.Painting
         , setOutputWidth
         , setContentPath
         , setStylePath
+        , setInitialType
         , readyToStart
         , decoder
         , encode
@@ -44,6 +46,7 @@ type alias Settings =
     , styleWeight : Float
     , variationWeight : Float
     , outputWidth : Int
+    , initialType : InitialType
     }
 
 
@@ -71,7 +74,14 @@ initialSettings =
     , styleWeight = 100.0
     , variationWeight = 1.0
     , outputWidth = 50
+    , initialType = Content
     }
+
+
+type InitialType
+    = Content
+    | Style
+    | Random
 
 
 setContentWeight : Float -> Painting -> Painting
@@ -135,6 +145,15 @@ setStylePath path painting =
         { painting | stylePath = Just path }
 
 
+setInitialType : InitialType -> Painting -> Painting
+setInitialType initialType ({ settings } as painting) =
+    let
+        newSettings =
+            { settings | initialType = initialType }
+    in
+        { painting | settings = newSettings }
+
+
 readyToStart : Painting -> Bool
 readyToStart painting =
     painting.contentPath /= Nothing && painting.stylePath /= Nothing
@@ -193,12 +212,33 @@ statusDecoder =
 
 settingsDecoder : Decoder Settings
 settingsDecoder =
-    Json.Decode.map5 Settings
+    Json.Decode.map6 Settings
         (Json.Decode.field "iterations" Json.Decode.int)
         (Json.Decode.field "content_weight" Json.Decode.float)
         (Json.Decode.field "style_weight" Json.Decode.float)
         (Json.Decode.field "variation_weight" Json.Decode.float)
         (Json.Decode.field "output_width" Json.Decode.int)
+        (Json.Decode.field "initial_type" initialTypeDecoder)
+
+
+initialTypeDecoder : Decoder InitialType
+initialTypeDecoder =
+    Json.Decode.string
+        |> Json.Decode.andThen
+            (\str ->
+                case str of
+                    "content" ->
+                        Json.Decode.succeed Content
+
+                    "style" ->
+                        Json.Decode.succeed Style
+
+                    "random" ->
+                        Json.Decode.succeed Random
+
+                    status ->
+                        Json.Decode.fail ("Unexpected initial type: " ++ status)
+            )
 
 
 iterationDecoder : Decoder Iteration
@@ -244,7 +284,21 @@ encodeSettings settings =
         , ( "style_weight", Json.Encode.float settings.styleWeight )
         , ( "variation_weight", Json.Encode.float settings.variationWeight )
         , ( "output_width", Json.Encode.int settings.outputWidth )
+        , ( "initial_type", encodeInitialType settings.initialType )
         ]
+
+
+encodeInitialType : InitialType -> Json.Encode.Value
+encodeInitialType initial_type =
+    case initial_type of
+        Content ->
+            Json.Encode.string "content"
+
+        Style ->
+            Json.Encode.string "style"
+
+        Random ->
+            Json.Encode.string "random"
 
 
 encodeIteration : Iteration -> Json.Encode.Value

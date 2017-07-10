@@ -27,6 +27,7 @@ defmodule Studio.Painter.Pycasso do
   defp settings_args(%Settings{} = settings) do
     [
       "-r port",
+      "--initial_type #{settings.initial_type}",
       "--output_width #{settings.output_width}",
       "--iterations #{settings.iterations}",
       "--content_weight #{settings.content_weight}",

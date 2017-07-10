@@ -56,8 +56,14 @@ defmodule Gallery.Web.PaintingChannel do
                              "style_weight" => st_w,
                              "variation_weight" => var_w,
                              "iterations" => iters,
-                             "output_width" => out_w}) do
-    %Settings{iterations: iters, content_weight: co_w, style_weight: st_w, variation_weight: var_w, output_width: out_w}
+                             "output_width" => out_w,
+                             "initial_type" => initial_type}) do
+    %Settings{iterations: iters,
+              content_weight: co_w,
+              style_weight: st_w,
+              variation_weight: var_w,
+              output_width: out_w,
+              initial_type: initial_type}
   end
 
   # TODO: move to broker

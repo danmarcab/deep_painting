@@ -4,7 +4,12 @@ defmodule Painting.Settings do
   """
 
   @derive [Poison.Encoder]
-  defstruct iterations: 5, content_weight: nil, style_weight: nil, variation_weight: nil, output_width: 200
+  defstruct iterations: 5,
+            content_weight: nil,
+            style_weight: nil,
+            variation_weight: nil,
+            output_width: 200,
+            initial_type: "content"
 
   @type t :: %__MODULE__{}
 
