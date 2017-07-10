@@ -5,14 +5,18 @@ defmodule Studio.Painter.Pycasso do
 
   alias Painting.Settings
 
-  defp start(%Painting{} = painting) do
+  def start(%Painting{} = painting) do
     executable = Application.get_env(:studio, :pycasso_path)
 
     Port.open({:spawn, "#{executable} #{args(painting)}"}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
   end
 
   defp args(%Painting{} = painting) do
-    ([painting.content, painting.style, output_path(painting)] ++ settings_args(painting.settings))
+    required_args =
+      [painting.content, painting.style, output_path(painting)]
+      |> Enum.map(&inspect/1)
+
+    (required_args ++ settings_args(painting.settings))
     |> Enum.join(" ")
   end
 
@@ -20,8 +24,15 @@ defmodule Studio.Painter.Pycasso do
     Application.app_dir(:studio, "priv") <> "/paintings/" <> painting.name
   end
 
-  defp settings_args(%Settings{output_width: output_width}) do
-    ["-r port", "--output_width #{output_width}"]
+  defp settings_args(%Settings{} = settings) do
+    [
+      "-r port",
+      "--output_width #{settings.output_width}",
+      "--iterations #{settings.iterations}",
+      "--content_weight #{settings.content_weight}",
+      "--style_weight #{settings.style_weight}",
+      "--variation_weight #{settings.variation_weight}"
+    ]
   end
 
 end

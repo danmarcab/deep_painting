@@ -35,14 +35,14 @@ view { hovering } painting =
             painting.iterations
                 |> List.indexedMap
                     (\n iter ->
-                        { x = toFloat (n + 1), y = iter.loss }
+                        { x = toFloat n, y = iter.loss }
                     )
 
         customizations =
             Plot.defaultSeriesPlotCustomizations
     in
         Plot.viewSeriesCustom
-            { customizations | height = 100, margin = { top = 20, bottom = 30, left = 100, right = 40 }, onHover = Just Hover }
+            { customizations | margin = { top = 20, bottom = 30, left = 100, right = 40 }, onHover = Just Hover }
             [ Plot.line <| List.map (myDot hovering) ]
             dataPoints
 

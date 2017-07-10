@@ -80,7 +80,8 @@ defmodule Gallery.Web.PaintingChannel do
         [
           {"name", painting.name},
           multipart_file(painting.name, "content", painting.content),
-          multipart_file(painting.name, "style", painting.style)
+          multipart_file(painting.name, "style", painting.style),
+          {"settings", Poison.encode!(painting.settings)}
         ]
       }
 

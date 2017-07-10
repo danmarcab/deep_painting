@@ -3,7 +3,8 @@ defmodule Painting.Settings do
   Module to create and manipulate painting settings.
   """
 
-  defstruct iterations: 5, content_weight: nil, style_weight: nil, variation_weight: nil, output_width: 50
+  @derive [Poison.Encoder]
+  defstruct iterations: 5, content_weight: nil, style_weight: nil, variation_weight: nil, output_width: 200
 
   @type t :: %__MODULE__{}
 

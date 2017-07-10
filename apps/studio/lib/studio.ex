@@ -109,6 +109,24 @@ defmodule Studio do
   end
 
   @doc """
+  Returns a map with all exisiting paintings (name of the painting as key, Painting as value)
+
+  ## Examples
+
+      iex> Studio.create_painting("My painting")
+      :ok
+      iex> Studio.create_painting("My painting 2")
+      :ok
+      iex> paintings_map = Studio.all_paintings()
+      iex> Map.keys(paintings_map)
+      ["My painting", "My painting 2"]
+
+  """
+  def all_paintings do
+    storage().all(storage_name())
+  end
+
+  @doc """
   Saves a painting with a given name.
 
   ## Examples

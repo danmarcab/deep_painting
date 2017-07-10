@@ -13,6 +13,7 @@ import Phoenix.Push as Push
 import Phoenix.Socket as Socket exposing (Socket)
 import Phoenix.Channel as Channel exposing (Channel)
 import Page.Details.Loss as Loss
+import Views.Range as Range
 
 
 -- MODEL --
@@ -56,6 +57,7 @@ type Msg
     | UpdateStylePath String
     | StartPainting
     | LossMsg Loss.Msg
+    | UpdateResultPos Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -131,6 +133,9 @@ update msg model =
                 LossMsg submsg ->
                     ( Loaded { loadedModel | loss = Loss.update submsg loadedModel.loss }, Cmd.none )
 
+                UpdateResultPos pos ->
+                    ( Loaded { loadedModel | resultFrame = Exactly pos }, Cmd.none )
+
                 _ ->
                     ( Loaded loadedModel, Cmd.none )
 
@@ -191,7 +196,7 @@ view model =
 
 
 settingsView : LoadedModel -> Html Msg
-settingsView { painting } =
+settingsView ({ painting } as loadedModel) =
     let
         disabled =
             case painting.status of
@@ -209,56 +214,22 @@ settingsView { painting } =
     in
         div [ class "details-settings framed" ]
             [ h4 [] [ text "settings" ]
-            , settingsViewHelp painting.settings disabled
+            , if disabled then
+                H.map LossMsg <| Loss.view loadedModel.loss painting
+              else
+                settingsViewHelp painting.settings disabled
             ]
 
 
 settingsViewHelp : Painting.Settings -> Bool -> Html Msg
 settingsViewHelp settings disabled =
-    let
-        log10 =
-            logBase 10
-
-        exp10 exp =
-            10 ^ exp
-
-        expRangeInput range msg label val =
-            rangeInput range msg label val log10 exp10
-
-        linRangeInput range msg label val =
-            rangeInput range msg label val identity identity
-
-        rangeInput ( from, to, step ) msg label val toSlider toVal =
-            let
-                parsedToVal str =
-                    case String.toFloat str of
-                        Ok num ->
-                            toVal num
-
-                        Err err ->
-                            val
-            in
-                div []
-                    [ H.div [] [ text <| label ++ toString val ]
-                    , H.input
-                        [ HA.type_ "range"
-                        , HA.min (toString from)
-                        , HA.max (toString to)
-                        , HA.value <| toString <| toSlider val
-                        , HA.step (toString step)
-                        , HE.onInput (parsedToVal >> msg)
-                        , HA.disabled disabled
-                        ]
-                        []
-                    ]
-    in
-        div []
-            [ linRangeInput ( 3, 50, 1 ) (UpdateIterations << round) "Interations: " (toFloat settings.iterations)
-            , expRangeInput ( -10, 10, 1 ) UpdateContentWeight "Content weight: " settings.contentWeight
-            , expRangeInput ( -10, 10, 1 ) UpdateStyleWeight "Style weight: " settings.styleWeight
-            , expRangeInput ( -10, 10, 1 ) UpdateVariationWeight "Variation weight: " settings.variationWeight
-            , linRangeInput ( 100, 600, 50 ) (UpdateOutputWidth << round) "Output width (px): " (toFloat settings.outputWidth)
-            ]
+    div []
+        [ Range.linear ( 3, 50, 1 ) (UpdateIterations << round) "Interations: " (toFloat settings.iterations) disabled
+        , Range.exponential ( -10, 10, 1 ) UpdateContentWeight "Content weight: " settings.contentWeight disabled
+        , Range.exponential ( -10, 10, 1 ) UpdateStyleWeight "Style weight: " settings.styleWeight disabled
+        , Range.exponential ( -10, 10, 1 ) UpdateVariationWeight "Variation weight: " settings.variationWeight disabled
+        , Range.linear ( 100, 600, 50 ) (UpdateOutputWidth << round) "Output width (px): " (toFloat settings.outputWidth) disabled
+        ]
 
 
 sourcesView : LoadedModel -> Html Msg
@@ -317,13 +288,13 @@ resultView : LoadedModel -> Html Msg
 resultView { painting, resultFrame } =
     let
         maybeIteration idx =
-            List.drop (idx - 1) painting.iterations
+            List.drop idx painting.iterations
                 |> List.head
 
         index =
             case resultFrame of
                 Last ->
-                    List.length painting.iterations
+                    (List.length painting.iterations) - 1
 
                 Exactly pos ->
                     pos
@@ -347,6 +318,7 @@ resultView { painting, resultFrame } =
         div [ class "details-result framed" ]
             [ h4 [] [ text "result" ]
             , content
+            , Range.linear ( 0, toFloat painting.settings.iterations, 1 ) (UpdateResultPos << round) "Interation: " (toFloat index) False
             ]
 
 

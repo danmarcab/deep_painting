@@ -162,12 +162,20 @@ searchView filter =
 
 paintingView : Painting -> Html Msg
 paintingView painting =
-    div
-        [ class "painting_preview framed" ]
-        [ h4 [] [ text painting.name ]
-        , a [ Route.href (Route.Details painting.name) ]
-            [ img [ src (Maybe.withDefault defaultImg painting.stylePath) ] [] ]
-        ]
+    let
+        lastImg =
+            painting.iterations
+                |> List.reverse
+                |> List.head
+                |> Maybe.map .path
+                |> Maybe.withDefault defaultImg
+    in
+        div
+            [ class "painting_preview framed" ]
+            [ h4 [] [ text painting.name ]
+            , a [ Route.href (Route.Details painting.name) ]
+                [ img [ src lastImg ] [] ]
+            ]
 
 
 defaultImg : String

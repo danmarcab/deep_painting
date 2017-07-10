@@ -49,6 +49,6 @@ defmodule Studio.Painting.Broker do
 
   # TODO: this should come from the original request from gallery
   defp gallery_url(name) do
-    "localhost:4000/api/painting/" <> name <> "/iteration"
+    "localhost:4000/api/painting/" <> URI.encode(name) <> "/iteration"
   end
 end

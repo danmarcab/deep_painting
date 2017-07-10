@@ -22,7 +22,11 @@ defmodule Studio.Web.Router do
     end
   end
 
-  def process_params(%{"name" => name, "content" => content_img, "style" => style_img}) do
+  def process_params(%{"name" => name,
+                       "content" => content_img,
+                       "style" => style_img,
+                       "settings" => encoded_settings}) do
+
     painting_path = Application.app_dir(:studio, "priv") <> "/paintings/" <> name <> "/"
 
     File.mkdir_p(painting_path)
@@ -36,7 +40,7 @@ defmodule Studio.Web.Router do
       name: name,
       content_path: content_path,
       style_path: style_path,
-      settings: Settings.new
+      settings: Poison.decode!(encoded_settings, as: %Settings{})
     }
   end
   def process_params(_),  do: :error
