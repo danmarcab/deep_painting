@@ -26,7 +26,9 @@ defmodule DeepPainting.Mixfile do
     [
       {:mix_test_watch, "~> 0.3", only: [:dev, :test], runtime: false},
       {:credo, "~> 0.5", only: [:dev, :test], runtime: false},
-      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:hackney, "== 1.8.0", override: true},
+      {:distillery, "~> 1.4", runtime: false}
     ]
   end
 end
