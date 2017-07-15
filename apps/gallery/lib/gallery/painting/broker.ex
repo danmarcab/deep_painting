@@ -1,8 +1,6 @@
 defmodule Gallery.Painting.Broker do
   @moduledoc """
-  This module provides a server that listens to messages of type:
-    {:painter, painting_name, %Painting.Iteration{} = iteration}
-  And makes requests back to gallery with the information of the iteration.
+  This module provides a server that listen and makes http calls to start a painting in studio
   """
 
   use GenServer
