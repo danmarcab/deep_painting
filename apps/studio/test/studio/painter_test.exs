@@ -14,23 +14,23 @@ defmodule Studio.PainterTest do
   end
 
   test "watcher is notified on every iteration until it completes the painting" do
-    Painter.start_link("my_painting", watcher: self())
+    Painter.start_link("my_painting", watcher: self(), callback_url: "url")
 
     for _ <- 0..10 do
-      assert_receive({:painter, "my_painting", %Iteration{}})
+      assert_receive({:painter, "url", "my_painting", %Iteration{}})
     end
-    refute_receive({:painter, "my_painting", %Iteration{}})
+    refute_receive({:painter, "url", "my_painting", %Iteration{}})
     assert {:ok, %{status: :complete}} = Studio.find_painting("my_painting")
   end
 
   test "can stop the painter, and completes painting" do
-    {:ok, painter} = Painter.start_link("my_painting", watcher: self())
+    {:ok, painter} = Painter.start_link("my_painting", watcher: self(), callback_url: "url")
 
     for _ <- 0..5 do
-      assert_receive({:painter, "my_painting", %Iteration{}})
+      assert_receive({:painter, "url", "my_painting", %Iteration{}})
     end
     Painter.stop(painter)
-    refute_receive({:painter, "my_painting", %Iteration{}})
+    refute_receive({:painter, "url", "my_painting", %Iteration{}})
     assert {:ok, %{status: :complete}} = Studio.find_painting("my_painting")
   end
 end

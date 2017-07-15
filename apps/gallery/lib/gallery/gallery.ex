@@ -69,7 +69,7 @@ defmodule Gallery do
 
   #  TODO: move somewhere
   def prepare_painting_for_ui(painting) do
-    Painting.prepend_path(painting, "http://localhost:4000/paintings/" <> painting.name <> "/")
+    Painting.prepend_path(painting, Endpoint.static_url() <> "/paintings/" <> painting.name <> "/")
   end
 
   defp storage do

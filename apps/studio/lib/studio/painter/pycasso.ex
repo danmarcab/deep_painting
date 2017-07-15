@@ -6,7 +6,7 @@ defmodule Studio.Painter.Pycasso do
   alias Painting.Settings
 
   def start(%Painting{} = painting) do
-    executable = Application.get_env(:studio, :pycasso_path)
+    executable = System.get_env("PYCASSO_PATH") || Application.get_env(:studio, :pycasso_path)
 
     Port.open({:spawn, "#{executable} #{args(painting)}"}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
   end

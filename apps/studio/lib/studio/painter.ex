@@ -10,6 +10,7 @@ defmodule Studio.Painter do
   @spec start_link(String.t, Keyword.t) :: GenServer.on_start
   def start_link(painting_name, opts \\ []) when is_list(opts) do
     watcher = Keyword.get(opts, :watcher)
+    callback_url = Keyword.get(opts, :callback_url)
     server_opts = case Keyword.fetch(opts, :name) do
       {:ok, name} ->
         [name: name]
@@ -17,15 +18,15 @@ defmodule Studio.Painter do
         []
     end
 
-    GenServer.start_link(__MODULE__, {painting_name, watcher}, server_opts)
+    GenServer.start_link(__MODULE__, {painting_name, watcher, callback_url}, server_opts)
   end
 
-  def init({name, watcher}) do
+  def init({name, watcher, callback_url}) do
     with {:ok, painting} <- Studio.find_painting(name),
          painting <- Painting.start(painting),
          port <- start_port(painting)
     do
-      {:ok, %{port: port, painting: painting, watcher: watcher}}
+      {:ok, %{port: port, painting: painting, watcher: watcher, callback_url: callback_url}}
     else
       _ -> {:stop, :error}
     end
@@ -54,7 +55,7 @@ defmodule Studio.Painter do
 
 #    send iteration data to watcher
     if state.watcher do
-      send(state.watcher, {:painter, state.painting.name, iteration})
+      send(state.watcher, {:painter, state.callback_url, state.painting.name, iteration})
     end
 
     if keep_painting?(new_state) do
