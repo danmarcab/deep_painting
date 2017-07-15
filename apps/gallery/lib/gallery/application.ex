@@ -14,8 +14,9 @@ defmodule Gallery.Application do
 
     # Define workers and child supervisors to be supervised
     children = [
+      worker(Gallery.Painting.Broker, []),
       # Start the endpoint when the application starts
-      supervisor(Gallery.Web.Endpoint, []),
+      supervisor(Gallery.Web.Endpoint, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

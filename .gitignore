@@ -27,3 +27,8 @@ erl_crash.dump
 
 # priv
 apps/studio/priv/
+
+
+.iex.exs
+apps/painting/priv/storage/gallery_storage
+apps/painting/priv/storage/studio_storage

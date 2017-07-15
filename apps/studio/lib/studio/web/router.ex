@@ -9,12 +9,17 @@ defmodule Studio.Web.Router do
 
   post "/paint" do
     case process_params(conn.params) do
-      %{name: name, content_path: content_path, style_path: style_path, settings: settings} ->
+      %{name: name,
+        content_path: content_path,
+        style_path: style_path,
+        settings: settings,
+        callback_url: callback_url} ->
+
         Studio.create_painting(name)
         Studio.add_painting_content(name, content_path)
         Studio.add_painting_style(name, style_path)
         Studio.add_painting_settings(name, settings)
-        Studio.start_painting(name)
+        Studio.start_painting(name, callback_url)
 
         send_resp(conn, 200, "Painting started")
       :error ->
@@ -25,7 +30,8 @@ defmodule Studio.Web.Router do
   def process_params(%{"name" => name,
                        "content" => content_img,
                        "style" => style_img,
-                       "settings" => encoded_settings}) do
+                       "settings" => encoded_settings,
+                       "callback_url" => callback_url}) do
 
     painting_path = Application.app_dir(:studio, "priv") <> "/paintings/" <> name <> "/"
 
@@ -40,7 +46,8 @@ defmodule Studio.Web.Router do
       name: name,
       content_path: content_path,
       style_path: style_path,
-      settings: Poison.decode!(encoded_settings, as: %Settings{})
+      settings: Poison.decode!(encoded_settings, as: %Settings{}),
+      callback_url: callback_url
     }
   end
   def process_params(_),  do: :error

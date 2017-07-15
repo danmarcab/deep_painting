@@ -6,6 +6,7 @@ defmodule Gallery.Web.PaintingChannel do
 
   require Logger
   alias Painting.Settings
+  alias Gallery.Painting.Broker
 
   def join("painting:" <> painting_name, _message, socket) do
     resp = case Gallery.find_painting(painting_name) do
@@ -21,7 +22,7 @@ defmodule Gallery.Web.PaintingChannel do
 
     :ok = Gallery.save_painting(painting)
 
-    start_painting(painting)
+    Broker.start_painting(painting)
 
     {:noreply, socket}
   end
@@ -66,50 +67,8 @@ defmodule Gallery.Web.PaintingChannel do
               initial_type: initial_type}
   end
 
-  # TODO: move to broker
-
-  defp start_painting(%Painting{} = painting) do
-    spawn(fn ->
-      case send_data(painting) do
-        {:ok, %HTTPoison.Response{status_code: 200}} ->
-          Gallery.save_painting(Painting.start(painting))
-        e ->
-          Logger.error (inspect e)
-      end
-    end)
-  end
-
-  defp send_data(%Painting{} = painting) do
-    multipart =
-      {
-        :multipart,
-        [
-          {"name", painting.name},
-          multipart_file(painting.name, "content", painting.content),
-          multipart_file(painting.name, "style", painting.style),
-          {"settings", Poison.encode!(painting.settings)}
-        ]
-      }
-
-    try do
-      HTTPoison.post(paint_url(), multipart)
-    rescue
-      error ->
-        error
-    end
-  end
-
-  defp paint_url do
-    "localhost:4001/paint/"
-  end
-
-  defp multipart_file(painting_name, name, file_name) do
-    file_on_disk = painting_path(painting_name) <> file_name
-
-    {:file, file_on_disk, {"form-data", [{"name", name}, {"filename", file_name}]}, []}
-  end
-
   defp painting_path(name) do
     Application.app_dir(:gallery, "priv") <> "/static/paintings/" <> name <> "/"
   end
+
 end
