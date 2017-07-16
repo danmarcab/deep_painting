@@ -3,12 +3,17 @@ defmodule Studio.Painter.Pycasso do
   Real implementation of a port that comunicates with pycasso to use with Studio.Painter
   """
 
+  require Logger
+
   alias Painting.Settings
 
   def start(%Painting{} = painting) do
     executable = System.get_env("PYCASSO_PATH") || Application.get_env(:studio, :pycasso_path)
 
-    Port.open({:spawn, "#{executable} #{args(painting)}"}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
+    command = "#{executable} #{args(painting)}"
+    Logger.info "Calling Pycasso with command: #{command}"
+
+    Port.open({:spawn, command}, [:binary, {:packet, 4}, :nouse_stdio, :exit_status])
   end
 
   defp args(%Painting{} = painting) do

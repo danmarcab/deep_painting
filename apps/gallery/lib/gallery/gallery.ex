@@ -3,7 +3,6 @@ defmodule Gallery do
   Gallery provides funcions to create, set the settings and start the process to create a painting.
   """
   alias Gallery.Web.Endpoint
-
   @doc """
   Finds an existing painting with a given name.
 
@@ -69,7 +68,7 @@ defmodule Gallery do
 
   #  TODO: move somewhere
   def prepare_painting_for_ui(painting) do
-    Painting.prepend_path(painting, Endpoint.static_url() <> "/paintings/" <> painting.name <> "/")
+    Painting.prepend_path(painting, external_url() <> "/paintings/" <> painting.name <> "/")
   end
 
   defp storage do
@@ -80,4 +79,12 @@ defmodule Gallery do
     Application.get_env(:gallery, :painting_storage)[:name]
   end
 
+  def external_url do
+    if System.get_env("GALLERY_DONT_EXPOSE_PORT") do
+      url = Endpoint.struct_url()
+      URI.to_string %{url | port: nil}
+    else
+      Endpoint.url()
+    end
+  end
 end

@@ -71,7 +71,7 @@ initialSettings : Settings
 initialSettings =
     { iterations = 10
     , contentWeight = 0.1
-    , styleWeight = 100.0
+    , styleWeight = 10.0
     , variationWeight = 1.0
     , outputWidth = 50
     , initialType = Content

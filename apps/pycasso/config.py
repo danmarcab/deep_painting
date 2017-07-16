@@ -25,8 +25,8 @@ def parse_args():
 
 def expand(config):
     w, h = load_img(config.content_img).size
-    height = config.output_width
-    img_size = (height, int(w * height / h))
+    width = config.output_width
+    img_size = (width, int(w * width / h))
 
     content = load_img(config.content_img, target_size=img_size)
     style = load_img(config.style_img, target_size=img_size)

@@ -5,7 +5,6 @@ defmodule Gallery.Painting.Broker do
 
   use GenServer
 
-  alias Gallery.Web.Endpoint
   require Logger
 
   def start_link do
@@ -45,6 +44,9 @@ defmodule Gallery.Painting.Broker do
       }
 
     try do
+      Logger.info "Sending request to studio on: #{paint_url()}"
+      Logger.info "Body: #{inspect multipart}"
+
       HTTPoison.post(paint_url(), multipart)
     rescue
       error ->
@@ -71,6 +73,6 @@ defmodule Gallery.Painting.Broker do
   end
 
   defp callback_url(name) do
-    Endpoint.url() <> "/api/painting/" <> URI.encode(name) <> "/iteration"
+    Gallery.external_url <> "/api/painting/" <> URI.encode(name) <> "/iteration"
   end
 end
