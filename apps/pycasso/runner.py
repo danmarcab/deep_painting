@@ -12,7 +12,7 @@ class BasicRunner(object):
         self.config = config
         self.optimizer = optimizer
 
-    def run(self, initial_image):
+    def run(self, (initial_image, initial_loss)):
         self.save_image(initial_image, 'iteration_0.png')
         for i in range(self.config.iterations):
             self.run_once(i + 1)

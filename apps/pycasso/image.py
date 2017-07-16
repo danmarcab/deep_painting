@@ -10,7 +10,7 @@ def preprocess_image(image):
     return image
 
 def deprocess_image(image, (rows, cols)):
-    if K.image_dim_ordering() == 'th':
+    if K.image_data_format() == 'channels_first':
         image = image.reshape((3, rows, cols))
         image = image.transpose((1, 2, 0))
     else:
@@ -24,6 +24,15 @@ def deprocess_image(image, (rows, cols)):
     image = np.clip(image, 0, 255).astype('uint8')
     return image
 
+def combination_image(config):
+    (rows, cols) = config.img_size
+
+    if K.image_data_format() == 'channels_first':
+        return K.placeholder((1, 3, rows, cols))
+    else:
+        return K.placeholder((1, rows, cols, 3))
+
+
 def initial(config):
     (rows, cols) = config.img_size
 
@@ -33,7 +42,7 @@ def initial(config):
         return preprocess_image(config.style)
     # random image
     else:
-        if K.image_dim_ordering() == 'th':
+        if K.image_data_format() == 'channels_first':
             return np.random.uniform(0, 255, (1, 3, rows, cols)) - 128.
         else:
             return np.random.uniform(0, 255, (1, rows, cols, 3)) - 128.
