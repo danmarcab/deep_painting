@@ -149,6 +149,9 @@ defmodule Painting do
 
   """
   @spec add_iteration(painting :: t, iter :: Iteration.t) :: t
+  def add_iteration(%__MODULE__{status: :ready} = p, %Iteration{} = iter) do
+    add_iteration(%{p | status: :in_progress}, iter)
+  end
   def add_iteration(%__MODULE__{status: :in_progress} = p, %Iteration{} = iter) do
     %{p | iterations: p.iterations ++ [iter]}
     |> update_status()

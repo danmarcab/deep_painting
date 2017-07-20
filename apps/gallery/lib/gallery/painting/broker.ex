@@ -12,7 +12,7 @@ defmodule Gallery.Painting.Broker do
   end
 
   def init(nil) do
-    {:ok, nil}
+    {:ok, %{}}
   end
 
   def start_painting(%Painting{} = painting) do
@@ -20,14 +20,24 @@ defmodule Gallery.Painting.Broker do
   end
 
   def handle_cast({:start_painting, painting}, state) do
+    spawn(fn ->
+      try_send_data(painting, 5)
+    end)
+
+    {:noreply, state}
+  end
+
+  defp try_send_data(painting, 0) do
+    Logger.error("Giving up starting #{painting.name}")
+  end
+  defp try_send_data(painting, retries) when retries > 0 do
     case send_data(painting) do
       {:ok, %HTTPoison.Response{status_code: 200}} ->
         Gallery.save_painting(Painting.start(painting))
       e ->
-        Logger.error (inspect e)
+        Logger.error(inspect e)
+        try_send_data(painting, retries - 1)
     end
-
-    {:noreply, state}
   end
 
   defp send_data(%Painting{} = painting) do

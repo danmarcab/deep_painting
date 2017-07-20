@@ -15,13 +15,17 @@ defmodule Studio.Web.Router do
         settings: settings,
         callback_url: callback_url} ->
 
-        Studio.create_painting(name)
-        Studio.add_painting_content(name, content_path)
-        Studio.add_painting_style(name, style_path)
-        Studio.add_painting_settings(name, settings)
-        Studio.start_painting(name, callback_url)
+        case Studio.create_painting(name) do
+          :ok ->
+            Studio.add_painting_content(name, content_path)
+            Studio.add_painting_style(name, style_path)
+            Studio.add_painting_settings(name, settings)
+            Studio.start_painting(name, callback_url)
 
-        send_resp(conn, 200, "Painting started")
+            send_resp(conn, 200, "Painting started")
+          {:error, :already_created} ->
+            send_resp(conn, 200, "Painting already started")
+        end
       :error ->
         send_resp(conn, 500, "Internal Error")
     end
