@@ -43,6 +43,6 @@ def initial(config):
     # random image
     else:
         if K.image_data_format() == 'channels_first':
-            return np.random.uniform(0, 255, (1, 3, rows, cols)) - 128.
+            return np.full((1, 3, rows, cols), 128.0)
         else:
-            return np.random.uniform(0, 255, (1, rows, cols, 3)) - 128.
+            return np.full((1, rows, cols, 3), 128.0)

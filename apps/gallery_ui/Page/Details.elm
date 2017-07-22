@@ -188,7 +188,10 @@ view model =
                     [ H.p [] [ text "loading......" ] ]
 
                 Loaded loadedModel ->
-                    [ H.h2 [] [ text loadedModel.painting.name ]
+                    [ H.h2 []
+                        [ text loadedModel.painting.name
+                        , text <| " (" ++ Painting.statusText loadedModel.painting ++ ")"
+                        ]
                     , settingsView loadedModel
                     , sourcesView loadedModel
                     , resultView loadedModel
@@ -225,11 +228,11 @@ settingsView ({ painting } as loadedModel) =
 settingsViewHelp : Painting.Settings -> Bool -> Html Msg
 settingsViewHelp settings disabled =
     div []
-        [ Range.linear ( 3, 50, 1 ) (UpdateIterations << round) "Interations: " (toFloat settings.iterations) disabled
-        , Range.exponential ( -10, 10, 1 ) UpdateContentWeight "Content weight: " settings.contentWeight disabled
-        , Range.exponential ( -10, 10, 1 ) UpdateStyleWeight "Style weight: " settings.styleWeight disabled
-        , Range.exponential ( -10, 10, 1 ) UpdateVariationWeight "Variation weight: " settings.variationWeight disabled
-        , Range.linear ( 100, 600, 50 ) (UpdateOutputWidth << round) "Output width (px): " (toFloat settings.outputWidth) disabled
+        [ Range.linear ( 5, 100, 5 ) (UpdateIterations << round) "Interations: " (toFloat settings.iterations) disabled
+        , Range.exponential ( -4, 4, 0.25 ) UpdateContentWeight "Content weight: " settings.contentWeight disabled
+        , Range.exponential ( -4, 4, 0.25 ) UpdateStyleWeight "Style weight: " settings.styleWeight disabled
+        , Range.exponential ( -4, 4, 0.25 ) UpdateVariationWeight "Variation weight: " settings.variationWeight disabled
+        , Range.linear ( 100, 800, 50 ) (UpdateOutputWidth << round) "Output width (px): " (toFloat settings.outputWidth) disabled
         , initialTypeView settings.initialType disabled
         ]
 
@@ -245,8 +248,8 @@ initialTypeView initialType disabled =
             , text "Content"
             , H.input [ HA.type_ "radio", HA.name "initial_type", HA.checked (initialType == Painting.Style), HE.onClick <| SetInitialType Painting.Style ] []
             , text "Style"
-            , H.input [ HA.type_ "radio", HA.name "initial_type", HA.checked (initialType == Painting.Random), HE.onClick <| SetInitialType Painting.Random ] []
-            , text "Random"
+            , H.input [ HA.type_ "radio", HA.name "initial_type", HA.checked (initialType == Painting.Blank), HE.onClick <| SetInitialType Painting.Blank ] []
+            , text "Blank"
             ]
         ]
 
@@ -352,15 +355,20 @@ optionsFromList list =
 
 styleList : List ( String, String )
 styleList =
-    [ ( "Starry night", "http://localhost:4000/images/sources/style/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg" )
+    [ ( "Starry night", "https://raw.githubusercontent.com/titu1994/Neural_Style_Transfer/master/images/inputs/style/starry_night.jpg" )
     , ( "The Scream", "http://localhost:4000/images/sources/style/1200px-The_Scream.jpg" )
+    , ( "Red Canna", "http://www.georgiaokeeffe.net/images/paintings/red-canna.jpg" )
+    , ( "Picasso seated nude", "https://www.pablopicasso.org/images/paintings/seated-nude.jpg" )
     , ( "Picasso self portrait", "http://localhost:4000/images/sources/style/self-portrait-1907.jpg" )
+    , ( "Misty mood", "http://img02.deviantart.net/ebd6/i/2015/236/c/d/misty_mood_by_leonid_afremov_by_leonidafremov-d2k3jaw.jpg" )
+    , ( "Ink City", "http://s-media-cache-ak0.pinimg.com/originals/48/c8/e3/48c8e3d14e5d0224ee8287013be7ad7d.jpg" )
     ]
 
 
 contentList : List ( String, String )
 contentList =
     [ ( "Cadiz", "http://localhost:4000/images/sources/content/image_61020.jpeg" )
+    , ( "Cadiz 2", "http://sleepincadiz.com/wp-content/uploads/2015/06/catedral-de-cadiz.jpg" )
     , ( "London", "http://localhost:4000/images/sources/content/bridge-england-united-kingdom-big-ben-thames-night-london-street-lights-cities-river-reflection-clock-watch-time-images-198692.jpg" )
     , ( "Dani", "http://localhost:4000/images/sources/content/daniel-cabillas.jpg" )
     ]

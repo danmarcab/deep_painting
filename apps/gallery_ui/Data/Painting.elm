@@ -6,6 +6,7 @@ module Data.Painting
         , InitialType(..)
         , Iteration
         , initialPainting
+        , statusText
         , setIterations
         , setContentWeight
         , setStyleWeight
@@ -69,11 +70,11 @@ initialPainting name =
 
 initialSettings : Settings
 initialSettings =
-    { iterations = 10
-    , contentWeight = 0.1
-    , styleWeight = 10.0
-    , variationWeight = 1.0
-    , outputWidth = 50
+    { iterations = 5
+    , contentWeight = 1.0
+    , styleWeight = 1.0
+    , variationWeight = 0.0001
+    , outputWidth = 400
     , initialType = Content
     }
 
@@ -81,7 +82,23 @@ initialSettings =
 type InitialType
     = Content
     | Style
-    | Random
+    | Blank
+
+
+statusText : Painting -> String
+statusText { status } =
+    case status of
+        NotReady ->
+            "New"
+
+        Ready ->
+            "Ready to start"
+
+        InProgress ->
+            "In Progress"
+
+        Complete ->
+            "Completed"
 
 
 setContentWeight : Float -> Painting -> Painting
@@ -234,7 +251,10 @@ initialTypeDecoder =
                         Json.Decode.succeed Style
 
                     "random" ->
-                        Json.Decode.succeed Random
+                        Json.Decode.succeed Blank
+
+                    "blank" ->
+                        Json.Decode.succeed Blank
 
                     status ->
                         Json.Decode.fail ("Unexpected initial type: " ++ status)
@@ -297,8 +317,8 @@ encodeInitialType initial_type =
         Style ->
             Json.Encode.string "style"
 
-        Random ->
-            Json.Encode.string "random"
+        Blank ->
+            Json.Encode.string "blank"
 
 
 encodeIteration : Iteration -> Json.Encode.Value

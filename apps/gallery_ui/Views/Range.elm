@@ -3,7 +3,7 @@ module Views.Range exposing (linear, exponential)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
-import Route
+import Numeral
 
 
 type alias Range =
@@ -30,9 +30,15 @@ rangeInput ( from, to, step ) msg label val toSlider toVal disabled =
 
                 Err err ->
                     val
+
+        formattedVal =
+            if val < 0.1 then
+                Numeral.format "0,0[.][0000]" val
+            else
+                Numeral.format "0,0[.]00" val
     in
         H.div []
-            [ H.div [] [ H.text <| label ++ toString val ]
+            [ H.div [] [ H.text <| label ++ formattedVal ]
             , H.input
                 [ HA.type_ "range"
                 , HA.min (toString from)

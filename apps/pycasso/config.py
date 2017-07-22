@@ -15,7 +15,7 @@ def parse_args():
     parser.add_argument('output_dir', help='Dir prefix for result images.')
     parser.add_argument('-r', '--runner', choices=['cli', 'port'], default='cli', help='Type of runner (cli or port).')
     parser.add_argument('-i', '--iterations', type=int, default=15, help='Iterations to run.')
-    parser.add_argument('-it', '--initial_type', choices=['content', 'style', 'random'], default='content', help='Type of initial image (content, style or random).')
+    parser.add_argument('-it', '--initial_type', choices=['content', 'style', 'blank'], default='content', help='Type of initial image (content, style or blank).')
     parser.add_argument('-cw', '--content_weight', type=float, default=0.1, help='Content weight.')
     parser.add_argument('-sw', '--style_weight', type=float, default=100.0, help='Style weight.')
     parser.add_argument('-vw', '--variation_weight', type=float, default=1.0, help='Variation weight.')
