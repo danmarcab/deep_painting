@@ -13,6 +13,7 @@ import Phoenix.Push as Push
 import Phoenix.Socket as Socket exposing (Socket)
 import Phoenix.Channel as Channel exposing (Channel)
 import Page.Details.Loss as Loss
+import Time
 import Views.Range as Range
 
 
@@ -27,12 +28,14 @@ type Model
 type alias LoadedModel =
     { painting : Painting
     , resultFrame : ResultFrame
+    , lossOpened : Bool
     , loss : Loss.Model
     }
 
 
 type ResultFrame
-    = Exactly Int
+    = Stopped Int
+    | Playing Int
     | Last
 
 
@@ -58,7 +61,12 @@ type Msg
     | SetInitialType Painting.InitialType
     | StartPainting
     | LossMsg Loss.Msg
+    | AdvanceResultIter
+    | ShowAlwaysLastIter
+    | PlayResultIter
+    | StopResultIter
     | UpdateResultPos Int
+    | ToogleLoss
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -80,7 +88,7 @@ update msg model =
                                     in
                                         Painting.initialPainting name
                     in
-                        ( Loaded { painting = painting, resultFrame = Last, loss = Loss.initialModel }, Cmd.none )
+                        ( Loaded { painting = painting, resultFrame = Last, lossOpened = False, loss = Loss.initialModel }, Cmd.none )
 
                 _ ->
                     ( Loading name, Cmd.none )
@@ -138,7 +146,49 @@ update msg model =
                     ( Loaded { loadedModel | loss = Loss.update submsg loadedModel.loss }, Cmd.none )
 
                 UpdateResultPos pos ->
-                    ( Loaded { loadedModel | resultFrame = Exactly pos }, Cmd.none )
+                    ( Loaded { loadedModel | resultFrame = Stopped pos }, Cmd.none )
+
+                PlayResultIter ->
+                    ( Loaded { loadedModel | resultFrame = Playing 1 }, Cmd.none )
+
+                StopResultIter ->
+                    let
+                        i =
+                            case loadedModel.resultFrame of
+                                Last ->
+                                    (List.length loadedModel.painting.iterations) - 1
+
+                                Playing m ->
+                                    m
+
+                                Stopped m ->
+                                    m
+                    in
+                        ( Loaded { loadedModel | resultFrame = Stopped i }, Cmd.none )
+
+                ShowAlwaysLastIter ->
+                    ( Loaded { loadedModel | resultFrame = Last }, Cmd.none )
+
+                AdvanceResultIter ->
+                    let
+                        adjust n =
+                            (n + 1) % (List.length loadedModel.painting.iterations)
+
+                        i =
+                            case loadedModel.resultFrame of
+                                Last ->
+                                    0
+
+                                Playing m ->
+                                    adjust m
+
+                                Stopped m ->
+                                    adjust m
+                    in
+                        ( Loaded { loadedModel | resultFrame = Playing i }, Cmd.none )
+
+                ToogleLoss ->
+                    ( Loaded { loadedModel | lossOpened = not loadedModel.lossOpened }, Cmd.none )
 
                 _ ->
                     ( Loaded loadedModel, Cmd.none )
@@ -155,7 +205,15 @@ subscriptions model =
             Phoenix.connect socket [ channel name ]
 
         Loaded loeadedModel ->
-            Phoenix.connect socket [ channel loeadedModel.painting.name ]
+            case loeadedModel.resultFrame of
+                Playing _ ->
+                    Sub.batch
+                        [ Time.every (500 * Time.millisecond) (always AdvanceResultIter)
+                        , Phoenix.connect socket [ channel loeadedModel.painting.name ]
+                        ]
+
+                _ ->
+                    Phoenix.connect socket [ channel loeadedModel.painting.name ]
 
 
 socketUrl : String
@@ -196,7 +254,13 @@ view model =
                     , sourcesView loadedModel
                     , resultView loadedModel
                     , div [ class "clearfix" ] []
-                    , H.map LossMsg <| Loss.view loadedModel.loss loadedModel.painting
+                    , if loadedModel.lossOpened then
+                        div [ class "framed loss" ]
+                            [ H.map LossMsg <| Loss.view loadedModel.loss loadedModel.painting
+                            , H.button [ class "close-loss", HE.onClick ToogleLoss ] [ text "Close" ]
+                            ]
+                      else
+                        text ""
                     ]
     in
         div [ class "details" ] content
@@ -313,13 +377,28 @@ resultView { painting, resultFrame } =
             List.drop idx painting.iterations
                 |> List.head
 
-        index =
+        ( index, buttons ) =
             case resultFrame of
                 Last ->
-                    (List.length painting.iterations) - 1
+                    ( (List.length painting.iterations) - 1
+                    , [ H.button [ HE.onClick StopResultIter ] [ text "[]" ]
+                      , H.button [ HE.onClick PlayResultIter ] [ text "|>" ]
+                      ]
+                    )
 
-                Exactly pos ->
-                    pos
+                Stopped pos ->
+                    ( pos
+                    , [ H.button [ HE.onClick PlayResultIter ] [ text "|>" ]
+                      , H.button [ HE.onClick ShowAlwaysLastIter ] [ text ">>" ]
+                      ]
+                    )
+
+                Playing pos ->
+                    ( pos
+                    , [ H.button [ HE.onClick StopResultIter ] [ text "[]" ]
+                      , H.button [ HE.onClick ShowAlwaysLastIter ] [ text ">>" ]
+                      ]
+                    )
 
         content =
             case painting.status of
@@ -333,9 +412,12 @@ resultView { painting, resultFrame } =
                     case maybeIteration index of
                         Just iteration ->
                             div []
-                                [ img [ src iteration.path ] []
-                                , Range.linear ( 0, toFloat <| (List.length painting.iterations) - 1, 1 ) (UpdateResultPos << round) "Interation: " (toFloat index) False
-                                ]
+                                ([ img [ src iteration.path ] []
+                                 , Range.linear ( 0, toFloat <| (List.length painting.iterations) - 1, 1 ) (UpdateResultPos << round) "Interation: " (toFloat index) False
+                                 , H.button [ HE.onClick ToogleLoss ] [ text "Show loss graph" ]
+                                 ]
+                                    ++ buttons
+                                )
 
                         Nothing ->
                             H.p [] [ text "Nothing to show yet." ]
@@ -369,6 +451,8 @@ contentList : List ( String, String )
 contentList =
     [ ( "Cadiz", "http://localhost:4000/images/sources/content/image_61020.jpeg" )
     , ( "Cadiz 2", "http://sleepincadiz.com/wp-content/uploads/2015/06/catedral-de-cadiz.jpg" )
-    , ( "London", "http://localhost:4000/images/sources/content/bridge-england-united-kingdom-big-ben-thames-night-london-street-lights-cities-river-reflection-clock-watch-time-images-198692.jpg" )
-    , ( "Dani", "http://localhost:4000/images/sources/content/daniel-cabillas.jpg" )
+    , ( "London", "http://www.telegraph.co.uk/content/dam/business/2016/12/06/JS115443655_wwwalamycom_London-Piccadilly-Circus-illuminated-xlarge_trans_NvBQzQNjv4Bq5yQLQqeH37t50SCyM4-zeGtT0gK_6EfZT336f62EI5U.jpg" )
+    , ( "London Park", "https://media.timeout.com/images/102880972/image.jpg" )
+    , ( "Santa ana", "http://www.fondobook.com/wp-content/uploads/2012/01/fondo_hd_43_ermita_andaluza.jpg" )
+    , ( "Blue lake", "http://natbg.com/wp-content/uploads/2016/09/winter-evening-nigh-night-blue-lake-cold-mountains-trees-beautiful-reflection-snow-winter-moon-wallpaper-hd.jpg" )
     ]

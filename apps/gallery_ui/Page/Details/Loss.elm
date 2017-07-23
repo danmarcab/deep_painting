@@ -3,6 +3,7 @@ module Page.Details.Loss exposing (Model, initialModel, Msg, update, view)
 import Color exposing (Color)
 import Color.Convert exposing (colorToCssRgb)
 import Date
+import Numeral
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Visualization.Axis as Axis exposing (defaultOptions)
@@ -10,7 +11,7 @@ import Visualization.List as List
 import Visualization.Scale as Scale exposing (ContinuousScale, OrdinalScale)
 import Visualization.Shape as Shape
 import Data.Painting as Painting
-import Svg.Events exposing (onClick, onMouseOver)
+import Svg.Events exposing (onClick, onMouseOut, onMouseOver)
 
 
 type alias Model =
@@ -111,7 +112,6 @@ yScale model iterations =
         case model.yScaleType of
             Linear ->
                 Scale.linear ( min, max ) ( h - 2 * padding, 0 )
-                    |> flip Scale.nice 4
 
             Log10 ->
                 Scale.log 10 ( min, max ) ( h - 2 * padding, 0 )
@@ -130,8 +130,26 @@ xAxis scale iterations =
 yAxis : ContinuousScale -> List Painting.Iteration -> Svg msg
 yAxis scale iterations =
     let
+        min =
+            iterations
+                |> List.map (values >> List.minimum >> Maybe.withDefault 0)
+                |> List.minimum
+                |> Maybe.withDefault 0
+
+        max =
+            iterations
+                |> List.map (values >> List.maximum >> Maybe.withDefault 0)
+                |> List.maximum
+                |> Maybe.withDefault 0
+
         axis =
-            Axis.axis { defaultOptions | orientation = Axis.Left, ticks = Just (List.map .loss iterations) } scale
+            Axis.axis
+                { defaultOptions
+                    | orientation = Axis.Left
+                    , ticks = Just [ min, max ]
+                    , tickFormat = Just formatLoss
+                }
+                scale
     in
         g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString padding ++ ")") ]
             [ axis, text_ [ fontFamily "sans-serif", fontSize "10", x "5", y "5" ] [ text "Loss" ] ]
@@ -165,27 +183,37 @@ curve model xScale yScale iterations =
 points : Model -> ContinuousScale -> ContinuousScale -> List Painting.Iteration -> Svg Msg
 points model xScale yScale iterations =
     let
-        preparedPoints =
-            List.indexedMap (\n iter -> ( Scale.convert xScale (toFloat n), Scale.convert yScale iter.loss )) iterations
+        pointView n iter =
+            let
+                point =
+                    ( Scale.convert xScale (toFloat n), Scale.convert yScale iter.loss )
 
-        radius point =
-            if Just (round <| Tuple.first point) == model.pointInfo then
-                8
-            else
-                4
-
-        pointView point =
-            Svg.path
-                [ d (circle <| radius point)
-                , fill "white"
-                , stroke "black"
-                , transform ("translate" ++ toString point)
-                , onMouseOver (PointInfo (Just <| round <| Tuple.first point))
-                ]
-                []
+                ( c, el ) =
+                    if Just (round <| Tuple.first point) == model.pointInfo then
+                        ( circle 8
+                        , [ Svg.text_
+                                [ transform ("translate(10,-10)") ]
+                                [ text <| formatLoss iter.loss ]
+                          ]
+                        )
+                    else
+                        ( circle 4, [] )
+            in
+                Svg.g [ transform ("translate" ++ toString point) ]
+                    ((Svg.path
+                        [ d c
+                        , fill "white"
+                        , stroke "black"
+                        , onMouseOver (PointInfo (Just <| round <| Tuple.first point))
+                        , onMouseOut (PointInfo Nothing)
+                        ]
+                        []
+                     )
+                        :: el
+                    )
     in
         g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")") ]
-            (List.map pointView preparedPoints)
+            (List.indexedMap pointView iterations)
 
 
 circle : Float -> String
@@ -262,7 +290,7 @@ h =
 
 padding : Float
 padding =
-    100
+    60
 
 
 series =
@@ -290,3 +318,15 @@ colorScale =
 colorString : String -> String
 colorString =
     Scale.convert colorScale >> Maybe.withDefault Color.black >> colorToCssRgb
+
+
+formatLoss : Float -> String
+formatLoss loss =
+    let
+        exp =
+            (round (logBase 10 loss)) - 1
+
+        n =
+            Numeral.format "0,0.00" <| loss / toFloat (10 ^ exp)
+    in
+        n ++ "e" ++ toString exp

@@ -70,10 +70,10 @@ initialPainting name =
 
 initialSettings : Settings
 initialSettings =
-    { iterations = 5
+    { iterations = 10
     , contentWeight = 1.0
-    , styleWeight = 1.0
-    , variationWeight = 0.0001
+    , styleWeight = 100
+    , variationWeight = 0.001
     , outputWidth = 400
     , initialType = Content
     }
