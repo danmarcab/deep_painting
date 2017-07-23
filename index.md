@@ -61,3 +61,83 @@ Esta división permite tener todas las aplicaciones juntas en un servidor como e
 Y también permite tener las aplicaciones separadas en dos servidores como en el siguiente diagrama:
 
 ![Arquitectura Inicial](Arquitectura_2.png)
+
+
+### Gallery
+
+Es la applicacion que coordina y expone la intefaz de las imágenes.
+
+Está escrita en elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de erlang.
+
+Se comunica con Gallery UI mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
+Se comunica con Painting mediante paso de mensajes, un mecanismo de comunicación de erlang.
+Se comunica con Studio mediante HTTP.
+
+### Gallery UI 
+
+Es la interfaz web de Gallery.
+
+Desde ella el usuario puede iniciar o ver el estado de las imágenes creadas hasta ahora.
+
+Está escrita en elm, un lenguaje funcional puro con sintaxis similar a haskell.
+
+Se comunica con Gallery mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
+
+### Painting
+
+Esta aplicación almacena las imágenes, tanto para Gallery como para Studio.
+
+Esta escrita en elixir.
+
+Se comunica con Gallery y Studio mediante paso de mensajes, un mecanismo de comunicación de erlang.
+
+En el caso de un despliegue por separado, habrá dos instancias de Painting.
+
+### Studio
+
+Es la applicacion que se recibe las peticiones de Gallery y monitoriza la ejecución de Pycasso.
+
+Está escrita en elixir.
+
+Se comunica con Pycasso mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
+Se comunica con Painting mediante paso de mensajes, un mecanismo de comunicación de erlang.
+Se comunica con Studio mediante HTTP.
+
+### Pycasso
+
+Es la applicacion que usa deep learning para crear las imágenes. 
+
+Está escrita en python, un lenguaje orientado a objetos que la comunidad científica esta tendiendo a usar. Usa
+`tensorflow` y otras librerías de apoyo para ejecutar una variante de la red neuronal `VGG19`, que consiste de 
+19 capas.
+
+Se comunica con Studio mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
+
+
+## Algunos Resultados
+
+Original
+
+![Cadiz](cadiz.png)
+
+Usando como estilo [La noche estrellada](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1513px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg) de Van Gogh
+
+![Cadiz Starry](cadiz_starry.png)
+
+Usando como estilo [El grito](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/1280px-The_Scream.jpg) de Munch.
+
+![Cadiz Scream](cadiz_scream.png)
+
+Usando como estilo [Mujer desnuda sentada](https://www.pablopicasso.org/images/paintings/seated-nude.jpg) de Picasso
+
+![Cadiz Seated](cadiz_seated.png)
+
+
+## Referencias
+
+* [Elixir](https://elixir-lang.org/)
+* [Erlang](https://www.erlang.org/)
+* [Phoenix](http://www.phoenixframework.org/)
+* [Elm](http://elm-lang.org/)
+* [Python](https://www.python.org/)
+* [Tensorflow](https://www.tensorflow.org/)
