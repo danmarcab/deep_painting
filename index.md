@@ -17,7 +17,7 @@ Las diferentes capas representan diferentes niveles de estilo (detalles, formas 
 
 Con el gradiente y usando un algoritmo de descenso de gradiente obtenemos una nueva imagen objetivo que
 deberá mantener el contenido (el primer componente intenta que el clasificador
-siga viendo los mismos objetos) y tener un poco mas del estilo de la imagen de estilo.
+siga viendo los mismos objetos) y tener un poco mas del estilo.
 
 ## Algunos Resultados
 
@@ -48,7 +48,7 @@ A continuación sigue una breve explicacion de cada uno de ellos.
 
 Es la applicacion que inicia, almacena, coordina y expone la intefaz de las imágenes.
 
-Está escrita en Elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de erlang.
+Está escrita en Elixir, un lenguage funcional y altamente concurrente que se ejecuta en la máquina virtual de Erlang.
 
 Se comunica con Gallery UI mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
 Se comunica con Pycasso mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
