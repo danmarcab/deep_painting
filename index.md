@@ -15,8 +15,8 @@ distinge objetos (clasificar objetos es el motivo por el que VGG19 fue creada).
 - El error de estilo: Se calcula usando la diferencia de matrices de gram de varias capas de la red VGG19.
 Las diferentes capas representan diferentes niveles de estilo (detalles, formas y composición general)
 
-Con el gradiente, y usando un algoritmo de descenso de gradiente, obtenemos una nueva imagen objetivo, que
-si todo ha ido bien, deberá mantener el contenido (porque el primer componente intenta que el clasificador
+Con el gradiente y usando un algoritmo de descenso de gradiente obtenemos una nueva imagen objetivo que
+deberá mantener el contenido (el primer componente intenta que el clasificador
 siga viendo los mismos objetos) y tener un poco mas del estilo de la imagen de estilo.
 
 ## Algunos Resultados
@@ -41,14 +41,14 @@ Usando como estilo [Mujer desnuda sentada](https://www.pablopicasso.org/images/p
 
 ![Arquitectura Inicial](ArquitecturaInicial.png)
 
-En el diagrama se pueden ver los pricipales componentes y como se comunican entre ellos. A continuación sigue 
-una breve explicacion de cada uno de ellos.
+En el diagrama se pueden ver los pricipales componentes y como se comunican entre ellos. 
+A continuación sigue una breve explicacion de cada uno de ellos.
 
 ### Gallery
 
 Es la applicacion que inicia, almacena, coordina y expone la intefaz de las imágenes.
 
-Está escrita en elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de erlang.
+Está escrita en Elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de erlang.
 
 Se comunica con Gallery UI mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
 Se comunica con Pycasso mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
@@ -59,17 +59,17 @@ Es la interfaz web de Gallery.
 
 Desde ella el usuario puede iniciar o ver el estado de las imágenes creadas hasta ahora.
 
-Está escrita en elm, un lenguaje funcional puro con sintaxis similar a haskell.
+Está escrita en Elm, un lenguaje funcional puro con sintaxis similar a Haskell.
 
 Se comunica con Gallery mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
 
 
 ### Pycasso
 
-Es la applicacion que usa deep learning para crear las imágenes. 
+Es la applicacion que usa "deep learning" para crear las imágenes. 
 
-Está escrita en python, un lenguaje orientado a objetos que la comunidad científica esta tendiendo a usar. Usa
-`tensorflow` y otras librerías de apoyo para ejecutar una variante de la red neuronal `VGG19`, que consiste de 
+Está escrita en Python, un lenguaje orientado a objetos que la comunidad científica esta tendiendo a usar.
+Usa`tensorflow` y otras librerías de apoyo para ejecutar una variante de la red neuronal `VGG19`, que consiste de 
 19 capas.
 
 Se comunica con Gallery mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
@@ -102,9 +102,9 @@ Y también permite tener las aplicaciones separadas en dos servidores como en el
 
 ### Gallery
 
-Es la applicacion que coordina y expone la intefaz de las imágenes.
+Es la applicacion que coordina y expone la interfaz de las imágenes.
 
-Está escrita en elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de erlang.
+Está escrita en Elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de erlang.
 
 Se comunica con Gallery UI mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
 Se comunica con Painting mediante paso de mensajes, un mecanismo de comunicación de erlang.
@@ -116,7 +116,7 @@ Es la interfaz web de Gallery.
 
 Desde ella el usuario puede iniciar o ver el estado de las imágenes creadas hasta ahora.
 
-Está escrita en elm, un lenguaje funcional puro con sintaxis similar a haskell.
+Está escrita en Elm, un lenguaje funcional puro con sintaxis similar a Haskell.
 
 Se comunica con Gallery mediante `Phoenix channels`, un protocolo del framework `Phoenix` basado en websockets.
 
@@ -124,17 +124,17 @@ Se comunica con Gallery mediante `Phoenix channels`, un protocolo del framework 
 
 Esta aplicación almacena las imágenes, tanto para Gallery como para Studio.
 
-Esta escrita en elixir.
+Esta escrita en Elixir.
 
-Se comunica con Gallery y Studio mediante paso de mensajes, un mecanismo de comunicación de erlang.
+Se comunica con Gallery y Studio mediante el paso de mensajes, un mecanismo de comunicación de Erlang.
 
 En el caso de un despliegue por separado, habrá dos instancias de Painting.
 
 ### Studio
 
-Es la applicacion que se recibe las peticiones de Gallery y monitoriza la ejecución de Pycasso.
+Es la aplicacion que se recibe las peticiones de Gallery y monitoriza la ejecución de Pycasso.
 
-Está escrita en elixir.
+Está escrita en Elixir.
 
 Se comunica con Pycasso mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
 Se comunica con Painting mediante paso de mensajes, un mecanismo de comunicación de erlang.
@@ -142,9 +142,9 @@ Se comunica con Studio mediante HTTP.
 
 ### Pycasso
 
-Es la applicacion que usa deep learning para crear las imágenes. 
+Es la applicacion que usa "Deep learning" para crear las imágenes. 
 
-Está escrita en python, un lenguaje orientado a objetos que la comunidad científica esta tendiendo a usar. Usa
+Está escrita en Python, un lenguaje orientado a objetos que la comunidad científica esta tendiendo a usar. Usa
 `tensorflow` y otras librerías de apoyo para ejecutar una variante de la red neuronal `VGG19`, que consiste de 
 19 capas.
 
