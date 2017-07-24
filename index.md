@@ -23,19 +23,19 @@ siga viendo los mismos objetos) y tener un poco más del estilo.
 
 Original
 
-![Cádiz](cádiz.png)
+![Cádiz](cadiz.png)
 
 Usando como estilo [La noche estrellada](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1513px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg) de Van Gogh
 
-![Cádiz Starry](cádiz_starry.png)
+![Cádiz Starry](cadiz_starry.png)
 
 Usando como estilo [El grito](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/1280px-The_Scream.jpg) de Munch.
 
-![Cádiz Scream](cádiz_scream.png)
+![Cádiz Scream](cadiz_scream.png)
 
 Usando como estilo [Mujer desnuda sentada](https://www.pablopicasso.org/images/paintings/seated-nude.jpg) de Picasso
 
-![Cádiz Seated](cádiz_seated.png)
+![Cádiz Seated](cadiz_seated.png)
 
 ## Arquitectura inicial
 
@@ -69,7 +69,7 @@ Se comunica con Gallery mediante `Phoenix channels`, un protocolo del framework 
 Es la aplicación que usa "Deep learning" para crear las imágenes. 
 
 Está escrita en Python, un lenguaje orientado a objetos que la comunidad científica tiende a usar.
-Usa`tensorflow` y otras librerías de apoyo para ejecutar una variante de la red neuronal `VGG19`, que consiste de 
+Usa `tensorflow` y otras librerías de apoyo para ejecutar una variante de la red neuronal `VGG19`, que consiste de 
 19 capas.
 
 Se comunica con Gallery mediante `Erlang ports`, un mecanismo de comunicación entre procesos basado en `pipes`.
@@ -102,7 +102,7 @@ Y también permite tener las aplicaciones separadas en dos servidores como en el
 
 ### Gallery
 
-Es la applicacion que coordina y expone la interfaz de las imágenes.
+Es la applicación que coordina y expone la interfaz de las imágenes.
 
 Está escrita en Elixir, un lenguage funcional y altamente concurrente que corre en la máquina virtual de Erlang.
 
