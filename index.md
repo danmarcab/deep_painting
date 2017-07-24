@@ -1,5 +1,42 @@
 # Deep Painting
 
+## Como funciona
+
+En el siguiente diagrama se puede ver a alto nivel el algoritmo de transferencia de imágenes:
+
+![Como funciona](Loss.png)
+
+En cada iteración se calcula el error y el gradiente sumando:
+
+- El error de contenido: Se calcula usando la suma de los la diferencia al cuadrado entre 
+la imagen objetivo y la de contenido. Estos valores se toman de una capa de la red VGG19 que 
+distinge objetos (clasificar objetos es el motivo por el que VGG19 fue creada).
+
+- El error de estilo: Se calcula usando la diferencia de matrices de gram de varias capas de la red VGG19.
+Las diferentes capas representan diferentes niveles de estilo (detalles, formas y composición general)
+
+Con el gradiente, y usando un algoritmo de descenso de gradiente, obtenemos una nueva imagen objetivo, que
+si todo ha ido bien, deberá mantener el contenido (porque el primer componente intenta que el clasificador
+siga viendo los mismos objetos) y tener un poco mas del estilo de la imagen de estilo.
+
+## Algunos Resultados
+
+Original
+
+![Cadiz](cadiz.png)
+
+Usando como estilo [La noche estrellada](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1513px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg) de Van Gogh
+
+![Cadiz Starry](cadiz_starry.png)
+
+Usando como estilo [El grito](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/1280px-The_Scream.jpg) de Munch.
+
+![Cadiz Scream](cadiz_scream.png)
+
+Usando como estilo [Mujer desnuda sentada](https://www.pablopicasso.org/images/paintings/seated-nude.jpg) de Picasso
+
+![Cadiz Seated](cadiz_seated.png)
+
 ## Arquitectura inicial
 
 ![Arquitectura Inicial](ArquitecturaInicial.png)
@@ -112,26 +149,6 @@ Está escrita en python, un lenguaje orientado a objetos que la comunidad cient�
 19 capas.
 
 Se comunica con Studio mediante `Erlang ports`, un mecanismo de comunicación entre processos basado en `pipes`.
-
-
-## Algunos Resultados
-
-Original
-
-![Cadiz](cadiz.png)
-
-Usando como estilo [La noche estrellada](https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1513px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg) de Van Gogh
-
-![Cadiz Starry](cadiz_starry.png)
-
-Usando como estilo [El grito](https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/The_Scream.jpg/1280px-The_Scream.jpg) de Munch.
-
-![Cadiz Scream](cadiz_scream.png)
-
-Usando como estilo [Mujer desnuda sentada](https://www.pablopicasso.org/images/paintings/seated-nude.jpg) de Picasso
-
-![Cadiz Seated](cadiz_seated.png)
-
 
 ## Referencias
 
