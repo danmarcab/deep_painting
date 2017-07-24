@@ -43,6 +43,8 @@ def initial(config):
     # random image
     else:
         if K.image_data_format() == 'channels_first':
-            return np.full((1, 3, rows, cols), 128.0)
+            noise_img = np.random.uniform(-20, 20, (1, 3, rows, cols)).astype('float32')
         else:
-            return np.full((1, rows, cols, 3), 128.0)
+            noise_img = np.random.uniform(-20, 20, (1, rows, cols, 3)).astype('float32')
+
+        return 0.7 * noise_img + 0.3 * preprocess_image(config.content)
