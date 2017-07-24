@@ -13,13 +13,13 @@ class BasicRunner(object):
         self.optimizer = optimizer
 
     def run(self, (initial_image, initial_loss)):
-        self.save_image(initial_image, 'iteration_0.png')
+        self.save_image(initial_image, 'iteration_0.jpg')
         for i in range(self.config.iterations):
             self.run_once(i + 1)
 
     def run_once(self, iteration):
         (img, loss) = self.optimizer.optimize()
-        file_name = self.save_image(img, 'iteration_%d.png' % iteration)
+        file_name = self.save_image(img, 'iteration_%d.jpg' % iteration)
         return self.log_img(iteration, file_name, loss)
 
     def log_img(self, iteration, file_name, loss):
@@ -46,7 +46,7 @@ class PortRunner(BasicRunner):
         self.packet_size = 4
 
     def run(self, (initial_image, initial_loss)):
-        file_name = self.save_image(initial_image, 'iteration_0.png')
+        file_name = self.save_image(initial_image, 'iteration_0.jpg')
         self.send_response(self.log_img(0, file_name, initial_loss))
         n = 0
         while True:
